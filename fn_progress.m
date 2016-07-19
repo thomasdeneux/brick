@@ -119,13 +119,18 @@ if ischar(varargin{1})
     % sizes
     x(1).promptsize = length(prompt);
     i = 0; x(1).curi = i;
-    x(1).max = varargin{2};
-    if ischar(x(1).max)
-        x(1).max = str2double(x(1).max);
+    x(1).pflag = strcmp(varargin{2},'%');
+    if x(1).pflag
+        x(1).max = 1;
+        x(1).isize = 3;
+    else
+        x(1).max = varargin{2};
+        if ischar(x(1).max)
+            x(1).max = str2double(x(1).max);
+        end
+        x(1).max = abs(x(1).max);
+        x(1).isize = floor(log10(x(1).max))+1;
     end
-    x(1).pflag = false;
-    x(1).max = abs(x(1).max);
-    x(1).isize = floor(log10(x(1).max))+1;
     if ~isempty(ht0) && ~ishandle(ht0), ht0=[]; end
     x(1).ht = ht0;
     x(1).ignoresub = false;
@@ -147,7 +152,7 @@ if ischar(varargin{1})
     x(1).prompt = prompt;
     x(1).format = ['%' num2str(x(1).isize) 'i'];
     if x(1).pflag
-        x(1).after = sprintf('%%');
+        x(1).after = '%%';
     else
         x(1).after = ['/' sprintf(x(1).format,x(1).max)];
     end
@@ -174,7 +179,7 @@ else
         if (i == x(1).curi), return, end
         x(1).curi = i;
         if x(1).doerase
-            nerase = x(1).isize+length(x(1).after);
+            nerase = x(1).isize+fn_switch(x(1).pflag,1,length(x(1).after));
             updatedisplay(nerase,[sprintf(x(1).format,i) x(1).after],x(1).ht)
         else
             updatedisplay(-1,[x(1).prompt ' ' sprintf(x(1).format,i) x(1).after],x(1).ht)

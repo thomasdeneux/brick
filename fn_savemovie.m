@@ -101,8 +101,6 @@ while i<=length(varargin)
         clip = x;
     elseif size(x,2)==3
         map = x;
-    elseif fn_isfigurehandle(x)
-        hf = x;
     else
         error('argument error')
     end

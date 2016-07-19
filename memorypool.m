@@ -54,15 +54,21 @@ classdef memorypool < handle
             pool = memorypool;
             item = memorypoolitem(pool,varargin{:});
         end
-        function setmaxmem(memstr)
+        function setmaxmem(mem)
             pool = memorypool;
-            token = regexpi(memstr,'^((\.|\d)+)([KMGT]{0,1})B{0,1}$','tokens');
-            if isempty(token), error 'input to setmaxmem must be for example ''4GB''', end
-            token = token{1};
-            value = str2double(token{1});
-            if isnan(value) || value<=0, error 'input to setmaxmem must be for example ''4GB''', end
-            unitlog = fn_switch(lower(token{2}),'',0,'k',10,'m',20,'g',30','t',40);
-            pool.maxmem = value*2^unitlog;
+            if ischar(mem)
+                token = regexpi(mem,'^((\.|\d)+)([KMGT]{0,1})B{0,1}$','tokens');
+                if isempty(token), error 'input to setmaxmem must be for example ''4GB''', end
+                token = token{1};
+                value = str2double(token{1});
+                if isnan(value) || value<=0, error 'input to setmaxmem must be for example ''4GB''', end
+                unitlog = fn_switch(lower(token{2}),'',0,'k',10,'m',20,'g',30','t',40);
+                pool.maxmem = value*2^unitlog;
+            elseif isnumeric(mem)
+                pool.maxmem = mem;
+            else
+                error argument
+            end
             checkmemory(pool)
         end
         function clear()

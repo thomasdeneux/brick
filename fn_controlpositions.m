@@ -21,12 +21,14 @@ if nargin==0, help fn_controlpositions, return, end
 posrel = row(posrel); if length(posrel)==2, posrel(3:4)=0; end
 pospix = row(pospix); if length(pospix)==2, pospix(3:4)=0; end
 
+% pointer to listeners
+hl = fn_pointer('ppos',[],'axlim',[],'axratio',[]);
+
 % update position once
-updatefcn = @(u,e)updatepositions(hu,hp,posrel,pospix);
+updatefcn = @(u,e)updatepositions(hu,hp,posrel,pospix,hl);
 feval(updatefcn) 
 
 % set listeners
-hl = fn_pointer('ppos',[],'axlim',[],'axratio',[]);
 if hp==get(hu,'parent')
     hl.ppos = fn_pixelsizelistener(hp,updatefcn);
 elseif get(hp,'parent')==get(hu,'parent')
@@ -57,26 +59,18 @@ end
 %---
 function deletelisteners(hl)
 
-delete(hl.ppos)
-delete(hl.axlim)
-delete(hl.axratio)
+delete(hl.ppos(ishandle(hl.ppos)))
+delete(hl.axlim(ishandle(hl.axlim)))
+delete(hl.axratio(ishandle(hl.axratio)))
 
 
 %---
-function deleteaxes(hp,evnt,fun)
-
-hlist = getappdata(hp,'fn_controlpositions');
-for k=1:length(hlist)
-    hu = hlist{k};
-    if ishandle(hu) || (isa(hu,'fn_slider') && isvalid(hu)), delete(hu), end
-end
-fn_evalcallback(fun,hp,evnt)
-
-%---
-function updatepositions(hu,hp,posrel,pospix) 
+function updatepositions(hu,hp,posrel,pospix,hl) 
 
 if ~ishandle(hu) && ~(isobject(hu) && isvalid(hu) && isprop(hu,'units') && isprop(hu,'position'))
-    error 'fn_controlposition requires first object to be a graphic handle or a valid object with ''units'' and ''position'' properties'
+    % object not valid anymore: delete listeners and return
+    deletelisteners(hl)
+    return
 end
 if hp==get(hu,'parent')
     pos0 = [0 0];
@@ -103,6 +97,17 @@ elseif get(hp,'parent')==get(hu,'parent')
             psiz(1) = psiz(1)*change;
         end
     end
+else
+    if fn_dodebug
+        if isempty(get(hu,'parent'))
+            disp 'cannot update position: object has currently no parent'
+        elseif isempty(get(hp,'parent'))
+            disp 'cannot update object position: reference has currently no parent'
+        else
+            disp 'cannot update object position: reference is neither parent, nor sibbling of object'
+        end
+    end
+    return
 end
 pos = [pos0 0 0] + [psiz psiz].*posrel + pospix;
 pos([3 4]) = max(pos([3 4]),2);

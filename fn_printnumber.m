@@ -47,6 +47,8 @@ while k<length(varargin)
             color = varargin{k};
         case {'3x5' '8x12' '8x16'}
             fontsize = a;
+        case {'topleft' 'topright' 'bottomleft' 'bottomright'}
+            pos = a;
         otherwise
             error('unknown option ''%s''',a)
     end

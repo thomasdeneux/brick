@@ -1,7 +1,7 @@
 function B = fn_map(fun,A,varargin)
 % function B = fn_map(fun,A[,'columns|rows'][,'array|cell'][,errorval])
 % function B = fn_map(A,fun[,'columns|rows'][,'array|cell'][,errorval])
-% 
+%---
 % map function 'fun' 
 % to elements [default] / columns / rows of A
 %
@@ -12,7 +12,7 @@ function B = fn_map(fun,A,varargin)
 % if errorval is specified, errors are caught and the value errorval is
 % returned in case of an error
 %
-% See also fn_isemptyc, fn_itemlengths
+% See also fn_isemptyc, fn_itemlengths, fn_find
 
 % Thomas Deneux
 % Copyright 2006-2012

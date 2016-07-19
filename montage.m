@@ -108,7 +108,9 @@ classdef montage < interface
             else
                 switch varargin{1}
                     case 'file'
-                        f = cellstr(fn_getfile);
+                        f = fn_getfile;
+                        if isequal(f,0), return, end
+                        f = cellstr(f);
                         nim = length(f);
                         a = cell(1,nim);
                         for i=1:nim, a{i}=fn_readimg(f{i}); end
@@ -198,7 +200,6 @@ classdef montage < interface
                             alpha = mask*M.X.white + ~mask*M.X.alpha;
                             set(M.im(i).h(1),'alphadata',alpha,'alphadatamapping','none','facealpha','texturemap')
                         end
-                        hstackbottom(end+1) = M.im(i).h(1); %#ok<AGROW> % image will be sent to bottom
                         if M.showmarks
                             M.im(i).h(2) = line(xyh(1,1),xyh(2,1),'parent',M.grob.ha,'linestyle','none','marker','s', ...
                                 'buttondownfcn',@(u,e)action(M,'movegroup',i), ...
@@ -210,8 +211,6 @@ classdef montage < interface
                         end
                         %set(M.im(i).h,'visible',fn_switch(s.active))
                 end
-                % send images to bottom
-                uistack(hstackbottom,'bottom')
             end
             if strcmp(flag,'reset')
                 fn_axis(ha,'tight',1.02)
@@ -351,23 +350,14 @@ classdef montage < interface
                     [M.im(i).scale] = deal(x);
                     M.show('move',i)
                 case 'stackbottom'
-                    if fn_matlabversion('newgraphics')    
-                        hh = cat(1,M.im(i).h);
-                        uistack(hh(:,1),'bottom')
-                    else
-                        for k=i, uistack(M.im(k).h(1),'bottom'), end
-                    end
+                    hh = cat(1,M.im.h);
+                    uistack(row(fliplr(hh(i,:))'),'bottom') % from bottom to top: first image, first handles, ..., last image, last handles
                 case 'stacktop'
                     % send the other images to bottom rather send the
                     % selected images to top: that way, all handles remain
                     % on top
-                    j = setdiff(1:length(M.im),i);
-                    if fn_matlabversion('newgraphics')    
-                        hh = cat(1,M.im(j).h);
-                        uistack(hh(:,1),'bottom')
-                    else
-                        for k=j, uistack(M.im(k).h(1),'bottom'), end
-                    end
+                    hh = cat(1,M.im.h);
+                    uistack(row(fliplr(hh(i,:))'),'top') % from bottom to top: first image, first handles, ..., last image, last handles
                 case 'control'
                     if all(ismember(M.X.changedfields,{'alpha' 'white'}))
                         % no need to redisplay everything

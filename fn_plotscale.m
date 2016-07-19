@@ -20,7 +20,7 @@ if nargin==0, help fn_plotscale, return, end
 
 posflag = '';
 tysize = []; dotranslate = false;
-if isnumeric(varargin{1}) && ishandle(varargin{1})
+if ishandle(varargin{1})
     ha = varargin{1}; varargin(1)=[];
 else
     ha = gca;
