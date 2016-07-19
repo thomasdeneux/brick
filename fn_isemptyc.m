@@ -5,7 +5,7 @@ function b = fn_isemptyc(varargin)
 % returns an array of logicals of the same size as cell array c indicating
 % which elements of c are empty
 %
-% See also fn_map, fn_itemlengths
+% See also fn_find, fn_map, fn_itemlengths
 
 % Thomas Deneux
 % Copyright 2011-2012

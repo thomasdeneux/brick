@@ -134,19 +134,21 @@ classdef interface < hgsetget
             
             % positioning
             uimenu(m,'label','Change current display', ...
-                'callback',@(u,evnt)chgframepositions(I,'reset'));
+                'callback',@(u,evnt)chgframepositions(I,'modify'));
             pos = I.options.positions; npos = length(pos);
             m1 = uimenu(m,'label','Saved displays');
             for k=1:npos
                 f = pos(k).name;
-                uimenu(m1,'label',f, ...
+                if k==1 && f(end)=='*', en = 'off'; else en = 'on'; end
+                uimenu(m1,'label',f,'enable',en, ...
                     'callback',@(u,evnt)chgframepositions(I,'load',f));
             end
-            uimenu(m1,'label','Create new...','separator','on', ...
-                'callback',@(u,evnt)chgframepositions(I,'new'));
+            uimenu(m1,'label','Save current as...','separator','on', ...
+                'callback',@(u,evnt)chgframepositions(I,'saveas'));
             m2 = uimenu(m1,'label','Delete');
             for k=1:npos
                 f = pos(k).name;
+                if k==1 && f(end)=='*', continue, end
                 uimenu(m2,'label',f, ...
                     'callback',@(u,evnt)chgframepositions(I,'delete',f));
             end
@@ -220,37 +222,54 @@ classdef interface < hgsetget
             pos = I.options.positions;
             npos = length(pos);
             curpos = pos(1).value;
+            iscurtmp = (pos(1).name(end)=='*');
+            curname = pos(1).name; if iscurtmp, curname(end)=[]; end
+            idxsaved = fn_switch(iscurtmp,2:npos,1:npos);
             doreinitmenus = false;
             switch flag
-                case 'reset'
-                    pos(1).value = fn_framedesign(I.grob,curpos,true);
-                    %                     obj = struct2cell(rmfield(I.grob,'hf'));
-                    %                     obj = [obj{:}];
-                    %                     set(obj,'units','pixel')
+                case 'modify'
+                    newpos = fn_framedesign(I.grob,curpos,true);
+                    if iscurtmp
+                        pos(1).value = newpos;
+                    else
+                        pos = [struct('name',[curname '*'],'value',newpos) pos];
+                    end
+                    doreinitmenus = true;
                 case 'set'
                     pos(1).value = fn_framedesign(I.grob,curpos,[]);
                 case 'load'
                     f = varargin{1};
                     idx = find(strcmp(f,{pos.name}));
-                    pos = pos([idx setdiff(1:npos,idx)]);
+                    pos = pos([idx setdiff(idxsaved,idx)]);
                     pos(1).value = fn_framedesign(I.grob,pos(1).value,[]);
                     doreinitmenus = true;
-                case 'new'
-                    name = inputdlg('Name of new position configuration','Enter name',1);
-                    if isempty(name) || fn_ismemberstr(name,{pos.name})
+                case 'saveas'
+                    name = inputdlg('Name of new position configuration','Enter name',1,{curname});
+                    if isempty(name) || (~strcmp(name,curname) && fn_ismemberstr(name,{pos.name}))
                         errordlg('Invalid name (empty or already exists)')
                         return
                     end
-                    pos = [struct('name',name,'value',curpos) pos];
+                    if strcmp(name,curname)
+                        if iscurtmp
+                            pos(1) = [];
+                            pos(1).value = curpos;
+                        else
+                            % display was not changed, nothing needs to be
+                            % saved
+                            return
+                        end
+                    else
+                        pos = [struct('name',name,'value',curpos) pos];
+                    end
                     doreinitmenus = true;
                 case 'delete'
                     f = varargin{1};
-                    idx = find(strcmp(f,{pos.name}));
+                    idx = find(strcmp(f,{pos(idxsaved).name}));
                     if idx==1
                         errordlg('Cannot delete current configuration')
                         return
                     end
-                    pos(idx) = [];
+                    pos(iscurtmp+idx) = [];
                     doreinitmenus = true;
             end
             I.options.positions = pos;

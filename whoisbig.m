@@ -10,19 +10,35 @@ function whoisbig(varargin)
 var = []; minsize = [];
 for k=1:length(varargin)
     a = varargin{k};
-    if isequal(a,0) || ischar(a)
+    if isequal(a,0)
         minsize = a;
+    elseif ischar(a)
+        tokens = regexpi(a,'^([\d.]*)([KMG]{0,1})$','tokens');
+        if ~isempty(tokens)
+            [n u] = deal(tokens{1}{:});
+            minsize = fn_switch(isempty(n),1,str2double(n)) * 2^fn_switch(lower(u),'',0,'k',10,'m',20,'g',30);
+        else
+            try
+                varname = a;
+                var = evalin('caller',varname);
+            catch
+                error(['cannot interpret argument ''' a ''''])
+            end
+        end
     else
         var = a;
         varname = inputname(k);
-        if isempty(minsize)
-            w = whos('var');
-            totsize = w.bytes;
-            minsize = min(10*2^20,totsize/1000);
-        end
     end
 end
-if isempty(minsize), minsize = '10M'; end
+if isempty(minsize)
+    if isempty(var)
+        minsize = 10*2^20; % '10M' 
+    else
+        w = whos('var');
+        totsize = w.bytes;
+        minsize = min(10*2^20,totsize/1000);
+    end
+end
 
 %% call 'whos'
 if isempty(var)
@@ -51,14 +67,6 @@ end
 %% sort
 [bytes ord] = sort([w.bytes]);
 w = w(ord);
-
-%% min size
-if ischar(minsize)
-    tokens = regexpi(minsize,'^([\d.]*)([KMG]{0,1})$','tokens');
-    if isempty(tokens), error argument, end
-    [n u] = deal(tokens{1}{:});
-    minsize = fn_switch(isempty(n),1,str2double(n)) * 2^fn_switch(lower(u),'',0,'k',10,'m',20,'g',30);
-end
 
 %% subselect
 matlabclasses = {'logical' 'char' 'single' 'double' 'uint8' 'uint16' 'uint32' 'uint64' 'int8' 'int16' 'int32' 'int64' 'struct' 'cell'};

@@ -217,7 +217,7 @@ if ~isfield(info,'register'), info.register = []; end
 
 % detect change of y direction
 if isimg && ~isfield(info,'ydirlistener') % do not create a redundant listener, in case axes had already been registered before
-    info.ydirlistener = addlistener(hObject,'YDir','PostSet',@(hu,e)chgAxis(hObject));
+    info.ydirlistener = addlistener(hObject,'YDir','PostSet',@(hu,e)chgAxis(hObject,'ydir'));
 end
 
 % save info
@@ -338,7 +338,7 @@ info = getappdata(hObject,'fn_imvalue');
 infobase = getappdata(0,'fn_imvalue');
 
 if info.IsImg
-    if nargin>=2, axis(hObject,newax), end % it can happen that no newax is defined, in the case we just want to re-draw the value
+    if ~strcmp(newax,'ydir'), axis(hObject,newax), end % it can happen that no newax is defined, in the case we just want to re-draw the value
     ht = findobj(get(hObject,'children'),'Tag','ImValText');
     if ishandle(ht)
         val = get(ht,'String');
@@ -351,7 +351,10 @@ if info.IsImg
     if nargin<2, return, end
     cross(hObject)
 else
-    if nargin<2, error programming, end
+    if strcmp(newax,'ydir')
+        disp 'ydirlistener still active? check this'
+        return
+    end
     ax = axis(hObject);
     if infobase.xonly
         axis(hObject,[newax(1:2) ax(3:4)])

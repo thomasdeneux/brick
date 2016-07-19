@@ -1,5 +1,6 @@
 classdef fn_propcontrol < hgsetget
 % function fn_propcontrol(obj,prop,spec,graphic object options...)
+% function fn_propcontrol(obj,prop,spec,{graphic object options...})
 %---
 % Create a control that will be synchronized to an object property value.
 % 
@@ -14,6 +15,9 @@ classdef fn_propcontrol < hgsetget
 %             or {'listbox|checkbox|menu|menugroup' {values...} {labels...}}
 %             'menu' will create one entry with sub-entries while
 %             'menugroup' will create multiple entries at the first level
+%             with these two options, if 'labels' has one value less than
+%             'values', the last element of 'values' is considered as a
+%             default value that is set when unchecking the current value
 % - options options for the graphic object that will be created
 %           If spec is 'menu' or 'menugroup', it is mandatory that options
 %           will contain the pair ('parent',parentmenu).
@@ -29,6 +33,8 @@ properties
     type
     style
     valuelist
+    dodefaultvalue = false
+    defaultvalue
     hl
 end
 
@@ -51,11 +57,23 @@ methods
                 error 'missing list of values'
             elseif iscell(spec{2})
                 M.valuelist = spec{2};
-                if length(spec)>=3, labellist = spec{3}; end
+                if length(spec)>=3
+                    labellist = spec{3}; 
+                    if length(labellist)==length(M.valuelist)-1
+                        M.dodefaultvalue = true;
+                        M.defaultvalue = M.valuelist{end};
+                        M.valuelist(end) = [];
+                    elseif length(labellist)~=length(M.valuelist)
+                        error 'number of labels must be equal to or one less than number of values'
+                    end
+                end
             else
                 M.valuelist = spec(2:end);
             end
             spec = spec{1};
+            if M.dodefaultvalue && ~ismember(spec,{'menu' 'menugroup'})
+                error 'default value is possible only for ''menu'' or ''menugroup'' options, otherwise the number of labels must be equal to the number of values'
+            end
         elseif ismember(spec,{'listbox' 'popupmenu'})
             kstring = strcmpi(varargin(1:2:end),'string');
             if isempty(kstring), error 'missing list of values', end
@@ -222,7 +240,11 @@ methods
                 set(M.obj,M.prop,fn_chardisplay(get(M.hu,'value'),M.type));
             % list of values
             case 'menugroup'
-                set(M.obj,M.prop,M.valuelist{i});
+                if strcmp(get(M.hu(i),'checked'),'on') && M.dodefaultvalue
+                    set(M.obj,M.prop,M.defaultvalue);
+                else
+                    set(M.obj,M.prop,M.valuelist{i});
+                end
             case {'listbox' 'popupmenu'}
                 idx = get(M.hu,'value');
                 if get(M.hu,'max')-get(M.hu,'min')>1

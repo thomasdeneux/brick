@@ -49,11 +49,22 @@ if isnumeric(inp) || islogical(inp) || ischar(inp)
     h = hash(inp,meth);
 else
     % transform object into cell array with numeric / character type elements
-    if isstruct(inp) || isobject(inp)
+    if isstruct(inp)
         inp = orderfields(struct(inp));
         F = fieldnames(inp);
         C = struct2cell(inp);
         C = [F(:); C(:)];
+    elseif isobject(inp)
+        F = fieldnames(inp); nF = length(F);
+        C = cell(nF,1+numel(inp));
+        for i=1:nF
+            f = F{i};
+            C{i,1} = f;
+            for j=1:numel(inp)
+                C{i,1+j} = inp(j).(f);
+            end
+        end
+        C = C(:);
     elseif iscell(inp)
         C = inp(:);
     else

@@ -10,6 +10,9 @@ if ~exist(fname,'file')
     fnamemat = [fname '.mat'];
     if exist(fnamemat,'file')
         fname = fnamemat;
+    elseif any(fname=='*')
+        fname = fn_getfile(fname);
+        if isequal(fname,0), [varargout{1:nargout}] = deal([]); return, end
     else
         error('Neither file ''%s'' or ''%s'' exists.',fname,fnamemat)
     end

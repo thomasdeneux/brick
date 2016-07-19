@@ -37,6 +37,9 @@ classdef fn_control < hgsetget
     % {['list|radio|button'] 'str1','str2',...}       
     %               specification of the type of display [default: list]
     %               for a choice between string values
+    %               if one option is the empty string and style is 'radio'
+    %               or 'button', this option will correspond to no button
+    %               pressed
     % 'char [n [nlin]]'    
     %               input for string, if n is specified, sets the minimal
     %               length of the input in number of characters, otherwise,
@@ -442,10 +445,11 @@ classdef fn_control < hgsetget
                         % (list of strings)
                         % note that in this case, xk.startval has not been
                         % defined yet
-                        if ~isempty(xk.value)
+                        if ischar(xk.value)
                             xk.startval = find(strcmp(xk.value,opt));
                             if isempty(xk.startval), xk.startval = 1; end
                         else
+                            if ~isequal(xk.value,[]), error 'value must be a string or []', end
                             xk.startval = 1;
                         end
                         xk.value = opt{xk.startval};
@@ -647,7 +651,7 @@ classdef fn_control < hgsetget
             %-
             
             % Width of the two columns
-            idx = true(1,nf); %logical([X.controls.n_val]); % ignore fields which do not have two columns
+            idx = logical([X.controls.n_val]); % ignore fields which do not have two columns
             if X.fignew
                 htest = figure('visible','off');
             else
@@ -657,8 +661,10 @@ classdef fn_control < hgsetget
             fsz = get(utest,'fontsize');
             if X.fignew, close(htest), else delete(utest), end
             fw = fsz * .6; % font width is approximately 3/5 of font height
+            n0 = 5 + [X.controls(~idx).check]*15 + [X.controls(~idx).n_name]*fw;
             n1 = 5 + [X.controls(idx).check]*15 + [X.controls(idx).n_name]*fw;
             n2 = 20 + [X.controls(idx).n_val]*fw;
+            A0 = max(n0);    % width for name
             A = max(n1);    % width for name
             B = max(n2);    % width for value
             
@@ -672,8 +678,12 @@ classdef fn_control < hgsetget
                 if isempty(ncolumn), ncol = 1; else ncol = ncolumn; end
                 nlin = ceil(nbut/ncol);
                 ss = get(0,'screensize');
-                Z = max(A+D+B+D, ...                                        % maximal width of normal buttons
-                    fn_switch(X.mode,'execfun',G+D+L+D,'ok',G+D,'none',0)); % width of special button
+                Z = max([A0, A+D+B+D, ...                                        % maximal width of normal buttons
+                    fn_switch(X.mode,'execfun',G+D+L+D,'ok',G+D,'none',0)]); % width of special button
+                if A+D+B+D<Z
+                    A = (Z-2*D)*(A/(A+B));
+                    B = (Z-2*D)-A;
+                end
                 W = D+ncol*Z;
                 H = E+nlin*(K+E);
                 H = H+20; % BUG with Exceed
@@ -700,8 +710,8 @@ classdef fn_control < hgsetget
                     otherwise
                         error('containter must be a figure or a uipanel object')
                 end
-                Z = max(A+D+B+D, ...                                        % maximal width of normal buttons
-                    fn_switch(X.mode,'execfun',G+D+L+D,'ok',G+D,'none',0)); % width of special button
+                Z = max([A0, A+D+B+D, ...                                        % maximal width of normal buttons
+                    fn_switch(X.mode,'execfun',G+D+L+D,'ok',G+D,'none',0)]); % width of special button
                 Y = K+E;
                 xrep = (posp(3)-D)/Z;
                 yrep = (posp(4)-D)/Y;
@@ -833,7 +843,7 @@ classdef fn_control < hgsetget
                                 'parent',X.hp, ...
                                 'units','pixel','position',[D+(icol-1)*Z+A+D H-ilin*Y B K], ...
                                 'value',xk.startval);
-                            set(xk.hval.ugroup,'borderwidth',0,'backgroundcolor',bgcol)
+                            set(xk.hval.panel,'borderwidth',0,'backgroundcolor',bgcol)
                             set(xk.hval.buttons,'backgroundcolor',bgcol)
                         case 'multcheck'
                             xk.hval = fn_multcheck(xk.string,'parent',X.hp, ...
@@ -1116,10 +1126,10 @@ classdef fn_control < hgsetget
                     end
                     % text update
                     if isempty(val)
-                        set(xk.hname,'string',xk.name)
+                        set(xk.hname,'string',xk.nicename)
                     else
                         set(xk.hname,'string', ...
-                            [xk.name ' (' num2str(val,xk.format) ')'])
+                            [xk.nicename ' (' num2str(val,xk.format) ')'])
                     end
                 case 'file'
                     val = rawval;
@@ -1180,15 +1190,17 @@ classdef fn_control < hgsetget
                 case 'checkbox'
                     % logical
                     set(xk.hname,'value',xk.value)
-                case {'popupmenu' 'radiobutton' 'togglebutton'}
-                    val = xk.value;
-                    if ischar(val), val = find(strcmp(xk.values,xk.value)); end
-                    if isempty(val)
-                        val = 1; 
+                case 'popupmenu'
+                    idx = find(strcmp(xk.values,xk.value));
+                    if isempty(idx)
+                        idx = 1; 
                         fprintf('warning: value ''%s'' does not exist, replaced by ''%s''\n',xk.value,xk.values{1});
-                        xk.value = xk.values{1};
+                        xk.value = xk.values{idx};
                     end
-                    set(xk.hval,'value',val);
+                    set(xk.hval,'value',idx);
+                case {'radiobutton' 'togglebutton'}
+                    if ~ischar(xk.value), error 'value must be a string', end
+                    set(xk.hval,'value',xk.value);
                 case 'multcheck'
                     set(xk.hval,'value',xk.value)
                 case 'multlist'
@@ -1270,7 +1282,7 @@ switch type
     case 'function_handle'
         str = char(val);
         if str(1)~='@'; str = ['@' str]; end
-    case {'double','single','logical'}
+    case {'double','single','logical','uint8','uint16','uint32','uint64','int8','int16','int32','int64'}
         [str errormsg] = fn_chardisplay(val);
         if ~isempty(errormsg), error(errormsg), end
     case 'cell'

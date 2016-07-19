@@ -9,10 +9,12 @@ function [x clip] = fn_clip(x,varargin)
 % - clipflag    clipping mode:
 %               [a b]                   define manually min and max value
 %               'fit','mM' or 'minmax'  use minimum and maximum [default]
-%               'fitz'                  use minimum and maximum, and make the center of the range zero
 %               'Xstd'                  use mean and X times standard deviation
 %               'prcA-B'                use percentiles (if B is omitted,
 %                                       use B = 100-A)
+%               add '[value]' at the end (e.g. 'fit[0]') to center the
+%               clipping range on the specified value
+%               
 % - outflag     output format
 %               [a b]       define minimum and maximum value [default, with
 %                           a=0 and b=1]
@@ -45,7 +47,7 @@ clipflag = []; outflag = []; nanvalue = [];
 for k=1:length(varargin)
     a = varargin{k};
     if ischar(a)
-        if fn_ismemberstr(a,{'fit','mM','minmax','fitz'}) || any(regexpi(a,'(^prc)|((st|sd|std)$)'))
+        if any(regexp(a,'^fit|mM|minmax')) || any(regexpi(a,'(^prc)|((st|sd|std))'))
             clipflag = a;
         elseif length(str2num(a))==2 %#ok<ST2NM>
             clipflag = str2num(a); %#ok<ST2NM>
@@ -70,24 +72,46 @@ if isnumeric(clipflag)
     if ~isvector(clipflag) || length(clipflag)~=2, error('clipping vector must have 2 elements'), end
     clip = clipflag;
 else
+    icenterval = regexp(clipflag,'\[.*\]$');
+    if isempty(icenterval)
+        centerval=[];
+    else
+        centerval = str2double(clipflag(icenterval+1:end-1));
+        clipflag(icenterval:end)=[];
+    end
     xstd = regexpi(clipflag,'^([\d.]*)(st|sd|std)$','tokens');
+    if ~isempty(xstd)
+        xstd = xstd{1}{1};
+    else
+        xstd = regexpi(clipflag,'^(st|sd|std)([\d.]*)$','tokens');
+        if ~isempty(xstd), xstd = xstd{1}{2}; end
+    end
     xprc = regexpi(clipflag,'^prc([\d.]*)[-_]*([\d.]*)$','tokens');
     if fn_ismemberstr(clipflag,{'fit' 'mM' 'minmax'})
-        clip = [min(x(:)) max(x(:))];
-    elseif strcmp(clipflag,'fitz')
-        clip = [-1 1]*max(abs(x(:)));
+        if isempty(centerval)
+            clip = [min(x(:)) max(x(:))];
+        else
+            clip = centerval + [-1 1]*max(abs(x(:)-centerval));
+        end
     elseif ~isempty(xstd)
-        xstd = xstd{1}{1};
         if isempty(xstd), xstd=1; else xstd=str2double(xstd); end
-        m = mean(x(~isnan(x) & ~isinf(x)));
+        if isempty(centerval), m = mean(x(~isnan(x) & ~isinf(x))); else m = centerval; end
         st = std(x(~isnan(x) & ~isinf(x)));
         clip = m + [-1 1]*xstd*st;
     elseif ~isempty(xprc)
         low = str2double(xprc{1}{1});
         high = str2double(xprc{1}{2});
-        if isnan(high), high=100-low; end
-        if high<30, high=100-high; end
-        clip = [prctile(x(:),low) prctile(x(:),high)];
+        if isempty(centerval)
+            if isnan(high), high=100-low; elseif high<30, high=100-high; end
+            clip = [prctile(x(:),low) prctile(x(:),high)];
+        else
+            if ~isnan(high)
+                warning 'cannot set independently the percentile of low and high out-of-range when center value is fixed'
+                if high<30, high=100-high; end
+                low = (low+high)/2;
+            end
+            clip = centerval + [-1 1]*prctile(abs(x(:)-centerval),low);
+        end
     else
         error('erroneous clipping option')
     end
