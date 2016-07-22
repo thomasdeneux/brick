@@ -3,16 +3,20 @@ function hl = fn_gridplot(varargin)
 % ---
 % Input:
 % - y       ND data
-% - flag    string made of keywords '-', 'row', 'col', 'grid' and 'color'
-%           [e.g. default is 'rowcolcolor']
+% - flag    string made of keywords '-', 'row', 'col', 'grid' and 'c'
 %           describe how dimensions (starting from the 2d one, the 1st one
 %           being time) will be treated
+%           'c' stands for color
+%           [e.g. default is 'rowcol-c': 2d dimension will be organized
+%           according to rows, 3rd to columns, 4th will not be organized
+%           (i.e. all traces superimposed, but will set the colors)]
 % - steps   [xstep ystep], {xstep ystep}, or ystep (see fn_eegplot)
 %
 % See also fn_eegplot
 
 % Input
-flag = {'row' 'col' '-'}; steps = '3STD'; donum = false;
+organize = {'row' 'col' '-'}; coloridx = 3;
+steps = '3STD'; donum = false;
 tt = []; y = [];
 for i=1:length(varargin)
     a = varargin{i};
@@ -24,33 +28,31 @@ for i=1:length(varargin)
         steps = a;
     elseif strcmp(a,'num')
         donum = true;
-    elseif ~isempty(regexpi(a,'(-|row|col|grid|color)'))
-        % found no straightforward to read the flag because 'col' is
-        % included in 'color'
-        if isempty(regexpi(a,'^(-|row|col|grid|color)*$')), error argument, end
-        idx = regexpi(a,'(-|row|col|grid|color)');
-        nflag = length(idx); idx(end+1) = length(a)+1;
-        flag = cell(1,nflag);
-        for k=1:nflag, flag{k}=a(idx(k):idx(k+1)-1); end
+    elseif ~isempty(regexpi(a,'^(-|row|col|grid|c)*$'))
+        tokens = regexpi(a,'(-|row|col|grid|c)','tokens');
+        organize = [tokens{:}];
+        coloridx = fn_find('c',organize);
+        if ~isempty(coloridx)
+            if ~isscalar(coloridx), error 'only one dimension can be used for colors', end
+            if coloridx==1, error 'color flag ''c'' cannot come first', end
+            organize(coloridx) = [];
+            coloridx = coloridx-1;
+        end
     else
         steps = a;
     end
 end
 
-% Data size
+% Data size and number of dimensions
 s = size(y);
 nt = s(1);
-nd = length(s)-1;
+nd = length(s)-1; % first dimension is not counted
+[organize{end+1:nd}] = deal('-');
 
-% Time
+% Time (=x-ordinate)
 if isempty(tt)
     tt = 1:nt;
 end
-
-% flag check-up
-if length(flag)<nd, error 'data has more dimensions than number of descriptors in flag', end
-
-
 x = repmat(column(tt),[1 s(2:end)]);
 
 % Step sizes
@@ -78,8 +80,8 @@ if ischar(ystep)
     end
 end
 if donum
-    x = x/xstep + 1; xstep = 1;
-    y = y/ystep + .5; ystep = 1;
+    x = x/xstep + .5; xstep = 1;
+    y = y/ystep + 1; ystep = 1;
 end
 
 % Set steps
@@ -89,7 +91,7 @@ s0 = substruct('()',repmat({':'},1,1+nd));
 color = [];
 for d=1:nd
     
-    switch flag{d}
+    switch organize{d}
         case '-'
             % nothing to do
         case 'col'
@@ -117,18 +119,19 @@ for d=1:nd
                 x1 = subsasgn(x1,si,subsref(x,si)+(ix-1)*xstep);
                 y1 = subsasgn(y1,si,subsref(y,si)+(iy-1)*ystep);
             end
-        case 'color'
-            % use this dimension to set colors
-            cols = get(gca,'colorOrder'); ncol = size(cols,1);
-            color = cell([1 s(2:end)]);
-            for i=1:s(1+d)
-                si = s0;
-                si.subs{1+d} = i;
-                coli = cols(fn_mod(i,ncol),:);
-                color = subsasgn(color,si,{coli});
-            end
     end
     
+    if d==coloridx
+        % use this dimension to set colors
+        cols = get(gca,'colorOrder'); ncol = size(cols,1);
+        color = cell([1 s(2:end)]);
+        for i=1:s(1+d)
+            si = s0;
+            si.subs{1+d} = i;
+            coli = cols(fn_mod(i,ncol),:);
+            color = subsasgn(color,si,{coli});
+        end
+    end
 end
 
 hl = plot(x1(:,:),y1(:,:));

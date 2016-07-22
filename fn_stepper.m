@@ -22,6 +22,7 @@ classdef fn_stepper < hgsetget
         foregroundcolor
         backgroundcolor
         visible
+        enable
     end
     properties (SetAccess='private')
         parent
@@ -105,6 +106,12 @@ classdef fn_stepper < hgsetget
         end
         function set.visible(P,x)
             set(P.hpanel,'visible',x)
+        end
+        function x = get.enable(P)
+            x = get(P.htext,'visible');
+        end
+        function set.enable(P,x)
+            set([P.hslider P.htext],'visible',x)
         end
         function x = get.deletefcn(P)
             x = get(P.hpanel,'deletefcn');
