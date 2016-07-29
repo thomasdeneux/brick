@@ -23,7 +23,7 @@ See also <http://www.gnu.org/licenses/>.
 --------------------------------------------------------------------------------
 CONTACT
 
-Please contact Thomas Deneux (thomas.deneux@univ-amu.fr) for help and bug
+Please contact Thomas Deneux (thomas.deneux@unic.cnrs-gif.fr) for help and bug
 reports.
 
 --------------------------------------------------------------------------------

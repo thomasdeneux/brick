@@ -55,36 +55,38 @@ else
 end
 
 
-if ischar(varargin{1}) 
+if ischar(varargin{1})
     prompt = varargin{1};
     
     % SPECIAL COMMANDS
-    switch prompt
-        case 'end'
-            if isempty(x), return, end
-            if ishandle(x(1).ht)
-                set(x(1).ht,'string','')
-            else
-                fprintf(repmat('\b',1,x(1).promptsize+1+x(1).isize+length(x(1).after)+1))
-            end
-            x(1) = [];
-            return
-        case 'cont'
-            fprintf(repmat(' ',1,x(1).promptsize+1+x(1).isize+length(x(1).after)))
-            return
-        case 'elapsed'
-            disp(['elapsed ' num2str(toc(x(1).timer)) 's.'])
-            return
-        case 'elapsedmin'
-            disp(['elapsed ' num2str(toc(x(1).timer)/60,'%.1f') 's.'])
-            return
-        case 'in'
-            ht0 = varargin{2};
-            return
-        case 'screen'
-            if ~isempty(x) && any(ishandle(x(1).ht)), set(x(1).ht,'string',''), end
-            ht0 = [];
-            return
+    if nargin==1
+        switch prompt
+            case 'end'
+                if isempty(x), return, end
+                if ishandle(x(1).ht)
+                    set(x(1).ht,'string','')
+                else
+                    fprintf(repmat('\b',1,x(1).promptsize+1+x(1).isize+length(x(1).after)+1))
+                end
+                x(1) = [];
+                return
+            case 'cont'
+                fprintf(repmat(' ',1,x(1).promptsize+1+x(1).isize+length(x(1).after)))
+                return
+            case 'elapsed'
+                disp(['elapsed ' num2str(toc(x(1).timer)) 's.'])
+                return
+            case 'elapsedmin'
+                disp(['elapsed ' num2str(toc(x(1).timer)/60,'%.1f') 's.'])
+                return
+            case 'screen'
+                if ~isempty(x) && any(ishandle(x(1).ht)), set(x(1).ht,'string',''), end
+                ht0 = [];
+                return
+        end
+    elseif strcmp(prompt,'in')
+        ht0 = varargin{2};
+        return
     end
     
     % SINGLE TEXT DISPLAY

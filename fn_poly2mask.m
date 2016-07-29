@@ -37,7 +37,14 @@ jmin = max(1,round(min(ypoly)));
 jmax = min(n,round(max(ypoly)));
 
 % apply function taken from Matplotlib
-submask = point_in_path_impl(xpoly-(imin-1),ypoly-(jmin-1),imax-imin+1,jmax-jmin+1);
+try
+    submask = point_in_path_impl(xpoly-(imin-1),ypoly-(jmin-1),imax-imin+1,jmax-jmin+1);
+catch
+    if fn_dodebug
+        disp 'please check what happened here!'
+        keyboard
+    end
+end
 mask = false(m,n);
 mask(imin:imax,jmin:jmax) = submask;
 
@@ -74,6 +81,7 @@ for isegment = 1:nsegment
         
     % invert values of points below the segment
     icheck = xor(ii<=x0,ii<=x1); % points in grid with abscissae inside the x-span of the segment
+    if ~any(icheck), continue, end
     maskcheck = mask(icheck,:);
     rightpath = bsxfun(@ge,(y1-jj)*(x0-x1),(x1-ii(icheck))*(y0-y1)); % points in grid on the right of path when going from point 0 to point 1
     if x0<x1, doinvert = rightpath; else doinvert = ~rightpath; end

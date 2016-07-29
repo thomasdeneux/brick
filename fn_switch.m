@@ -1,8 +1,9 @@
-function y = fn_switch(x,varargin)
+function y = fn_switch(varargin)
 % function y = fn_switch(x,y_true,[x2,y_true2,[...]]y_false)
 % function y = fn_switch(x,case1,y1,case2,y2,..,casen,yn[,ydefault])
 % function y = fn_switch(true|false)
 % function y = fn_switch('on|off'[',toggle'])
+% function y = fn_switch(y,y_defaultifempty)
 %---
 % the 2 first cases are general prototypes: the functions recognize which
 % to use according to whether x is logical and scalar
@@ -17,46 +18,57 @@ function y = fn_switch(x,varargin)
 % Thomas Deneux
 % Copyright 2005-2012
 
-% special cases
-switch nargin
-    case 1
-        % specialized function: logical <-> on/off conversions
-        if ischar(x)
-            % on/off -> true/false
-            switch x
-                case 'on'
-                    y = true;
-                case 'off'
-                    y = false;
-                otherwise
-                    error('fn_switch with a single string argument: argument should be ''on'' or ''off''')
-            end
-        else
-            % true/false -> on/off
-            if x
-                y = 'on';
-            else
-                y = 'off';
-            end
-        end  
-        return
-    case 2
-        % specialized function: on/off switch
-        if ~strcmp(varargin{1},'toggle'), error('bad flag'), end
+
+x = varargin{1};
+
+if nargin==1
+        
+    % specialized function: logical <-> on/off conversions
+    if ischar(x)
+        % on/off -> true/false
         switch x
             case 'on'
-                y = 'off';
+                y = true;
             case 'off'
-                y = 'on';
+                y = false;
             otherwise
-                error('fn_switch with a two arguments: first argument should be ''on'' or ''off''')
+                error('fn_switch with a single string argument: argument should be ''on'' or ''off''')
         end
-        return
-end
+    else
+        % true/false -> on/off
+        if x
+            y = 'on';
+        else
+            y = 'off';
+        end
+    end
+        
+elseif nargin==2 && strcmp(varargin{2},'toggle')
 
+    % specialized function: on/off switch
+    switch x
+        case 'on'
+            y = 'off';
+        case 'off'
+            y = 'on';
+        otherwise
+            error('fn_switch with a two arguments: first argument should be ''on'' or ''off''')
+    end
+            return
 
-if (isscalar(x) && islogical(x)) || (nargin==3)     % "IF"
-    karg = 1;
+elseif nargin==2
+    
+    % return first value, or second if first is empty
+    if ~isempty(x)
+        y = x;
+    else
+        y = varargin{2};
+    end
+
+elseif (isscalar(x) && islogical(x)) || (nargin==3)     
+    
+    % "IF"
+    karg = 2;
     while true
         if x
             y = varargin{karg};
@@ -70,10 +82,13 @@ if (isscalar(x) && islogical(x)) || (nargin==3)     % "IF"
             karg = karg+2;
         end
     end
-else                                                % "SWITCH"
-    ncase = floor(length(varargin)/2);
+    
+else
+    
+    % "SWITCH"
+    ncase = floor((length(varargin)-1)/2);
     for k=1:ncase
-        casek = varargin{2*k-1};
+        casek = varargin{2*k};
         if iscell(casek) || (~ischar(casek) && ~isscalar(casek) && isscalar(x))
             b = ismember(x,casek); 
         else
@@ -81,14 +96,15 @@ else                                                % "SWITCH"
         
         end
         if b
-            y = varargin{2*k};
+            y = varargin{2*k+1};
             return
         end
     end
-    if length(varargin)==2*ncase+1
-        y = varargin{2*ncase+1};
+    if length(varargin)==2*ncase+2
+        y = varargin{2*ncase+2};
     else
         error('value does not match any case')
     end
+    
 end
         

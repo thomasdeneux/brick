@@ -142,6 +142,10 @@ info = getappdata(hObject,'fn_imvalue');
 if ~isempty(info) 
     if info.IsImg 
         if strcmp(type,'image')
+            % (first delete old object as they can cause the axis to extend
+            % beyond the image position)
+            delete(findobj(get(hObject,'children'),'Tag','ImValCross'))
+            delete(findobj(get(hObject,'children'),'Tag','ImValText'))
             if infobase.axisimage
                 axis(hObject,'image')
             else

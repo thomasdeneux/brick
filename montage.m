@@ -5,6 +5,7 @@ classdef montage < interface
         X
         context
         showmarks = true;
+        motionfactor = {};
     end
     
     methods
@@ -31,6 +32,7 @@ classdef montage < interface
             M.grob.x = uipanel; %('units','pixel','buttonDownFcn',@(u,e)fn_moveobject(u));
             fn_pixelsizelistener(M.grob.x,@(u,e)M.init_control)
             fn_scrollwheelregister(M.hf,@(n)scrollaxis(M,n))
+            set(gcf,'KeyPressFcn',@(u,e)keypress(M,'press',e),'KeyReleaseFcn',@(u,e)keypress(M,'release',e))
             M.grob.list = uicontrol('style','listbox','max',2,'units','normalized', ...
                 'callback',@(u,e)M.selectimages(get(u,'value')), ...
                 'uicontextmenu',M.context);
@@ -240,7 +242,8 @@ classdef montage < interface
         end
         function loaddata(M,fname)
             if nargin<2, fname = fn_getfile('*.mat'); if ~fname, return, end, end
-            M.im = fn_structmerge(immodel,fn_loadvar(fname));
+            x = fn_loadvar(fname);
+            M.im = fn_structmerge(immodel,x);
             M.show('reset')
             set(M.grob.list,'string',{M.im.name},'value',[])
         end
@@ -289,12 +292,50 @@ classdef montage < interface
             set(M.hf,'pointer',curpointer)
         end
         function scrollaxis(M,n)
-            n=n/10;
+            n=n/4*M.motionfactor;
             ha = M.grob.ha;
             p = get(ha,'currentpoint'); p = p(1,[1 1 2 2]);
             ax = axis(ha);
             ax = p + (ax-p)*(1.2^n);
             axis(ha,ax)
+        end
+        function keypress(M,flag,e)
+            % update current motion factor, so it can be used for wheel
+            % scrolling
+            if ismember('control',e.Modifier)
+                M.motionfactor = 1/4;
+            elseif ismember('shift',e.Modifier)
+                M.motionfactor = 4;
+            else
+                M.motionfactor = 1;
+            end                
+            if strcmp(flag,'release'), return, end
+            % action
+            i = get(M.grob.list,'value');
+            if ~any([M.im(i).active]), return, end
+            ax = axis(M.grob.ha);
+            step = mean(diff(ax([1 3; 2 4]))/400)*M.motionfactor;
+            switch(e.Key)
+                case 'leftarrow'
+                    [M.im(i).xc] = dealc([M.im(i).xc]-step);
+                case 'rightarrow'
+                    [M.im(i).xc] = dealc([M.im(i).xc]+step);
+                case 'uparrow'
+                    [M.im(i).yc] = dealc([M.im(i).yc]-step);
+                case 'downarrow'
+                    [M.im(i).yc] = dealc([M.im(i).yc]+step);
+                case 'pagedown'
+                    hh = cat(1,M.im(i).h);
+                    uistack(row(fliplr(hh)'),'bottom')
+                    return
+                case 'pageup'
+                    hh = cat(1,M.im(i).h);
+                    uistack(row(fliplr(hh)'),'up')
+                    return
+                otherwise
+                    disp(e.Key)
+            end
+            M.show('move',i)
         end
         function action(M,flag,i)
             seltype = get(M.hf,'selectionType');
@@ -350,14 +391,11 @@ classdef montage < interface
                     [M.im(i).scale] = deal(x);
                     M.show('move',i)
                 case 'stackbottom'
-                    hh = cat(1,M.im.h);
-                    uistack(row(fliplr(hh(i,:))'),'bottom') % from bottom to top: first image, first handles, ..., last image, last handles
+                    hh = cat(1,M.im(i).h);
+                    uistack(row(fliplr(hh)'),'bottom') % from bottom to top: first image, first handles, ..., last image, last handles
                 case 'stacktop'
-                    % send the other images to bottom rather send the
-                    % selected images to top: that way, all handles remain
-                    % on top
-                    hh = cat(1,M.im.h);
-                    uistack(row(fliplr(hh(i,:))'),'top') % from bottom to top: first image, first handles, ..., last image, last handles
+                    hh = cat(1,M.im(i).h);
+                    uistack(row(fliplr(hh)'),'top') % from bottom to top: first image, first handles, ..., last image, last handles
                 case 'control'
                     if all(ismember(M.X.changedfields,{'alpha' 'white'}))
                         % no need to redisplay everything
@@ -410,6 +448,7 @@ classdef montage < interface
     % Output
     methods
         function a = getAlignedImages(M,dx)
+            disp 'this function has errors'
             if nargin<2, dx=min([M.im.scale]); end
             n = length(M.im);
             a = {M.im.data};
@@ -450,6 +489,65 @@ classdef montage < interface
                 ak = reshape(cat(3,ak{:}),[nx ny ncol]);
                 a{kim} = uint8(ak);
             end
+        end
+        function a = getBigImage(M,dx)
+            if nargin<2, dx=min([M.im.scale]); end
+            n = length(M.im);
+            a = {M.im.data};
+            % grid size
+            range = NaN(n,4);
+            for kim=1:n
+                s = M.im(kim);
+                [ni nj ~] = size(s.data);
+                [ii jj] = ndgrid(linspace(1,ni,2),linspace(1,nj,2));
+                ij = [ones(1,2*2); row(ii); row(jj)];
+                T1 = [1 0 0; [-(ni+1)/2; -(nj+1)/2] eye(2)]; % set central pixel to zero
+                TSR = [[s.xc; s.yc] s.scale*[cos(s.rot) -sin(s.rot); sin(s.rot) cos(s.rot)]];
+                xy = (TSR*T1)*ij;
+                range(kim,:) = [min(xy(1,:)) max(xy(1,:)) min(xy(2,:)) max(xy(2,:))];
+            end
+            % interpolate
+            [xx yy] = ndgrid(min(range(:,1)):dx:max(range(:,2)),min(range(:,3)):dx:max(range(:,4)));
+            [nx ny] = size(xx);
+            xy = [ones(1,numel(xx)); row(xx); row(yy)];
+            a = zeros(nx,ny);
+            contrib = zeros(nx,ny);
+            fn_progress('interpolate',n)
+            for kim=1:n
+                fn_progress(kim)
+                s = M.im(kim);
+                [ni nj ncol] = size(s.data);
+                [ii jj] = ndgrid(1:ni,1:nj);
+                T1 = [1 0 0; [-(ni+1)/2; -(nj+1)/2] eye(2)]; % set central pixel to zero
+                TSR = [1 0 0; [s.xc; s.yc] s.scale*[cos(s.rot) -sin(s.rot); sin(s.rot) cos(s.rot)]]*T1;
+                TSR1 = TSR^-1; TSR1(1,:)=[];
+                ijinterp = TSR1*xy;
+                ii1 = reshape(ijinterp(1,:),[nx ny]);
+                jj1 = reshape(ijinterp(2,:),[nx ny]);
+                ak = double(M.im(kim).data);
+                % smooth
+                if dx>s.scale
+                    ak = fn_filt(ak,dx/s.scale,'lk',[1 2]);
+                end
+                % obtain contribution based on distance to sides
+                %sigmacontrib = mean([range(:,2)-range(:,1); range(:,4)-range(:,3)])/2;
+                ck = exp(-20*((ii/ni-.5).^2+(jj/nj-.5).^2).^0.8);
+                % scale by contribution 
+                ak = ak.*ck;
+                % interpolate
+                %                 ak = num2cell(ak,[1 2]);
+                %                 for k=1:ncol
+                %                     ak{k} = interpn(ii,jj,ak{k},ii1,jj1,'linear',0);
+                %                 end
+                %                 ak = cat(3,ak{:});
+
+                ak = interpn(ii,jj,ak,ii1,jj1,'linear',0);
+                ck = interpn(ii,jj,ck,ii1,jj1,'linear',0);
+                a = a+ak;
+                contrib = contrib+ck;
+            end
+            a = a./contrib;
+            a(isnan(a)) = 0;
         end
     end
 end

@@ -223,8 +223,10 @@ for k=1:nfig
             set(hobj,'inverthardcopy',fn_switch(invertcolor))
             printflags = fn_switch(invertcolor,{},{'-loose'});
             for i=1:length(formatk)
-                fnamei = [fname{k} '.' fn_switch(formatk{i},'pdf','ps',formatk{i})];
-                formatki = fn_switch(formatk{i},{'eps' 'ps' 'pdf'},'psc2',formatk{i});
+                % fnamei = [fname{k} '.' fn_switch(formatk{i},'pdf','ps',formatk{i})];   % [old: pdf through ps] 
+                % formatki = fn_switch(formatk{i},{'eps' 'ps' 'pdf'},'psc2',formatk{i}); % [old: pdf through ps] 
+                fnamei = [fname{k} '.' formatk{i}];                              % [new: pdf direct] 
+                formatki = fn_switch(formatk{i},{'eps' 'ps'},'psc2',formatk{i}); % [new: pdf direct]
                 if strcmp(formatki,'fig')
                     saveas(hobj,fnamei)
                 else
@@ -234,7 +236,8 @@ for k=1:nfig
                     if ~strcmp(s.append,'ps2pdf')
                         print(hobj,fnamei,['-d' formatki],printflags{:})
                     end
-                    if strcmp(formatk{i},'pdf') || (strcmp(formatk{i},'ps') && any(strfind(s.append,'pdf')))
+                    % if strcmp(formatk{i},'pdf') || (strcmp(formatk{i},'ps') && any(strfind(s.append,'pdf'))) % [old: pdf through ps] 
+                    if strcmp(formatk{i},'ps') && any(strfind(s.append,'pdf')) % [new: pdf direct] 
                         ps2pdf('psfile',[fname{k} '.ps'],'pdffile',[fname{k} '.pdf'], ...
                             'gspapersize',fn_strcat(paperpos(3:4),'x'),'deletepsfile',1,'verbose',0)
                     end
