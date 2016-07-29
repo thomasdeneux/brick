@@ -42,19 +42,19 @@ uimenu(m,'label','get figure size','callback',@(u,e)figsize(hf))
 
 uimenu(m,'label','fn_imvalue','Callback','fn_imvalue','separator','on')
 uimenu(m,'label','fn_imvalue image','Callback','fn_imvalue image')
-uimenu(m,'label','fn_imvalue clean','Callback','fn_imvalue clean')
 uimenu(m,'label','fn_imvalue end','Callback','fn_imvalue end')
 m1 = uimenu(m,'label','more');
+uimenu(m1,'label','fn_imvalue clean','Callback','fn_imvalue clean')
 uimenu(m1,'label','fn_imvalue xy image','Callback','fn_imvalue xy image')
 uimenu(m1,'label','fn_imvalue register ...','Callback','fn_imvalue register')
 uimenu(m1,'label','fn_imvalue unregister','Callback','fn_imvalue unregister')
 
-uimenu(m,'label','colormap gray','Callback','colormap gray','separator','on')
-uimenu(m,'label','colormap jet','Callback','colormap jet')
-m1 = uimenu(m,'label','more');
-uimenu(m1,'label','colormap mapclip','Callback','colormap mapclip')
-uimenu(m1,'label','colormap signcheck','Callback','colormap signcheck')
-uimenu(m1,'label','colormap green','Callback','colormap green')
+m1 = uimenu(m,'label','colormap');
+uimenu(m1,'label','gray','Callback','colormap gray','separator','on')
+uimenu(m1,'label','jet','Callback','colormap jet')
+uimenu(m1,'label','mapclip','Callback','colormap mapclip')
+uimenu(m1,'label','signcheck','Callback','colormap signcheck')
+uimenu(m1,'label','green','Callback','colormap green')
 
 uimenu(m,'label','reset figure callbacks', ...
     'Callback', ...
@@ -86,6 +86,8 @@ uimenu(m,'label','copy figure to clipboard', ...
 uimenu(m,'label','copy figure (no buttons)', ...
     'callback',@(u,evnt)copyfigure(hf,'nobutton'))
 m1 = uimenu(m,'label','More');
+uimenu(m1,'label','white background', ...
+    'callback',@(u,evnt)set(hf,'color','white'))
 uimenu(m1,'label','save image (full options)...', ...
     'callback',@(u,evnt)fn_savefig(hf))
 uimenu(m1,'label','append to ps file...', ...
@@ -204,7 +206,7 @@ end
 m = findall(hf1,'tag','fn_figmenu'); % there should be 2 of them!, keep only the last (older, linked to the new figure, not to the original one)
 delete(m(1)), m(1)=[];
 figname = get(hf,'name');
-if isempty(figname), figname = ['(copy of Figure ' num2str(hf) ')']; else figname = [figname ' (copy)']; end
+if isempty(figname), figname = ['(copy of Figure ' num2str(get(hf,'number')) ')']; else figname = [figname ' (copy)']; end
 set(hf1,'tag','','name',figname, ...
     'WindowButtonDownFcn','','WindowButtonUpFcn','', ...
     'WindowButtonMotionFcn','','WindowKeyPressFcn','','WindowKeyReleaseFcn','', ...

@@ -1,5 +1,5 @@
-function [p beta] = fn_GLMtest(X,y,h,testflag)
-% function [p beta] = fn_GLMtest(X,y,h[,'F|T')
+function [p beta beta0] = fn_GLMtest(X,y,h,testflag)
+% function [p beta beta0] = fn_GLMtest(X,y,h[,'F|T')
 %---
 % 
 % Input:
@@ -28,6 +28,7 @@ if size(X,1)~=n
         error 'length of regressors does not match length of data'
     end
 end
+X = double(X);
 nreg = size(X,2);
 if nargin<3, h = []; end
 if nargin<4

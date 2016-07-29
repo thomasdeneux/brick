@@ -34,9 +34,10 @@ if hp==get(hu,'parent')
 elseif get(hp,'parent')==get(hu,'parent')
     hl.ppos = fn_pixelposlistener(hp,updatefcn);
     if strcmp(get(hp,'type'),'axes')
-        axlistener(hp,hl,updatefcn) % sets info.axlim
-        % watching xlim and ylim depends on the data aspect ratio mode
-        hl.axratio = addlistener(hp,'DataAspectRatioMode','PostSet',@(m,evnt)axlistener(hp,hl,updatefcn));
+        hl.axlim = addlistener(hp,{'XLim','YLim'},'PostSet',updatefcn);
+        hl.axlim.Enabled = strcmp(get(hp,'DataAspectRatioMode'),'manual');
+        hl.axratio = addlistener(hp,'DataAspectRatioMode','PostSet', ...
+            @(m,evnt)axlistener(hp,hl,updatefcn));
     end
 else
     error 'cannot first object must be either child or sibbling of second object'
@@ -49,12 +50,10 @@ fn_deletefcn(hp,@(u,e)delete(hu(ishandle(hu) || (isobject(hu) && isvalid(hu)))))
 fn_deletefcn(hu,@(u,e)deletelisteners(hl))
 
 %---
-function axlistener(hp,info,updatefcn)
+function axlistener(hp,hl,updatefcn)
 
 feval(updatefcn)
-if strcmp(get(hp,'DataAspectRatioMode'),'manual')
-    info.axlim = addlistener(hp,{'XLim','YLim'},'PostSet',updatefcn);
-end
+hl.axlim.Enabled = strcmp(get(hp,'DataAspectRatioMode'),'manual');
     
 %---
 function deletelisteners(hl)

@@ -1,5 +1,6 @@
 function hl = fn_gridplot(varargin)
-% function hl = fn_gridplot([t,]data[,flag][,steps][,'num'])
+% function hl = fn_gridplot([t,]data[,flag][,steps][,'num']
+%                   [,'callback',fun][,'colors',colors][,'offset',offset])
 % ---
 % Input:
 % - y       ND data
@@ -11,14 +12,27 @@ function hl = fn_gridplot(varargin)
 %           according to rows, 3rd to columns, 4th will not be organized
 %           (i.e. all traces superimposed, but will set the colors)]
 % - steps   [xstep ystep], {xstep ystep}, or ystep (see fn_eegplot)
+% - 'num'   indicate numbers
+% - fun     function to execute when clicking a line
+%           fun(idx) has one argument indicating the coordinates of the
+%           line being clicked (starting from dimension 2)
+% - colors  re-define the list of colors
+% - offset  vector of time indices to average for offset computation, or
+%           'all' (or 'avg') for using all indices
+%           or a cell array {idx, dim} where dim is the set of additional
+%           dimensions over which to average (i.e. will share the same mean
+%           value)
 %
 % See also fn_eegplot
 
 % Input
-organize = {'row' 'col' '-'}; coloridx = 3;
-steps = '3STD'; donum = false;
+organize = {'row' 'col' '-'}; coloridx = 3; colors = [];
+steps = '3STD'; donum = false; callback = [];
+offset = struct('flag','','idx',[],'dim',[]);
 tt = []; y = [];
-for i=1:length(varargin)
+i = 0;
+while i<length(varargin)
+    i = i+1;
     a = varargin{i};
     if isempty(y) && isvector(a) && isempty(tt)
         tt = a;
@@ -38,6 +52,25 @@ for i=1:length(varargin)
             organize(coloridx) = [];
             coloridx = coloridx-1;
         end
+    elseif strcmp(a,'callback')
+        i = i+1;
+        callback = varargin{i};
+    elseif ismember(a,{'color' 'colors'})
+        i = i+1;
+        colors = varargin{i};
+    elseif strcmp(a,'offset')
+        i = i+1;
+        b = varargin{i};
+        if isnumeric(b) || islogical(b) || ischar(b)
+            offset.flag = 'avg';
+            offset.idx = b;
+        elseif iscell(b)
+            offset.flag = 'avg';
+            offset.idx = b{1};
+            offset.dim = b{2};
+        else
+            error argument
+        end
     else
         steps = a;
     end
@@ -54,6 +87,28 @@ if isempty(tt)
     tt = 1:nt;
 end
 x = repmat(column(tt),[1 s(2:end)]);
+
+% Subtract offset
+switch offset.flag
+    case ''
+        % no offset subtraction
+    case 'avg'
+        if isnumeric(offset.idx) 
+            m = reshape(y(offset.idx,:),[length(offset.idx) s(2:end)]);
+        elseif islogical(offset.idx)
+            m = reshape(y(offset.idx,:),[sum(offset.idx) s(2:end)]);
+        elseif ismember(offset.idx,{'all' 'avg'})
+            m = y;
+        else
+            error argument
+        end
+        m = nmean(m,1);
+        for d=offset.dim
+            m = nmean(m,d);
+        end
+        y = fn_subtract(y,m);
+        clear m
+end
 
 % Step sizes
 if ~iscell(steps), 
@@ -123,19 +178,28 @@ for d=1:nd
     
     if d==coloridx
         % use this dimension to set colors
-        cols = get(gca,'colorOrder'); ncol = size(cols,1);
+        if isempty(colors), colors = get(gca,'colorOrder'); end
+        ncol = size(colors,1);
         color = cell([1 s(2:end)]);
         for i=1:s(1+d)
             si = s0;
             si.subs{1+d} = i;
-            coli = cols(fn_mod(i,ncol),:);
+            coli = colors(fn_mod(i,ncol),:);
             color = subsasgn(color,si,{coli});
         end
     end
 end
 
 hl = plot(x1(:,:),y1(:,:));
+hl = reshape(hl,[s(2:1+nd) 1]);
 if ~isempty(color), fn_set(hl,'color',color(:)), end
+if ~isempty(callback)
+    for i=1:prod(s(2:1+nd))
+        idx = fn_indices(s(2:1+nd),i);
+        set(hl(i),'buttondownfcn',@(u,e)callback(idx))
+    end
+end
+    
 
 if nargout==0, clear hl, end
     

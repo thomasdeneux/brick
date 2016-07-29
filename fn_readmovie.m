@@ -12,6 +12,9 @@ function a = fn_readmovie(filename,frames)
 if nargin<1
     filename = fn_getfile('*.avi');
 end
+if ~exist(filename,'file')
+    error('file ''%s'' does not exist',filename)
+end
 if nargin<2, frames={}; end
 
 disp 'reading'

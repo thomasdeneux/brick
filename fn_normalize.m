@@ -48,7 +48,7 @@ switch flag
         x = fn_subtract(x,m);
         m2 = x.^2;
         for k=1:nd
-            m2 = mean(m2,dim(k));
+            m2 = nmean(m2,dim(k));
         end
         x = fn_div(x,sqrt(m2));
     case 'norm2'

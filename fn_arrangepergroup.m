@@ -70,7 +70,18 @@ nrep = fn_switch(flag,'same',min(npergroup),'all',max(npergroup));
 
 % rearrange
 s1 = [s(1:dim-1) ngroup nrep s(dim+1:end)];
-data1 = NaN(s1);
+if iscell(data)
+    data1 = cell(s1);
+elseif isnumeric(data)
+    switch class(data)
+        case {'single' 'double'}
+            data1 = NaN(s1,'like',data);
+        otherwise
+            data1 = zeros(s1,'like',data);
+    end
+else
+    error argument
+end
 subs = substruct('()',repmat({':'},[1 length(s)]));
 subs1 = substruct('()',repmat({':'},[1 length(s1)])); 
 for i=1:ngroup
