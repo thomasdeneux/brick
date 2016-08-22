@@ -330,7 +330,7 @@ for ha = findall(0,'type','axes')'
             ret = ha; return
         else
             ret = [ret ha];
-        end
+        end  
     end
 end
 
