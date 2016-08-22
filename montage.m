@@ -5,7 +5,7 @@ classdef montage < interface
         X
         context
         showmarks = true;
-        motionfactor = {};
+        motionfactor = 1;
     end
     
     methods

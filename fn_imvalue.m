@@ -321,7 +321,7 @@ function ret = linkedAxes(refaxis,isimg,onlyone)
 if nargin<3, onlyone = false; end
 ret = [];
 if isimg, interest = 1:4; else interest = 1:2; end
-for ha = findobj('type','axes')'
+for ha = findall(0,'type','axes')'
     info1 = getappdata(ha,'fn_imvalue');
     if isempty(info1), continue, end
     oldaxis = info1.OldAxis;
@@ -471,7 +471,7 @@ hlist = linkedAxes(oldax,isimg);
 
 switch selectiontype
     case 'normal'
-        rect = fn_mouse('rect-');
+        rect = fn_mouse(hObject,'rect-');
         rectpixsize = abs(fn_coordinates(hObject,'a2b',rect(3:4),'vector'));
         if all(rectpixsize>2)                                               % zoom to selection
             newax = [rect(1) (rect(1)+rect(3)) rect(2) (rect(2)+rect(4))];

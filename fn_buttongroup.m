@@ -2,7 +2,7 @@ classdef fn_buttongroup < hgsetget
     % function G = fn_buttongroup(style,str,callback,'prop1',value1,...)
     %---
     % Input:
-    % - style       'radio' or 'toggle'
+    % - style       'radio', 'toggle' or 'push'
     % - str         list of string values
     % - callback    function with prototype @(x)fun(x), where x is the
     %               selected string value
@@ -26,7 +26,7 @@ classdef fn_buttongroup < hgsetget
         position
     end
     properties (SetAccess='private')
-        style       % radio or toggle
+        style       % radio, toggle or push
         vertical    % true or false
         panel
         buttons
@@ -75,11 +75,16 @@ classdef fn_buttongroup < hgsetget
                 G.buttons(i) = uicontrol('parent',G.panel,'style',[style 'button'], ...
                     'units','normalized','position',pos, ...
                     'string',G.string{i});
-                % prefer using 'buttondownfcn' rather than 'callback' to
-                % get simultaneous updates of activated and inactivated
-                % options
-                set(G.buttons(i),'enable','inactive', ...
-                    'buttondownfcn',@(u,e)changeSelection(G,i,get(u,'value')))
+                if strcmp(style,'push')
+                    % easy
+                    set(G.buttons(i),'callback',@(u,e)callback(G.string{i}))
+                else
+                    % prefer using 'buttondownfcn' rather than 'callback' to
+                    % get simultaneous updates of activated and inactivated
+                    % options
+                    set(G.buttons(i),'enable','inactive', ...
+                        'buttondownfcn',@(u,e)changeSelection(G,i,get(u,'value')))
+                end
             end
             
             % set additional properties

@@ -14,6 +14,7 @@ function [data maskbin] = fn_bin(data,bins,varargin)
 %   'same'      make binned data same size as original
 %   'sum'       sum over each block rather than averaging
 %   'mode'      take most frequent value inside block rather than averaging
+%   'min|max'   take min or max over each bin
 %   'and|or'    performs a logical 'and' or 'or' rather than averaging;
 %               note that if data is a logical, 'and' is chosen by default
 %   'smart'     cover all the data; for this all blocks do not have exactly the

@@ -46,6 +46,8 @@ elseif all(ishandle(grob))
 elseif ~isfield(grob,'hf')
     F=fieldnames(grob); grob.hf = get(grob.(F{1})(1),'parent'); 
 end
+% (handle sub-structures)
+grob = flattenstruct(grob);
 % (positions given as an argument, or a file, or a file linked to an .m
 % file)
 dosavefile = false;
@@ -381,6 +383,37 @@ end
 function attachdata(hf,grob,fname)
 
 setappdata(hf,'fn_framedesign',struct('grob',grob,'fname',fname))
+
+%---
+function s = flattenstruct(s,prefix,a)
+% add elements of structure a to structure s with prefix added to field
+% names
+
+% "root" call with only one argument
+if nargin==1
+    F = fieldnames(s);
+    for i=1:length(F)
+        f = F{i};
+        a = s.(f);
+        if isstruct(a)
+            s = rmfield(s,f);
+            s = flattenstruct(s,[f '__'],a);
+        end
+    end
+    return
+end
+
+% recursive call
+F = fieldnames(a);
+for j=1:length(F)
+    f = F{j};
+    b = a.(f);
+    if isstruct(b)
+        s = flattenstructure(s,[prefix f '__'],b);
+    else
+        s.([prefix f]) = b;
+    end
+end
 
 
 

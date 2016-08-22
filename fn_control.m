@@ -75,13 +75,20 @@ classdef fn_control < hgsetget
     %               that this starting value is optional, but they must
     %               appear in the string)
     % 'file|dir'    button for selecting file name / directory name
-    % specification structure or 'struct'
-    %               button to edit the sub-structure
+    %
+    % Special specifications in spec:
     % 'label'       field name will be displayed (usually labels a new
     %               section) but does not correspond to any data
+    % 'struct' or full specification sub-structure
+    %               button to edit the sub-structure
+    % 'hide'        value is not displayed
     % 'readonly [n]'
     %               read-only display of value as a string
-    % 'hide'        value not displayed
+    % {'push' 'str1','str2',...}
+    %               create array of push buttons that will cause an action
+    %               to be launched
+    %               in this case callback fun will be called with action
+    %               string as an argument (instead of structure s)
     % 
     % One might want to display small sentences rather than simple names
     % when prompting user. For this, the following syntaxes are allowed:
@@ -270,7 +277,11 @@ classdef fn_control < hgsetget
                 else
                     xk.nicename = strrep(f,'__',' ');
                 end
-                xk.n_name = length(xk.nicename);
+                if strcmp(xk.style,'pushbutton')
+                    xk.n_name = 0;
+                else
+                    xk.n_name = length(xk.nicename);
+                end
                 
                 % [value type and control style]
                 xk.label = false;
@@ -290,6 +301,10 @@ classdef fn_control < hgsetget
                             % format {'multcheck|multlist','str1','str2',...}
                             xk.type = 'logical';
                             xk.style = opt{1};
+                            opt(1) = [];
+                        case 'push'
+                            xk.type = 'action';
+                            xk.style = 'pushbutton';
                             opt(1) = [];
                         otherwise
                             % format {'str1','str2',...}, default style is 'list'
@@ -377,10 +392,7 @@ classdef fn_control < hgsetget
                 % [initial value, control width, and style-specific parameters] 
                 xk.n_line = 1;
                 switch xk.style
-                    case 'label'
-                        % label only: nothing to do
-                        xk.n_val = 0;
-                    case 'exclude'
+                    case {'label' 'exclude'}
                         xk.n_val = 0;
                     case 'checkbox'
                         % logical value - only check box
@@ -441,24 +453,26 @@ classdef fn_control < hgsetget
                         if strcmp(xk.style,'multlist')
                             xk.n_line = xk.mode;
                         end
-                    case {'popupmenu' 'radiobutton' 'togglebutton'}
+                    case {'popupmenu' 'radiobutton' 'togglebutton' 'pushbutton'}
                         % (list of strings)
                         % note that in this case, xk.startval has not been
                         % defined yet
-                        if ischar(xk.value)
-                            xk.startval = find(strcmp(xk.value,opt));
-                            if isempty(xk.startval), xk.startval = 1; end
-                        else
-                            if ~isequal(xk.value,[]), error 'value must be a string or []', end
-                            xk.startval = 1;
+                        if ~strcmp(xk.style,'pushbutton')
+                            if ischar(xk.value)
+                                xk.startval = find(strcmp(xk.value,opt));
+                                if isempty(xk.startval), xk.startval = 1; end
+                            else
+                                if ~isequal(xk.value,[]), error 'value must be a string or []', end
+                                xk.startval = 1;
+                            end
+                            xk.value = opt{xk.startval};
                         end
-                        xk.value = opt{xk.startval};
                         xk.values = opt;
                         tmp = char(opt{:}); 
                         switch xk.style
                             case 'popupmenu'
                                 xk.n_val = 1+min(25,size(tmp,2))*.8;
-                            case 'togglebutton'
+                            case {'togglebutton' 'pushbutton'}
                                 xk.n_val = length(opt) + numel(tmp)*.8;
                             case 'radiobutton'
                                 xk.n_val = 4*length(opt) + numel(tmp)*.8;
@@ -664,8 +678,8 @@ classdef fn_control < hgsetget
             n0 = 5 + [X.controls(~idx).check]*15 + [X.controls(~idx).n_name]*fw;
             n1 = 5 + [X.controls(idx).check]*15 + [X.controls(idx).n_name]*fw;
             n2 = 20 + [X.controls(idx).n_val]*fw;
-            A0 = max(n0);    % width for name
-            A = max(n1);    % width for name
+            A0 = max(n0);   % width for name (controls without value)
+            A = max(n1);    % width for name (controls with value)
             B = max(n2);    % width for value
             
             % Position parameters 
@@ -814,11 +828,13 @@ classdef fn_control < hgsetget
                     end
                 else
                     % first column
-                    xk.hname = uicontrol('style','text','string',xk.nicename, ...
-                        'horizontalalignment','left', ...
-                        'parent',X.hp,'backgroundcolor',bgcol, ...
-                        'position',[D+(icol-1)*Z H-ilin*Y A T]);
-                    set(xk.hname,'units','normalized');
+                    if ~strcmp(xk.style,'pushbutton')
+                        xk.hname = uicontrol('style','text','string',xk.nicename, ...
+                            'horizontalalignment','left', ...
+                            'parent',X.hp,'backgroundcolor',bgcol, ...
+                            'position',[D+(icol-1)*Z H-ilin*Y A T]);
+                        set(xk.hname,'units','normalized');
+                    end
                     if xk.check
                         set(xk.hname,'style','checkbox','value',xk.defaultcheck);
                         set(xk.hname,'callback',@(hu,evnt)chgvalue(X,k,logical(get(hu,'value'))));
@@ -834,12 +850,14 @@ classdef fn_control < hgsetget
                                 'position',[D+(icol-1)*Z+A+D H-ilin*Y B K], ...
                                 'string',xk.values,'value',xk.startval, ...
                                 'callback',@(hu,evnt)chgvalue(X,k));
-                        case {'radiobutton' 'togglebutton'}
-                            compactstyle = fn_switch(xk.style, ...
-                                'radiobutton',  'radio', ...
-                                'togglebutton', 'toggle');
-                            xk.hval = fn_buttongroup(compactstyle,xk.values, ...
-                                @(x)chgvalue(X,k), ...
+                        case {'radiobutton' 'togglebutton' 'pushbutton'}
+                            compactstyle = strrep(xk.style,'button','');
+                            if strcmp(xk.style,'pushbutton')
+                                callback = X.fun;
+                            else
+                                callback = @(x)chgvalue(X,k);
+                            end
+                            xk.hval = fn_buttongroup(compactstyle,xk.values,callback, ...
                                 'parent',X.hp, ...
                                 'units','pixel','position',[D+(icol-1)*Z+A+D H-ilin*Y B K], ...
                                 'value',xk.startval);

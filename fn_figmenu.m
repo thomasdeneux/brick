@@ -88,7 +88,7 @@ uimenu(m,'label','copy figure (no buttons)', ...
 m1 = uimenu(m,'label','More');
 uimenu(m1,'label','white background', ...
     'callback',@(u,evnt)set(hf,'color','white'))
-uimenu(m1,'label','save image (full options)...', ...
+uimenu(m1,'label','save figure (full options)...', ...
     'callback',@(u,evnt)fn_savefig(hf))
 uimenu(m1,'label','append to ps file...', ...
     'callback',@(u,evnt)savefig(hf,'append'))
@@ -104,6 +104,8 @@ uimenu(m1,'label','magnify current axes', ...
     'callback',@(u,evnt)copypart(hf,'current axes'))
 uimenu(m1,'label','copy image to clipboard', ...
     'callback',@(u,evnt)saveimage(hf,'clipboard'))
+uimenu(m1,'label','save image to png...', ...
+    'callback',@(u,evnt)saveimage(hf,'png'))
 
 setappdata(hf,'fn_figmenu',items)
 
@@ -162,22 +164,26 @@ end
 %---
 function saveimage(hf,flag)
 
-if ~strcmp(flag,'clipboard'), error 'unknown flag', end
 im = findobj(hf,'type','image');
 if ~isscalar(im)
     errordlg('figure should contain one and only one image');
 end
 cdata = get(im,'cdata');
+
 if isa(cdata,'single'), cdata = double(cdata); end
-switch size(cdata,3)
-    case 3
-        % the easier
+if size(cdata,3)==1
+    cm = get(hf,'colormap');
+    ha = get(im,'parent');
+    clip = get(ha,'clim');
+    cdata = fn_clip(cdata,clip,cm);
+end
+
+switch flag
+    case 'clipboard'
         imclipboard('copy',cdata)
-    case 1
-        cm = get(hf,'colormap');
-        ha = get(im,'parent');
-        clip = get(ha,'clim');
-        imclipboard('copy',fn_clip(cdata,clip,cm))
+    case 'png'
+        fname = fn_savefile('*.png','Select file where to save image.');
+        imwrite(cdata,fname)
 end
 
 %---
