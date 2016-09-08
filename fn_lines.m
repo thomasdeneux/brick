@@ -47,8 +47,8 @@ if doz && ~(dox && doy), error 'argument', end
 ha = gca; doclose = false; lineopt = {'color' 'k'};
 for i=1:length(varargin)
     a = varargin{i};
-    if isscalar(varargin{1}) && ishandle(varargin{1}) && strcmp(get(a,'type'),'axes')
-        ha = varargin{1};
+    if isscalar(a) && ishandle(a) && strcmp(get(a,'type'),'axes')
+        ha = a;
     elseif ischar(a) && strcmp(a,'close')
         doclose = true;
     else

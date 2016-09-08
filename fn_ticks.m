@@ -1,13 +1,23 @@
-function fn_ticks(xticklabel,yticklabel)
-% function fn_ticks(xticklabel,yticklabel)
+function fn_ticks(varargin)
+% function fn_ticks([ha,]xticklabel,yticklabel)
 %---
 % Shortcut for
 % set(gca,'xtick',1:length(xticklabel),'xticklabel',xticklabel, ...
 %     'xtick',1:length(xticklabel),'xticklabel',xticklabel)
 
-if ~isequal(xticklabel,[])
-    set(gca,'xtick',1:length(xticklabel),'xticklabel',xticklabel)
+% Input
+if isscalar(varargin{1}) && ishandle(varargin{1}) && strcmp(get(varargin{1},'type'),'axes')
+    ha = varargin{1};
+    varargin(1) = [];
+else
+    ha = gca;
 end
-if nargin>=2 && ~isequal(yticklabel,[])
-    set(gca,'ytick',1:length(yticklabel),'yticklabel',yticklabel)
+xticklabel = varargin{1};
+if length(varargin)>=2, yticklabel = varargin{2}; else yticklabel = []; end
+
+if ~isequal(xticklabel,[])
+    set(ha,'xtick',1:length(xticklabel),'xticklabel',xticklabel)
+end
+if ~isequal(yticklabel,[])
+    set(ha,'ytick',1:length(yticklabel),'yticklabel',yticklabel)
 end

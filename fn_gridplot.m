@@ -26,7 +26,7 @@ function hl = fn_gridplot(varargin)
 % See also fn_eegplot
 
 % Input
-organize = {'row' 'col' '-'}; coloridx = 3; colors = [];
+organize = []; coloridx = 3; colors = [];
 steps = '3STD'; donum = false; callback = [];
 offset = struct('flag','','idx',[],'dim',[]);
 tt = []; y = [];
@@ -80,7 +80,14 @@ end
 s = size(y);
 nt = s(1);
 nd = length(s)-1; % first dimension is not counted
-[organize{end+1:nd}] = deal('-');
+if isempty(organize)
+    def = {'row' 'col'};
+    organize = repmat({'-'},1,nd);
+    idx = find(s(2:end)>1,2);
+    organize(idx) = def(1:length(idx));
+else
+    [organize{end+1:nd}] = deal('-');
+end
 
 % Time (=x-ordinate)
 if isempty(tt)

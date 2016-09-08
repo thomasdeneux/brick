@@ -1,4 +1,10 @@
 function m = nmean(x,dim)
+% function y = nmean(x,dim)
+%---
+% returns average while ignoring NaNs
+%
+% see also nstd, nste, nmedian
+
 %NANMEAN Mean value, ignoring NaNs.
 %   M = NANMEAN(X) returns the sample mean of X, treating NaNs as missing
 %   values.  For vector input, M is the mean value of the non-NaN elements

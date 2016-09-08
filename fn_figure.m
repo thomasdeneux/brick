@@ -31,9 +31,9 @@ end
 if ~isempty(varargin)
     set(hf,varargin{:})
 end
-clf(hf)
 delete(get(hf,'children'))
 if nargout==0
     figure(hf)
+    clf(hf)
     clear hf
 end

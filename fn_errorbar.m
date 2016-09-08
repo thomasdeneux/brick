@@ -188,13 +188,13 @@ if iscell(Y)
     n2 = numel(Y);
     y = zeros(n1,n2); e = zeros(n1,n2);
     for i=1:length(Y)
-        y(:,i) = mean(Y{i},2);
-        e(:,i) = std(Y{i},0,2)/sqrt(size(Y{i},2));
+        y(:,i) = nmean(Y{i},2);
+        e(:,i) = nste(Y{i},2);
     end
 else
     dim = ndims(Y);
-    y   = mean(Y,dim);
-    e = std(Y,0,dim)/sqrt(size(Y,dim));
+    y   = nmean(Y,dim);
+    e   = nste(Y,dim);
 end
 
 

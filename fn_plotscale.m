@@ -48,14 +48,34 @@ set(ha,'visible','off')
 delete(findobj(ha,'tag','fn_plotscale'))
 
 if isempty(tysize)
-    if isempty(tlabel), tsize=0; else tsize=sscanf(tlabel,'%f'); end
+    if isempty(tlabel)
+        tsize=0; 
+    else
+        tokens = regexp(tlabel,'^([.0-9]*|auto)','tokens');
+        tokens = tokens{1};
+        if strcmp(tokens{1},'auto')
+            [tsize str] = autoScaleLength(ha,'x');
+            tlabel = strrep(tlabel,'auto',str);
+        else
+            tsize = str2double(tokens{1});
+        end
+    end
     if isempty(ylabel)
         ysize=0; 
     else
-        tokens = regexp(ylabel,'^([.0-9]*)(%{0,1})','tokens');
+        tokens = regexp(ylabel,'^([.0-9]*|auto)(%{0,1})','tokens');
         tokens = tokens{1};
-        ysize = str2double(tokens{1});
-        if strcmp(tokens{2},'%'), ysize = ysize/100; end
+        if strcmp(tokens{1},'auto')
+            if strcmp(tokens{2},'%')
+                [ysize str] = autoScaleLength(ha,'y',100);
+            else
+                [ysize str] = autoScaleLength(ha,'y');
+            end
+            ylabel = strrep(ylabel,'auto',str);
+        else
+            ysize = str2double(tokens{1});
+            if strcmp(tokens{2},'%'), ysize = ysize/100; end
+        end
     end
 else
     tsize = tysize(1);
@@ -109,4 +129,23 @@ if ysize~=0
 end
 
 if nargout==0, clear hl, end
+
+%---
+function [sz label] = autoScaleLength(ha,flag,factor)
+
+axsz = fn_pixelsize(ha);
+switch flag
+    case 'x'
+        target = 0.2 * diff(get(ha,'xlim'))*(min(axsz)/axsz(1));
+    case 'y'
+        target = 0.2 * diff(get(ha,'ylim'))*(min(axsz)/axsz(2));
+end
+leads = [1 2 5];                        % possible leading number
+dlog = log10(target./leads);             % corresponding exponent
+[~, idx] = min(abs(dlog-round(dlog)));  % which one is closer to an integer
+sz = leads(idx)*10.^round(dlog(idx));
+
+if nargin<3, factor = 1; end
+label = num2str(sz*factor);
+
 

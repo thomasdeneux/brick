@@ -108,7 +108,7 @@ if founddata<=0
     data = rangearg{end};
     rangearg(end) = [];
 end
-if iscell(data), data = cat(3,data{:}); end
+if iscell(data), data = cat(4,data{:}); end
 % (sizes)
 s = size(data); s(end+1:5) = 1;
 nx = s(1); ny = s(2);
@@ -405,7 +405,12 @@ else
                     'units','pixel','pos',[left+(i-1)*w bottom+(nrow-j)*h w h], ...
                     'units',defunits); 
             end
-            imagesc(x,y,data(:,:,k)','parent',ha(k),clip);
+            switch nc
+                case 1
+                    imagesc(x,y,data(:,:,:,k)','parent',ha(k),clip);
+                case 3
+                    imagesc(x,y,permute(data(:,:,:,k),[2 1 3]),'parent',ha(k));
+            end
             if doaxisratio, axis(ha(k),'image'), end
             if j<nrow
                 set(ha(k),'xticklabel','')
@@ -419,7 +424,6 @@ else
             end
         end
     end
-    set(ha,'clim',clip);
     %fn_clipcontrol(ha);
     
     % output?

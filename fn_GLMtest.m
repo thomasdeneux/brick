@@ -1,5 +1,6 @@
-function [p beta beta0] = fn_GLMtest(X,y,h,testflag)
-% function [p beta beta0] = fn_GLMtest(X,y,h[,'F|T')
+function [p beta out3] = fn_GLMtest(X,y,h,testflag)
+% function [p beta beta0] = fn_GLMtest(X,y,h,'F')
+% function [p beta betaproj] = fn_GLMtest(X,y,h,'T')
 %---
 % 
 % Input:
@@ -47,6 +48,7 @@ switch upper(testflag)
         if ~isempty(h)
             X0 = X; X0(:,h) = [];
             beta0 = X0\y;
+            out3 = beta0;
             y0 = X0*beta0;
         else
             X0 = [];
@@ -76,10 +78,11 @@ switch upper(testflag)
         end
 
         % Projection
-        beta = gamma'*beta;
+        betaproj = gamma'*beta;
+        out3 = betaproj;
         
         % T-score
-        T = beta*sqrt(n-p1) ./ sqrt(sum((y-y1).^2,1) * (gamma'*(X'*X)^-1*gamma));
+        T = betaproj*sqrt(n-p1) ./ sqrt(sum((y-y1).^2,1) * (gamma'*(X'*X)^-1*gamma));
         
         % p-value
         p = tcdf(-T,n-p1); %tcdf(T,n-p1,'upper');

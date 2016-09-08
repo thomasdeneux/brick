@@ -130,7 +130,7 @@ if ischar(varargin{1})
         if ischar(x(1).max)
             x(1).max = str2double(x(1).max);
         end
-        x(1).max = abs(x(1).max);
+        x(1).max = double(abs(x(1).max));
         x(1).isize = floor(log10(x(1).max))+1;
     end
     if ~isempty(ht0) && ~ishandle(ht0), ht0=[]; end

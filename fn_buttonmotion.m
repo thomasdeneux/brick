@@ -25,7 +25,7 @@ if ischar(fun) && strcmp(fun,'demo')
     demo()
     return
 end
-hf = []; doup = (nargout>0); pointer = '';
+hf = []; doup = false; pointer = '';
 k = 0;
 while k<length(varargin)
     k = k+1;
@@ -58,7 +58,7 @@ okdown = isempty(get(hf,'WindowButtonDownFcn'));
 
 % Motion
 disp_if_debug('current WindowButtonMotionFcn is: ',get(hf,'WindowButtonMotionFcn'),', setting now to @motionexec')
-set(hf,'WindowButtonMotionFcn',{@motionexec 'move' fun}, ...
+set(hf,'WindowButtonMotionFcn',{@motionexec 'move' fun nargout}, ...
     'WindowButtonUpFcn',{@motionexec 'stop'})
 if ~isempty(pointer)
     curpointer = get(hf,'pointer');
@@ -66,19 +66,24 @@ if ~isempty(pointer)
 end
 if okdown, set(hf,'WindowButtonDownFcn',{@motionexec 'stop2'}), end
 setappdata(hf,'fn_buttonmotion_scrolling',true)
+if nargout, setappdata(hf,'fn_buttonmotion_output',cell(1,nargout)), end
+
+% Wait for motion end
 disp_if_debug('waiting for motion end')
 waitfor(hf,'WindowButtonMotionFcn','')
+disp_if_debug('finished waiting')
 if okdown, set(hf,'WindowButtonDownFcn',''), end
 
 % Button release
 if ~ishandle(hf), return, end % figure has been closed in the mean while
 setappdata(hf,'fn_buttonmotion_scrolling',false)
 if ~isempty(pointer), set(hf,'pointer',curpointer); end
-if doup, [varargout{1:nargout}] = exec(fun); end
+if doup, exec(fun,nargout,hf); end
 rmappdata(hf,'fn_buttonmotion_scrolling') 
+if nargout, varargout = getappdata(hf,'fn_buttonmotion_output'); end
 
 %---
-function motionexec(hf,evnt,actionflag,fun)
+function motionexec(hf,~,actionflag,fun,nout)
 
 persistent kid
 if isempty(kid), kid = 0; end
@@ -117,7 +122,7 @@ end
 % evaluate function
 disp_if_debug(['exec  ' debugstr])
 try 
-    exec(fun); 
+    exec(fun,nout,hf); 
 catch ME
     terminate(hf)
     rethrow(ME)
@@ -140,17 +145,20 @@ if ~isempty(debugstr)
 end
 
 %---
-function varargout = exec(fun)
+function exec(fun,nout,hf)
 
+if nargin>=2 && nout, out = cell(1,nout); end
 if ischar(fun)
     evalin('base',fun);
 elseif isa(fun,'function_handle')
-    [varargout{1:nargout}] = feval(fun);
+    if nout, [out{:}] = feval(fun); else feval(fun); end
 elseif iscell(fun)
-    [varargout{1:nargout}] = feval(fun{:});
+    if nout, [out{:}] = feval(fun{:}); else feval(fun{:}); end
 else
     error bad
 end
+if nout, setappdata(hf,'fn_buttonmotion_output',out), end
+
 
 %---
 function terminate(hf)

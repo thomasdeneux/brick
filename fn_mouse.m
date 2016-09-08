@@ -21,13 +21,13 @@ function varargout = fn_mouse(varargin)
 % options: (ex: 'rect+', 'poly-@:.25:')
 % +     selection is drawn (all modes)
 % -     use as first point the current point in axes (rect, poly, free, ellipse)
-% @     plots open line instead of closed polygon (poly, free)
+% @     closes polygon or line (poly, free, spline)
 % ^     enable escape: cancel current selection if a second key is pressed
 % :num: interpolates line with one point every 'num' pixel (poly, free, ellipse)
 %       for 'ellipse' mode, if :num; is not specified, output is a cell
 %       array {center axis e} event in the case of only one outpout argument
 % 
-% See also fn_maskselect
+% See also fn_maskselect, interactivePolygon
 
 % Thomas Deneux
 % Copyright 2005-2012
@@ -55,18 +55,20 @@ figure(hf)
 type = regexp(mode,'^(\w)+','match'); type = type{1};
 buttonalreadypressed = any(mode=='-');
 showselection = any(mode=='+');
-openline = any(mode=='@');
+openline = ~any(mode=='@');
 dointerp = any(mode==':');
 doescape = any(mode=='^');
+
+% Suspend callbacks
+SuspendCallbacks(ha)
+C = onCleanup(@()RestoreCallbacks(ha)); % RestoreCallbacks will execute at the end even if an error occurs
 
 switch type
     case {'point' 'cross'}
         if doescape, error 'escape option is not valid for type ''point'' or ''cross''', end
         curpointer = get(hf,'pointer');
         if strcmp(type,'cross'), set(hf,'pointer','fullcrosshair'), end
-        SuspendCallbacks(ha)
         waitforbuttonpressmsg(ha,msg)
-        RestoreCallbacks(ha)
         point = get(ha,'CurrentPoint');    % button down detected
         if strcmp(type,'cross'), set(hf,'pointer',curpointer), end
         if showselection
@@ -90,7 +92,7 @@ switch type
         p1 = get(ha,'CurrentPoint'); p1 = p1(1,1:2);
         hl(1) = line('xdata',p1([1 1]),'ydata',p1([2 2]),'parent',ha,'color','k');
         hl(2) = line('xdata',p1([1 1]),'ydata',p1([2 2]),'parent',ha,'color','b','linestyle','--');
-        data = fn_buttonmotion({@drawline,ha,hl,p1},hf);
+        data = fn_buttonmotion({@drawline,ha,hl,p1},hf,'doup');
         delete(hl(2))
         if showselection
             set(hl(1),'color','y')
@@ -108,16 +110,14 @@ switch type
     case {'rect' 'rectax' 'rectangle' 'xsegment' 'ysegment'}
         % if button has already been pressed, no more button will be
         % pressed, so it is not necessary to suspend callbacks
-        SuspendCallbacks(ha)
         if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
         selectiontype = get(hf,'selectionType');
         p0 = get(ha,'currentpoint'); p0 = p0(1,1:2);
         hl(1) = line(p0(1),p0(2),'color','k','linestyle','-','parent',ha);
         hl(2) = line(p0(1),p0(2),'color','w','linestyle',':','parent',ha);
         mode = fn_switch(type,'xsegment','x','ysegment','y','');
-        rect = fn_buttonmotion({@drawrectangle,ha,hl,p0,mode},hf);
+        rect = fn_buttonmotion({@drawrectangle,ha,hl,p0,mode},hf,'doup');
         delete(hl)
-        RestoreCallbacks(ha)
         if doescape && ~strcmp(get(hf,'selectionType'),selectiontype)
             % another key was pressed -> escape
             waitforbuttonup(hf)
@@ -145,12 +145,12 @@ switch type
             end
             varargout = {rect};
         end
-    case 'poly'
-        SuspendCallbacks(ha)
+    case {'poly' 'spline'}
         if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
         selectiontype = get(hf,'selectionType');
-        [xi,yi] = fn_getline(ha);                   % return figure units
-        RestoreCallbacks(ha)
+        p = get(ha,'currentpoint');
+        info = fn_pointer('xi',p(1,1),'yi',p(1,2));
+        [xi,yi] = fn_getline(ha,openline);                   % return figure units
         if doescape && ~strcmp(get(hf,'selectionType'),selectiontype)
             % another key was pressed -> escape
             waitforbuttonup(hf)
@@ -176,14 +176,12 @@ switch type
         end
         varargout={x'};
     case 'free'
-        SuspendCallbacks(ha)
         if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
         selectiontype = get(hf,'selectionType');
         p = get(ha,'currentpoint');
         hl(1) = line(p(1,1),p(1,2),'color','k','linestyle','-','parent',ha);
         hl(2) = line(p(1,1),p(1,2),'color','w','linestyle',':','parent',ha);
         fn_buttonmotion({@freeform,ha,hl},hf)
-        RestoreCallbacks(ha)    
         x = [get(hl(1),'xdata')' get(hl(2),'ydata')'];
         delete(hl)
         if doescape && ~strcmp(get(hf,'selectionType'),selectiontype)
@@ -211,7 +209,6 @@ switch type
         varargout={x'};
     case {'ellipse' 'ring'}
         if doescape, warning 'escape option is not valid for types ''ellipse'' and ''ring''', end
-        SuspendCallbacks(ha)
         if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
         p = get(ha,'currentpoint');
         hl(1) = line(p(1,1),p(1,2),'color','k','linestyle','-','parent',ha);
@@ -229,7 +226,6 @@ switch type
             info.flag = 'ring';
             fn_buttonmotion({@drawellipse,ha,hl,info},hf)
         end
-        RestoreCallbacks(ha)   
         x = [get(hl(1),'xdata')' get(hl(1),'ydata')'];
         ax = info.axis;
         u = (ax(:,2)-ax(:,1))/2;
@@ -270,8 +266,7 @@ end
 function SuspendCallbacks(ha)
 % se pr�munir des callbacks divers et vari�s
 
-hf = get(ha,'parent'); while ~strcmp(get(hf,'type'),'figure'), hf = get(hf,'parent'); end
-setappdata(ha,'uistate',guisuspend(hf))
+setappdata(ha,'uistate',guisuspend(ha))
 setappdata(ha,'oldtag',get(ha,'Tag'))
 set(ha,'Tag','fn_mouse') % pour bloquer fn_imvalue !
 
@@ -281,11 +276,12 @@ function RestoreCallbacks(ha)
 
 set(ha,'Tag',getappdata(ha,'oldtag'))
 rmappdata(ha,'oldtag')
-guirestore(getappdata(ha,'uistate'))
+guirestore(ha,getappdata(ha,'uistate'))
 
 %-------------------------------------------------
-function state = guisuspend(hf)
+function state = guisuspend(ha)
 
+hf = fn_parentfigure(ha);
 state.hf        = hf;
 state.obj       = findobj(hf);
 state.hittest   = get(state.obj,'hittest');
@@ -293,26 +289,28 @@ state.buttonmotionfcn   = get(hf,'windowbuttonmotionfcn');
 state.buttondownfcn     = get(hf,'windowbuttondownfcn');
 state.buttonupfcn       = get(hf,'windowbuttonupfcn');
 state.keydownfcn        = get(hf,'keypressfcn');
-try state.keyupfcn = get(hf,'keyreleasefcn'); end
+state.keyupfcn = get(hf,'keyreleasefcn');
+% state.handlevis = get(ha,'handlevisibility'); % seems not necessary
 
 set(state.obj,'hittest','off')
 set(hf,'hittest','on','windowbuttonmotionfcn','', ...
     'windowbuttondownfcn','','windowbuttonupfcn','', ...
-    'keypressfcn','')
-try set(hf,'keyreleasefcn',''), end
+    'keypressfcn','','keyreleasefcn','')
+% set(ha,'handlevisibility','on')
 
 %-------------------------------------------------
-function guirestore(state)
+function guirestore(ha,state)
 
 for k=1:length(state.obj)
     set(state.obj(k),'hittest',state.hittest{k});
 end
 hf = state.hf;
-set(hf,'windowbuttonmotionfcn',state.buttonmotionfcn);
-set(hf,'windowbuttondownfcn',state.buttondownfcn);
-set(hf,'windowbuttonupfcn',state.buttonupfcn);
-set(hf,'keypressfcn',state.keydownfcn);
-try set(hf,'keyreleasefcn',state.keyupfcn); end
+set(hf,'windowbuttonmotionfcn',state.buttonmotionfcn, ...
+    'windowbuttondownfcn',state.buttondownfcn, ...
+    'windowbuttonupfcn',state.buttonupfcn, ...
+    'keypressfcn',state.keydownfcn, ...
+    'keyreleasefcn',state.keyupfcn)
+% set(ha,'handlevisibility',state.handlevis)
 
 %-------------------------------------------------
 function data=drawline(ha,hl,p1)
