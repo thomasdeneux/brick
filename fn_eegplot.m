@@ -1,5 +1,5 @@
 function hl = fn_eegplot(varargin)
-% function hl = fn_eegplot([t,]data,usual plot arguments[,stepflag][,flag])
+% function hl = fn_eegplot([t,]data[,stepflag][,flag][,line properties...])
 %---
 % Like Matlab function 'plot', but separates line by a distance 'ystep'
 %
@@ -26,80 +26,69 @@ function hl = fn_eegplot(varargin)
 % Input
 % (data at position 1 or 2)
 if nargin>1 && isnumeric(varargin{2}) && ~isscalar(varargin{2})
-    idata = 2;
+    [t data] = deal(varargin{1:2});
+    varargin(1:2) = [];
 else
-    idata = 1;
+    data = varargin{1};
+    varargin(1) = [];
+    t = 1:size(data,1);
 end
-data = varargin{idata};
-
-% (flags at the end)
-donum = ''; % '', 'bottom' or 'top'
-ystep = [];
-% ('num' flag?)
-a = varargin{end};
-if ischar(a)
-    switch a
-        case 'num'
-            donum = 'bottom';
-        case 'numtop'
-            donum = 'top';
-    end
-    if ~isempty(donum), varargin(end) = []; end
-end
-% (step specification)
-a = varargin{end};
-if isnumeric(a) && isscalar(a) && ~(ishandle(a) && strcmp(get(a,'type'),'axes')) % TODO: not enough!!
-    ystep = a;
-    varargin(end) = [];
-elseif ischar(a)
-    x = regexpi(a,'^([0-9\.]*)STD$','tokens');
-    if ~isempty(x)
-        if isempty(x{1}{1}), fact=1; else fact=str2double(x{1}); end
-        ystep = fact*mean(mean(std(data)));
-        varargin(end) = [];
+% (other arguments)
+lineopt = {}; donum = ''; ystep = [];
+for i = 1:length(varargin)
+    a = varargin{i};
+    if isnumeric(a)
+        ystep = a;
+    elseif ~ischar(a)
+        error argument
+    elseif strcmp(a,'num')
+        donum = 'bottom';
+    elseif strcmp(a,'numtop')
+        donum = 'top';
+    elseif regexpi(a,'^([0-9\.]*)(std|fit)$');
+        ystep = a;
     else
-        x = regexp(a,'^([0-9\.]*)fit$','tokens');
-        if ~isempty(x)
-            if isempty(x{1}), fact=1; else fact=str2double(x{1}); end
-            ystep = fact*max(max(data(:))-min(data(:)));
-            varargin(end) = [];
-        end
+        lineopt = varargin(i:end);
+        break
     end
 end
 
-% more computation
-if isempty(ystep)
-    ystep = 3*mean(mean(std(data)));
+% step specification
+if isempty(ystep), ystep = '3STD'; end
+if ischar(ystep)
+    tokens = regexpi(ystep,'^([0-9\.]*)(std|fit)$','tokens');
+    tokens = tokens{1};
+    if isempty(tokens{1}), fact=1; else fact=str2double(tokens{1}); end
+    switch lower(tokens{2})
+        case 'std'
+            ystep = fact*mean(mean(std(data)));
+        case 'fit'
+            ystep = fact*max(max(data(:))-min(data(:)));
+    end
 end
+
+% dispatch data
 if donum
     data = 1+(-1)^strcmp(donum,'top')*fn_normalize(data,1,'-')/ystep;
     ystep = 1;
 end
-is3d = (ndims(data)>2);
-if is3d
-    [nt nc nstep] = size(data);
-    data = data(:,:);
-else
-    [nt nstep] = size(data);
-    nc = 1;
-end
-varargin{idata} = data;
+if ismatrix(data), data = permute(data,[1 3 2]); end
+[~, nc, nstep] = size(data);
+for k=2:nstep, data(:,:,k) = data(:,:,k) + (k-1)*ystep; end
 
 % display
-hl = plot(varargin{:});
-if isempty(hl), return, end
-hl = reshape(hl,nc,nstep);
-uistack(hl(:),'top')
-ha = get(hl(1),'parent');
-cols = get(ha,'colororder');
-ncol = size(cols,1);
-for k=1:nstep
-    for i=1:nc, set(hl(i,k),'ydata',get(hl(i,k),'ydata')+(k-1)*ystep), end
-    set(hl(:,k),'color',cols(fn_mod(k,ncol),:),varargin{idata+1:end})
+hl = plot(t,data(:,:));
+if ~isempty(hl)
+    hl = reshape(hl,nc,nstep);
+    ha = get(hl(1),'parent');
+    cols = get(ha,'colororder');
+    ncol = size(cols,1);
+    for k=1:nstep
+        set(hl(:,k),'color',cols(fn_mod(k,ncol),:),lineopt{:}) % important to have lineopt here, in case it overwrites the color
+    end
+    axis(ha,'tight')
+    if strcmp(donum,'top'), set(ha,'yDir','reverse'), end
 end
-axis(ha,'tight')
-if strcmp(donum,'top'), set(ha,'yDir','reverse'), end
-
 if nargout==0, clear hl, end
 
     

@@ -45,23 +45,23 @@ classdef interface < hgsetget
     
     % Initialization
     methods
-        function I = interface(hf,figtitle,defaultoptions)
+        function I = interface(hf,figtitle,defaultchildoptions)
             if nargin==0
                 hf = 827;
                 figtitle = 'INTERFACE';
             end
             
             % options
-            interfaceoptions = I.options; % minimal default options
-            loadoptions(I)                % load saved options
-            if nargin>=3 && ~isempty(defaultoptions)
-                % some new options might have been created (either in
-                % 'interface' or in the child class), other might have been
-                % removed -> update the saved options
-                defaultoptions = fn_structmerge(interfaceoptions,defaultoptions); % default set
-                I.options = fn_structmerge(defaultoptions,I.options,'skip');      % update
-                saveoptions(I)
+            defaultoptions = I.options; % minimal default options
+            if nargin>=3 && ~isempty(defaultchildoptions)
+                defaultoptions = fn_structmerge(defaultoptions,defaultchildoptions); % default set
             end
+            loadoptions(I)              % load saved options
+            % some new options might have been created (either in
+            % 'interface' or in the child class), other might have been
+            % removed -> update the saved options
+            I.options = fn_structmerge(defaultoptions,I.options,'skip');      % update
+            saveoptions(I)
             
             % internal parameters
             I.interfacepar = struct( ...
@@ -135,23 +135,9 @@ classdef interface < hgsetget
             % positioning
             uimenu(m,'label','Change current display', ...
                 'callback',@(u,evnt)chgframepositions(I,'modify'));
-            pos = I.options.positions; npos = length(pos);
-            m1 = uimenu(m,'label','Saved displays');
-            for k=1:npos
-                f = pos(k).name;
-                if k==1 && f(end)=='*', en = 'off'; else en = 'on'; end
-                uimenu(m1,'label',f,'enable',en, ...
-                    'callback',@(u,evnt)chgframepositions(I,'load',f));
-            end
-            uimenu(m1,'label','Save current as...','separator','on', ...
-                'callback',@(u,evnt)chgframepositions(I,'saveas'));
-            m2 = uimenu(m1,'label','Delete');
-            for k=1:npos
-                f = pos(k).name;
-                if k==1 && f(end)=='*', continue, end
-                uimenu(m2,'label',f, ...
-                    'callback',@(u,evnt)chgframepositions(I,'delete',f));
-            end
+            items.displayslist = uimenu(m,'label','Saved displays');
+            I.interfacepar.menuitems = items;
+            init_menus_displayslist(I)
             
             % expert buttons
             varname = inputname(1);
@@ -178,14 +164,21 @@ classdef interface < hgsetget
                 'callback',@(u,evnt)saveimage(I))
             uimenu(m1,'label','Save image (full options)...', ...
                 'callback',@(u,evnt)fn_savefig(I.hf))
-            uimenu(m1,'label','Copy figure', ...
-                'callback',@(u,evnt)fn_savefig(I.hf,'showonly'))
+            uimenu(m1,'label','Copy to clipboard', ...
+                'callback',@(u,evnt)saveimage(I,'clipboard'))
+            uimenu(m1,'label','Copy to new figure', ...
+                'callback',@(u,evnt)saveimage(I,'show'))
             
             % save items
             I.interfacepar.menuitems = items;
         end
         function saveoptions(I)
             fn_savevar(I.settings,I.options)
+        end
+        function loaddefaultoptions(I)
+            codefile = which(class(I));
+            fdefault = [fn_fileparts(codefile,'noext') '.mat'];
+            I.options = fn_loadvar(fdefault);
         end
         function savedefaultoptions(I)
             codefile = which(class(I));
@@ -225,7 +218,7 @@ classdef interface < hgsetget
             iscurtmp = (pos(1).name(end)=='*');
             curname = pos(1).name; if iscurtmp, curname(end)=[]; end
             idxsaved = fn_switch(iscurtmp,2:npos,1:npos);
-            doreinitmenus = false;
+            changedlist = false;
             switch flag
                 case 'modify'
                     newpos = fn_framedesign(I.grob,curpos,true);
@@ -234,7 +227,7 @@ classdef interface < hgsetget
                     else
                         pos = [struct('name',[curname '*'],'value',newpos) pos];
                     end
-                    doreinitmenus = true;
+                    changedlist = true;
                 case 'set'
                     pos(1).value = fn_framedesign(I.grob,curpos,[]);
                 case 'load'
@@ -242,26 +235,18 @@ classdef interface < hgsetget
                     idx = find(strcmp(f,{pos.name}));
                     pos = pos([idx setdiff(idxsaved,idx)]);
                     pos(1).value = fn_framedesign(I.grob,pos(1).value,[]);
-                    doreinitmenus = true;
+                    changedlist = true;
                 case 'saveas'
                     name = inputdlg('Name of new position configuration','Enter name',1,{curname});
                     if isempty(name) || (~strcmp(name,curname) && fn_ismemberstr(name,{pos.name}))
                         errordlg('Invalid name (empty or already exists)')
                         return
                     end
-                    if strcmp(name,curname)
-                        if iscurtmp
-                            pos(1) = [];
-                            pos(1).value = curpos;
-                        else
-                            % display was not changed, nothing needs to be
-                            % saved
-                            return
-                        end
-                    else
-                        pos = [struct('name',name,'value',curpos) pos];
-                    end
-                    doreinitmenus = true;
+                    newpos = struct('name',name,'value',curpos);
+                    if iscurtmp, pos(1) = []; end
+                    if strcmp(name,curname), pos(strcmp({pos.name},name)) = []; end
+                    pos = [newpos pos];
+                    changedlist = true;
                 case 'delete'
                     f = varargin{1};
                     idx = find(strcmp(f,{pos(idxsaved).name}));
@@ -270,11 +255,11 @@ classdef interface < hgsetget
                         return
                     end
                     pos(iscurtmp+idx) = [];
-                    doreinitmenus = true;
+                    changedlist = true;
             end
             I.options.positions = pos;
             saveoptions(I)
-            if doreinitmenus, init_menus(I), end
+            if changedlist, init_menus_displayslist(I), end
         end
         function saveimage(I,fname)
             if nargin>=2, fname = {fname}; else fname = {'askname'}; end
@@ -333,6 +318,28 @@ classdef interface < hgsetget
         end
         function x = setinfo(I) %#ok<MANU>
             x = struct;
+        end
+    end
+    methods (Access='private')
+        function init_menus_displayslist(I)
+            m1 = I.interfacepar.menuitems.displayslist;
+            delete(get(m1,'children'))
+            pos = I.options.positions; npos = length(pos);
+            for k=1:npos
+                f = pos(k).name;
+                if k==1 && f(end)=='*', en = 'off'; else en = 'on'; end
+                uimenu(m1,'label',f,'enable',en, ...
+                    'callback',@(u,evnt)chgframepositions(I,'load',f));
+            end
+            uimenu(m1,'label','Save current as...','separator','on', ...
+                'callback',@(u,evnt)chgframepositions(I,'saveas'));
+            m2 = uimenu(m1,'label','Delete');
+            for k=1:npos
+                f = pos(k).name;
+                if k==1 && f(end)=='*', continue, end
+                uimenu(m2,'label',f, ...
+                    'callback',@(u,evnt)chgframepositions(I,'delete',f));
+            end
         end
     end
     

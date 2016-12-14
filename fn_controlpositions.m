@@ -35,12 +35,12 @@ elseif get(hp,'parent')==get(hu,'parent')
     hl.ppos = fn_pixelposlistener(hp,updatefcn);
     if strcmp(get(hp,'type'),'axes')
         hl.axlim = addlistener(hp,{'XLim','YLim'},'PostSet',updatefcn);
-        hl.axlim.Enabled = strcmp(get(hp,'DataAspectRatioMode'),'manual');
+        enableListener(hl.axlim,strcmp(get(hp,'DataAspectRatioMode'),'manual'));
         hl.axratio = addlistener(hp,'DataAspectRatioMode','PostSet', ...
             @(m,evnt)axlistener(hp,hl,updatefcn));
     end
 else
-    error 'cannot first object must be either child or sibbling of second object'
+    error 'first object must be either child or sibbling of second object'
 end
 
 % delete control upon parent deletion
@@ -53,7 +53,7 @@ fn_deletefcn(hu,@(u,e)deletelisteners(hl))
 function axlistener(hp,hl,updatefcn)
 
 feval(updatefcn)
-hl.axlim.Enabled = strcmp(get(hp,'DataAspectRatioMode'),'manual');
+enableListener(hl.axlim,strcmp(get(hp,'DataAspectRatioMode'),'manual'));
     
 %---
 function deletelisteners(hl)
@@ -75,27 +75,9 @@ if hp==get(hu,'parent')
     pos0 = [0 0];
     psiz = fn_pixelsize(hp);
 elseif get(hp,'parent')==get(hu,'parent')
-    ppos = fn_pixelpos(hp);
+    ppos = fn_pixelpos(hp,'strict');
     pos0 = ppos(1:2);
     psiz = ppos(3:4);
-    if strcmp(get(hp,'type'),'axes') && strcmp(get(hp,'dataaspectratiomode'),'manual')
-        % if DataAspectRatioMode is manual, then only part of the axes might be
-        % occupied!! let's see which dimension is not fully occupied
-        availableratio = psiz(1)/psiz(2);
-        dataratio = get(hp,'dataaspectratio'); % ratio(1) in x should be the same length as ratio(2) in y
-        actualratio = (diff(get(hp,'xlim'))/dataratio(1)) / (diff(get(hp,'ylim'))/dataratio(2));
-        change = actualratio/availableratio;
-        if change>1
-            % we want a larger x/y ratio than given by the full axes
-            % -> shrink y dimension
-            pos0(2) = pos0(2) + psiz(2)*(1-1/change)/2;
-            psiz(2) = psiz(2)/change;
-        else
-            % the contrary
-            pos0(1) = pos0(1) + psiz(1)*(1-change)/2;
-            psiz(1) = psiz(1)*change;
-        end
-    end
 else
     if fn_dodebug
         if isempty(get(hu,'parent'))

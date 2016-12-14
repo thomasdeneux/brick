@@ -52,7 +52,7 @@ if isempty(tysize)
         tsize=0; 
     else
         tokens = regexp(tlabel,'^([.0-9]*|auto)','tokens');
-        tokens = tokens{1};
+        if isempty(tokens), tokens = {'1' ''}; else tokens = tokens{1}; end
         if strcmp(tokens{1},'auto')
             [tsize str] = autoScaleLength(ha,'x');
             tlabel = strrep(tlabel,'auto',str);
@@ -63,8 +63,8 @@ if isempty(tysize)
     if isempty(ylabel)
         ysize=0; 
     else
-        tokens = regexp(ylabel,'^([.0-9]*|auto)(%{0,1})','tokens');
-        tokens = tokens{1};
+        tokens = regexp(ylabel,'^([.0-9]*(\.[0-9]*){0,1}(e-{0,1}[0-9]+){0,1}|auto)(%{0,1})','tokens');
+        if isempty(tokens), tokens = {'1' ''}; else tokens = tokens{1}; end
         if strcmp(tokens{1},'auto')
             if strcmp(tokens{2},'%')
                 [ysize str] = autoScaleLength(ha,'y',100);

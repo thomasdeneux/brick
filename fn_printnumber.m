@@ -23,7 +23,7 @@ function im = fn_printnumber(im,elems,varargin)
 % - '3x5', '8x12' [default] or '8x16'   font size
 % - 'pos(ition)', posstr
 %           posstr is any of 'topleft', 'topright', 'bottomleft',
-%           'bottomright'
+%           'bottomright', 'center'
 % - 'col(or)', col
 %           col is a scalar, N-element vector, 1x3 vector or Nx3 array
 %           default is black ([0 0 0]) if im has color frames, 0 otherwise
@@ -131,9 +131,6 @@ end
 
 % elements to print
 % (make a cell array, check size)
-s = size(im);
-if s(1)<=ncol || s(2)<=nrow, error 'image size is too small to print characters into it', end
-ncharavail = floor(s(1)/ncol);
 if iscell(elems)
     str = elems;
 elseif ischar(elems)
@@ -144,6 +141,14 @@ elseif isnumeric(elems)
     str = fn_num2str(elems,['%.' num2str(ndigit) 'i'],'cell');
 end
 N = length(str);
+if isempty(im)
+    s = [ncol*max(fn_itemlengths(str))+1 nrow+1 N];
+    if all(color==1), im = zeros(s); else im = ones(s); end
+else
+    s = size(im);
+    if s(1)<ncol+1 || s(2)<nrow+1, error 'image size is too small to print a single character into it', end
+end
+ncharavail = floor(s(1)/ncol);
 % (prepare masks and handle scale bar)
 mask0 = false(s(1:2));
 if doscale
@@ -194,7 +199,10 @@ for k=1:N
             case 'bottomright'
                 posk = [s(1)-ncol*nchar+1 s(2)-nrow];
             case 'center'
-                posk = [ceil((s(1)-ncol*nchar)/2) floor((s(2)-nrow)/2)];
+                % todo: to be really precise vertically, it would be
+                % necessary for each character set to know at which
+                % vertical position is the midline
+                posk = [ceil((s(1)-ncol*nchar)/2)+1 ceil((s(2)-nrow)/2)];
             otherwise
                 error 'unknown position specification'
         end

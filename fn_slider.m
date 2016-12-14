@@ -186,7 +186,7 @@ classdef fn_slider < hgsetget
             c = get(U.hpanel,'backgroundcolor');
         end
         function set.backgroundcolor(U,c)
-            set(U.hpanel,'backgroundcolor',c);
+            set([U.hpanel U.hframe],'backgroundcolor',c);
         end
         function c = get.slidercolor(U)
             c = get(U.hslider,'backgroundcolor');
@@ -686,7 +686,7 @@ classdef fn_slider < hgsetget
                     % slide
                     p0 = mouseposframe(U);
                     if strcmp(flag,'slider') && U.area
-                        PIX = 2;
+                        PIX = 4;
                         xs = mouseposslider(U);
                         if xs(1)<=PIX
                             flag = 'left';
@@ -829,23 +829,12 @@ end
 function pos = mousepos(hobj)
 % position in pixel units of pointer in current container (figure or
 % uipanel)
-% this is SHITTY!!!
 
-switch get(hobj,'type')
-    case 'figure'
-        tmp = get(hobj,'units');
-        set(hobj,'units','pixel')
-        pos = get(hobj,'currentpoint');
-        set(hobj,'units',tmp)
-    case 'uipanel'
-        tmp = get(hobj,'units');
-        set(hobj,'units','pixel')
-        panelpos = get(hobj,'position');
-        set(hobj,'units',tmp)
-        pos = mousepos(get(hobj,'parent'));
-        pos = pos-(panelpos(1:2)-1);
-    otherwise
-        error programming
+hf = fn_parentfigure(hobj);
+pos = get(hf,'CurrentPoint');
+if strcmp(get(hobj,'type'),'uipanel')
+    panelpos = round(fn_pixelpos(hobj,'recursive'));
+    pos = pos-panelpos(1:2);
 end
 
 end

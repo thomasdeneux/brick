@@ -26,7 +26,7 @@ nok(nok==0) = 1;    % the first value will be picked-up, as if it was non-NaN
 midx = (nok+1)/2;   % can be integer or integer+0.5, in which case the mean of the two adjacent values will be computed
 
 % get median!
-idx = sub2ind(sz,[floor(midx); ceil(midx)],[1:sz2(2); 1:sz2(2)]);
+idx = sub2ind(sz2,[floor(midx); ceil(midx)],[1:sz2(2); 1:sz2(2)]);
 m = mean(y(idx),1);
 
 % final reshape

@@ -1,4 +1,4 @@
-classdef windowcallbackmanager < handle
+classdef windowcallbackmanager < hgsetget
     % class 'windowcallbackmanager' is used for example by function
     % fn_scrollwheelregister, but is not supposed to be used by users
     %
@@ -9,18 +9,18 @@ classdef windowcallbackmanager < handle
     % that it will be added to the next action when system will not be busy
     % any more
     
-    properties
+    properties (SetAccess='private')
         hf
         objects     % structure with information about figure and its children (handle, position, callback...)
         scrollcount % buffer to memorize number of scrolls when actions are canceled
         busy
         activekeys = {};
         cursize = [0 0];
+        scrollmap_internal  % internal 'scroll map', might be empty if not yet computed
+    end
+    properties (Dependent, SetAccess='private')
         scrollmap   % map of to which registered child does every pixel of the figure belong
     end
-    %     properties (Dependent, SetAccess='private')
-    %         scrollmap
-    %     end
     
     % Initialization
     methods
@@ -53,7 +53,6 @@ classdef windowcallbackmanager < handle
                 'curpos',   [], ...
                 'callback', '' ...
                 );
-            W.scrollmap = [];
             W.scrollcount = 0;
             W.busy = false;
             
@@ -69,9 +68,6 @@ classdef windowcallbackmanager < handle
             repair(W)
             kobj = find([W.objects.hobj]==hobj);
             if isempty(kobj)
-                if get(hobj,'parent')~=W.hf
-                    warning 'intermediary levels between object and parent figure are not allowed yet'
-                end
                 kobj = length(W.objects)+1;
                 W.objects(kobj).hobj = hobj;
                 W.objects(kobj).doscroll = doscroll && fn_switch(get(hobj,'visible'));
@@ -123,17 +119,16 @@ classdef windowcallbackmanager < handle
             set(W.hf,'windowscrollwheelfcn',@(h,e)scrollwheelaction(W,e))
             W.busy = false;
             W.scrollcount = 0;
-            nobj = length(W.objects);
         end
     end
     
     % Handle changes of positions
     methods
         function map = get.scrollmap(W)
-            map = W.scrollmap;
+            map = W.scrollmap_internal;
             if isempty(map)
                 updatepos(W,'set')
-                map = W.scrollmap;
+                map = W.scrollmap_internal;
             end
         end
         function updatepos(W,flag,kobj)
@@ -150,7 +145,6 @@ classdef windowcallbackmanager < handle
             % some variables
             siz = round(fn_pixelsize(W.hf));
             nobj = length(W.objects); 
-            mask0 = false(siz);
             
             % special case: figure size has been changed but we are
             % executing a callback new to the change in position of a
@@ -162,29 +156,35 @@ classdef windowcallbackmanager < handle
             
             switch flag
                 case 'addnew'
-                    % add a new object on top of the map
-                    mask = W.objects(kobj).curpos;
-                    W.scrollmap(mask) = kobj;
+                    % add a new object on top of the map... only if the map
+                    % is built already
+                    if ~isempty(W.scrollmap_internal)
+                        pos = round(fn_pixelpos(hobj,'recursive'));
+                        mask = false(siz); mask(pos(1):pos(2),pos(3):pos(4)) = true;
+                        W.objects(kobj).curpos = mask;
+                        W.scrollmap_internal(mask) = kobj;
+                    end
                 case {'chgfigpos' 'remove' 'add'}
                     % need to re-build the full map -> postpone until it is
                     % actually needed!
-                    W.scrollmap = [];
+                    W.scrollmap_internal = [];
                 case 'chgpos'
                     % need to re-build the full map... only if the object
                     % is active!
                     if W.objects(kobj).doscroll
-                        W.scrollmap = []; 
+                        W.scrollmap_internal = []; 
                     end
                 case 'set'
                     % set current size
                     W.cursize = siz;
                     % build the full map
+                    mask0 = false(siz);
                     curmap = ones(siz(1),siz(2)); % 1 refers to first object, i.e. the figure
                     for kobj=2:nobj % start at 2, first element is the figure!
                         sk = W.objects(kobj);
                         hobj = sk.hobj;
                         if sk.doscroll && ishandle(hobj)
-                            pos = round(fn_pixelpos(hobj));
+                            pos = round(fn_pixelpos(hobj,'recursive'));
                             pos = fn_minmax('axi',[pos(1) pos(1)+pos(3) pos(2) pos(2)+pos(4)],[1 siz(1) 1 siz(2)]);
                             mask = mask0; mask(pos(1):pos(2),pos(3):pos(4)) = true;
                             W.objects(kobj).curpos = mask;
@@ -193,7 +193,7 @@ classdef windowcallbackmanager < handle
                             W.objects(kobj).curpos = []; % in case object will be put back later, its mask will need to be recalculated
                         end
                     end
-                    W.scrollmap = curmap;
+                    W.scrollmap_internal = curmap;
             end
         end
     end
@@ -215,24 +215,19 @@ classdef windowcallbackmanager < handle
             if ~W.busy
                 % execute the action
                 W.busy = true;
+                c = onCleanup(@()set(W,'busy',false));
                 nscroll = W.scrollcount + e.VerticalScrollCount;
                 W.scrollcount = 0;
-                try
-                    fun = W.objects(kobj).callback;
-                    args = regexp(char(fun),'^@\(([\w,])*\)','tokens');
-                    narg = 1+sum(args{1}{1}==',');
-                    switch narg
-                        case 1
-                            feval(W.objects(kobj).callback,nscroll);
-                        case 2
-                            feval(W.objects(kobj).callback,nscroll,W.activekeys);
-                        otherwise
-                            error 'callback must have one or two arguments'
-                    end
-                    W.busy = false;
-                catch ME
-                    W.busy = false;
-                    rethrow(ME)
+                fun = W.objects(kobj).callback;
+                args = regexp(char(fun),'^@\(([\w,])*\)','tokens');
+                narg = 1+sum(args{1}{1}==',');
+                switch narg
+                    case 1
+                        W.objects(kobj).callback(nscroll);
+                    case 2
+                        W.objects(kobj).callback(nscroll,W.activekeys);
+                    otherwise
+                        error 'callback must have one or two arguments'
                 end
             else
                 % cancel the action, but remember the number of scrolls

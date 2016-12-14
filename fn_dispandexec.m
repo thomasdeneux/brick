@@ -1,12 +1,26 @@
-function fn_dispandexec(c)
-% function fn_dispandexec(commands)
+function fn_dispandexec(varargin)
+% function fn_dispandexec(cmd1,cmd2,...)
+% function fn_dispandexec(fun,arg1,arg2,...)
 %--
-% display and execute commands (a string or a cell array of strings)
-% Note that all '$' signs are replaced by blanks ' '.
+% display and execute commands or functions
 
 % Thomas Deneux
 % Copyright 2011-2012
 
-if ~iscell(c), c={c}; end
-for k=1:length(c), c{k} = strrep(c{k},'$',' '); disp(c{k}), end
-for k=1:length(c), evalin('base',c{k}), end
+if nargin==0, help fn_dispandexec, return, end
+
+switch class(varargin{1})
+    case 'char'
+        for k=1:length(varargin)
+            cmd = varargin{k};
+            disp(cmd)
+            evalin('base',cmd)
+        end
+    case 'function_handle'
+        fun = varargin{1};
+        disp(char(fun))
+        feval(fun,varargin{2:end})
+    otherwise
+        error('first argument must be a string or a function handle')
+end
+

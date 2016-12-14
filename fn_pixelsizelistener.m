@@ -7,7 +7,7 @@ function hl = fn_pixelsizelistener(hobj,callback)
 % object 'SizeChanged' event. In earlier versions, this is a wrapper
 % for pixelposwatcher class.
 %
-% See also pixelposwatcher, fn_pixelposlistener
+% See also fn_pixelsize, fn_pixelposlistener
 
 if fn_matlabversion('newgraphics')
     hl = addlistener(hobj,'SizeChanged',callback);

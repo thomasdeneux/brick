@@ -1,5 +1,6 @@
 function y = fn_coerce(x,m,M)
 % function y = fn_coerce(x,m,M)
+% function y = fn_coerce(x,[m M])
 %---
 % y = min(max(x,m),M);
 

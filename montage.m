@@ -793,7 +793,7 @@ classdef montage < interface
                 M.numredo = 0;
             end
             s = M.im;
-            [s.h] = deal([]); % handles should not be stored
+            if ~isempty(s), [s.h] = deal([]); end % handles should not be stored
             if ~isempty(M.lastim) && isequal(M.lastim{end},s), return, end
             if M.numredo>0
                 M.lastim(end-(0:M.numredo-1)) = [];

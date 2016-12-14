@@ -1,7 +1,7 @@
 function repout = fn_cd(flag,varargin)
 % function rep = fn_cd(flag,relpath)
 % function fn_cd('edit')
-% function fn_cd('list')
+% function [list = ] fn_cd('list')
 %---
 % This function allows user to rapidly change the current directory or get
 % the full path to some files. 
@@ -31,18 +31,18 @@ switch flag
         return
     case 'list'
         s = loaddef;
-        list = char({s.label});
-        list(:,end+1) = ' '; % add separator spaces
-        [nitem nc] = size(list);
-        W = matlab.desktop.commandwindow.size; W = W(1);
-        ncol = max(1,floor((W+1)/nc));
-        nrow = ceil(nitem/ncol);
-        list(end+1:nrow*ncol,:) = ' ';
-        list = fn_reshapepermute(list,[nrow ncol nc],{1 [3 2]});
-        list(:,end) = []; % remove right-most separator spaces
         if nargout==1
-            repout = list;
+            repout = s;
         else
+            list = char({s.label});
+            list(:,end+1) = ' '; % add separator spaces
+            [nitem nc] = size(list);
+            W = matlab.desktop.commandwindow.size; W = W(1);
+            ncol = max(1,floor((W+1)/nc));
+            nrow = ceil(nitem/ncol);
+            list(end+1:nrow*ncol,:) = ' ';
+            list = fn_reshapepermute(list,[nrow ncol nc],{1 [3 2]});
+            list(:,end) = []; % remove right-most separator spaces
             disp(list)
         end
         return
@@ -144,6 +144,10 @@ s = loaddef();
 ndef = length(s);
 npage = ceil(ndef/ndefperpage);
 
+% sort definitions
+[~, ord] = sortrows([fn_map(s,@(u)char('A'+~isstruct(u.path)),'cell')' {s.relto}' {s.label}']);
+s = s(ord);
+
 % first line
 uicontrol('style','text','string','label','pos',[d H-ht w1 hh])
 uicontrol('style','text','string','relative to','pos',[d+w1+d H-ht w2 hh])
@@ -214,6 +218,15 @@ displaypage()
     function chgdef(k)
         kdef = (kpage-1)*ndefperpage + k;
         c = fn_get(hu(:,k),'string');
+        if isempty(c{1})
+            % no label -> remove entry
+            if kdef<=ndef
+                s(kdef) = [];
+                ndef = length(s);
+                displaypage()
+            end
+            return
+        end
         [s(kdef).label s(kdef).relto path] = deal(c{:});
         if get(hm(k),'value')
             % host name - specific definition
@@ -242,7 +255,8 @@ displaypage()
         if kdef>ndef, set(hu(:,k),'backgroundcolor','w'), return, end
         fname = getdir(s,kdef);
         if isempty(s(kdef).label)
-            set(hu(:,k),'backgroundcolor','default','string','')
+            error 'empty labels should be detected upstream'
+            %set(hu(:,k),'backgroundcolor','default','string','')
         elseif exist(fname,'dir')
             set(hu(:,k),'backgroundcolor','w')
         else
@@ -252,6 +266,7 @@ displaypage()
     function userdir(k)
         kdef = (kpage-1)*ndefperpage + k;
         path = fn_getdir;
+        if isequal(path,0), return, end
         if kdef<=ndef && ~isempty(s(kdef).relto)
             s(kdef).path = '';
             relto = getdir(s,kdef);

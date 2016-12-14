@@ -1,6 +1,7 @@
 function hl = fn_gridplot(varargin)
 % function hl = fn_gridplot([t,]data[,flag][,steps][,'num']
-%                   [,'callback',fun][,'colors',colors][,'offset',offset])
+%                   [,'callback',fun][,'colors',colors][,'offset',offset]
+%                   [,usual plot options])
 % ---
 % Input:
 % - y       ND data
@@ -12,7 +13,8 @@ function hl = fn_gridplot(varargin)
 %           according to rows, 3rd to columns, 4th will not be organized
 %           (i.e. all traces superimposed, but will set the colors)]
 % - steps   [xstep ystep], {xstep ystep}, or ystep (see fn_eegplot)
-% - 'num'   indicate numbers
+% - 'num', 'top', 'numtop'     indicate numbers ('numtop': order from top to
+%            bottom instead of bottom to top)
 % - fun     function to execute when clicking a line
 %           fun(idx) has one argument indicating the coordinates of the
 %           line being clicked (starting from dimension 2)
@@ -27,21 +29,27 @@ function hl = fn_gridplot(varargin)
 
 % Input
 organize = []; coloridx = 3; colors = [];
-steps = '3STD'; donum = false; callback = [];
+steps = '3STD'; donum = false; dotop = false; callback = [];
 offset = struct('flag','','idx',[],'dim',[]);
-tt = []; y = [];
+tt = []; yset = false;
+plotopt = {};
 i = 0;
 while i<length(varargin)
     i = i+1;
     a = varargin{i};
-    if isempty(y) && isvector(a) && isempty(tt)
+    if i==1 && (nargin>=2) && isnumeric(varargin{2}) && isnumeric(a) && isvector(a)
         tt = a;
-    elseif isempty(y)
+    elseif ~yset
         y = a;
+        yset = true;
     elseif ~ischar(a)
         steps = a;
     elseif strcmp(a,'num')
         donum = true;
+    elseif strcmp(a,'numtop')
+        [donum dotop] = deal(true);
+    elseif strcmp(a,'top')
+        dotop = true;
     elseif ~isempty(regexpi(a,'^(-|row|col|grid|c)*$'))
         tokens = regexpi(a,'(-|row|col|grid|c)','tokens');
         organize = [tokens{:}];
@@ -71,9 +79,21 @@ while i<length(varargin)
         else
             error argument
         end
-    else
+    elseif regexpi(a,'std|fit')
         steps = a;
+    else
+        % following arguments are usual plot options
+        plotopt = varargin(i:end);
+        break
     end
+end
+
+% Axes handle
+kparent = find(strcmpi(plotopt(1:2:end),'parent'));
+if ~isempty(kparent)
+    ha = plotopt{2*kparent};
+else
+    ha = gca;
 end
 
 % Data size and number of dimensions
@@ -121,7 +141,9 @@ end
 if ~iscell(steps), 
     if isnumeric(steps), steps = num2cell(steps); else steps = {steps}; end
 end
-if length(steps)==2
+if isempty(y)
+    [xstep ystep] = deal(0);
+elseif length(steps)==2
     xstep = steps{1};
     ystep = steps{2};
 else
@@ -168,7 +190,8 @@ for d=1:nd
             for i=1:s(1+d)
                 si = s0;
                 si.subs{1+d} = i;
-                y1 = subsasgn(y1,si,subsref(y,si)+(i-1)*ystep);
+                if dotop, nystep = s(1+d)-i; else nystep = i-1; end
+                y1 = subsasgn(y1,si,subsref(y,si)+nystep*ystep);
             end
         case 'grid'
             % dispatch all along the grid
@@ -179,13 +202,14 @@ for d=1:nd
                 si = s0;
                 si.subs{1+d} = i;
                 x1 = subsasgn(x1,si,subsref(x,si)+(ix-1)*xstep);
-                y1 = subsasgn(y1,si,subsref(y,si)+(iy-1)*ystep);
+                if dotop, nystep = s(1+d)-iy; else nystep = iy-1; end
+                y1 = subsasgn(y1,si,subsref(y,si)+nystep*ystep);
             end
     end
     
     if d==coloridx
         % use this dimension to set colors
-        if isempty(colors), colors = get(gca,'colorOrder'); end
+        if isempty(colors), colors = get(ha,'colorOrder'); end
         ncol = size(colors,1);
         color = cell([1 s(2:end)]);
         for i=1:s(1+d)
@@ -197,17 +221,25 @@ for d=1:nd
     end
 end
 
-hl = plot(x1(:,:),y1(:,:));
-hl = reshape(hl,[s(2:1+nd) 1]);
-if ~isempty(color), fn_set(hl,'color',color(:)), end
-if ~isempty(callback)
-    for i=1:prod(s(2:1+nd))
-        idx = fn_indices(s(2:1+nd),i);
-        set(hl(i),'buttondownfcn',@(u,e)callback(idx))
+if isempty(y)
+    if ~ishold(ha), cla(ha), end
+    hl = [];
+else
+    if nt==1
+        % only one time point: add marker for good visibility
+        plotopt = [{'marker' '*' 'linestyle' 'none'} plotopt];
+    end
+    hl = plot(x1(:,:),y1(:,:),plotopt{:});
+    if nt>1, hl = reshape(hl,[s(2:1+nd) 1]); end % problem if nt=1
+    if ~isempty(color), fn_set(hl,'color',color(:)), end
+    if ~isempty(callback)
+        for i=1:prod(s(2:1+nd))
+            idx = fn_indices(s(2:1+nd),i);
+            set(hl(i),'buttondownfcn',@(u,e)callback(idx))
+        end
     end
 end
     
-
 if nargout==0, clear hl, end
     
     

@@ -82,9 +82,7 @@ n = length(w);
 names = char('Name','',w.name);
 
 %% size
-s1 = fn_map(@(s)num2str(s(1)),{w.size},'cell');
-format = ['%' num2str(max(fn_map(@length,s1))) 'i'];
-s1 = char(fn_map(@(s)sprintf('%5i',s(1)),{w.size},'cell'));
+s1 = fliplr(char(fn_map(@(x)fliplr(num2str(x(1))),{w.size},'cell')));
 s2 = char(fn_map(@(s)fn_strcat(s(2:end),'x','x',''),{w.size},'cell'));
 sizes = char('Size','',[s1 s2]);
 

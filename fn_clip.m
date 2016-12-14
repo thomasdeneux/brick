@@ -49,7 +49,7 @@ for k=1:length(varargin)
     if ischar(a)
         if any(regexp(a,'^fit|mM|minmax')) || any(regexpi(a,'(^prc)|((st|sd|std))'))
             clipflag = a;
-        elseif length(str2num(a))==2 %#ok<ST2NM>
+        elseif regexp(a,'^[0-9e\-.]+ +[0-9e\-.]+$') % two numbers
             clipflag = str2num(a); %#ok<ST2NM>
         else
             outflag = a;
@@ -116,6 +116,7 @@ else
         error('erroneous clipping option')
     end
 end
+if diff(clip)==0, clip = clip+[-1 1]; end
 
 % output mode
 doclip = true; nbit = [];
@@ -160,7 +161,12 @@ if ~doclip, return, end
 if ~isempty(nanvalue)
     xnan = isnan(x);
 end
-x = min(1-eps(single(1)),max(0,x)); % it is convenient that 1 cannot be reached
+if isa(x,'double')
+    upperbound = 1-eps(1); % it is convenient that 1 cannot be reached
+else
+    upperbound = 1-eps(single(1));
+end
+x = min(upperbound,max(0,x)); 
 
 % scaling
 if n
@@ -169,6 +175,8 @@ if n
     else
         x = cast(n*x,outflag); % values between 0 and 2^nbit-1
     end
+elseif a==0 && b==1
+    % nothing to do
 else
     x = a + x*(b-a); % b cannot be reached
 end

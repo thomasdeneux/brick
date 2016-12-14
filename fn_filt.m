@@ -424,6 +424,7 @@ switch filtertype
         Wn = freqthr*2; % 1 <-> Nyquist
         switch type
             case 'l'
+                if ischar(N), N = str2double(N); end
                 [b a] = butter(N,Wn(1),'low');
                 y = filter(b,a,x,[],dim);
             case 'h'

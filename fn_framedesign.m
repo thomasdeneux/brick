@@ -108,11 +108,9 @@ if nargin>1
         end
         if isfield(pos,f)
             if strcmp(f,'hf')
-                % don't move the figure if it already has the appropriate
-                % size
-                set(grob.hf,'units','pixel')
-                curpos = get(grob.hf,'pos');
-                if curpos(3:4)==pos.hf(3:4), continue, end 
+                % do not move the figure, only resize it
+                fn_setfigsize(grob.hf,pos.hf(3:4))
+                continue
             end
             for i=1:min(size(pos.(f),1),numel(grob.(f)))
                 obji = grob.(f)(i);

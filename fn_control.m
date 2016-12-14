@@ -679,8 +679,11 @@ classdef fn_control < hgsetget
             n1 = 5 + [X.controls(idx).check]*15 + [X.controls(idx).n_name]*fw;
             n2 = 20 + [X.controls(idx).n_val]*fw;
             A0 = max(n0);   % width for name (controls without value)
+            if isempty(A0), A0=1; end
             A = max(n1);    % width for name (controls with value)
+            if isempty(A), A=1; end
             B = max(n2);    % width for value
+            if isempty(B), B=1; end
             
             % Position parameters 
             D = 5; E = 10;  % horizontal and vertical spacing

@@ -11,7 +11,7 @@ function p = fn_bootstrap(a,b,varargin)
 %           distributions to be compared (leave b empty for single
 %           distribution)
 % - mode    'mean' (default) or 'median'
-% - tail
+% - tail    'both' (default), 'left' or 'right'
 % - npermmax    maximum number of permutation [default: 2e5]
 %
 % This syntax is not definitive!!!
@@ -66,8 +66,14 @@ p = zeros(1,nx);
 idxx = 1:nx;
 
 % statistics for shuffled data
-nabove = zeros(1,nx); % number of times the statistic for shuffled data was above that for real data
-nbelow = zeros(1,nx); % number of times the statistic for shuffled data was below that for real data
+doabove = ~strcmp(tail,'left');
+if doabove
+    nabove = zeros(1,nx); % number of times the statistic for shuffled data was above that for real data
+end
+dobelow = ~strcmp(tail,'right');
+if dobelow
+    nbelow = zeros(1,nx); % number of times the statistic for shuffled data was below that for real data
+end
 rng(0,'twister') % make results repeatable
 
 checkups = 10.^(2:floor(log10(npermmax)));
@@ -88,8 +94,8 @@ while nperm<checkups(end)
         data1 = data; data1(sub,:) = -data(sub,:);
         stat = fun(data1);
     end
-    nabove = nabove + (stat>=stat0);
-    nbelow = nbelow + (stat<=stat0);
+    if doabove, nabove = nabove + (stat>=stat0); end
+    if dobelow, nbelow = nbelow + (stat<=stat0); end
     if any(nperm==checkups)
         switch tail
             case 'right'

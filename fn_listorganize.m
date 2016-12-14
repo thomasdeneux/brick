@@ -44,7 +44,7 @@ fn_controlpositions(u,hf,[1 1 0 0],[-(W+D) -5*H W H])
 
 u = uicontrol('string','add...','parent',hf,'callback',@(u,e)action('add'));
 fn_controlpositions(u,hf,[1 1 0 0],[-(W+D) -7*H W H])
-u = uicontrol('string','remove','parent',hf,'callback',@(u,e)action('remove'));
+u = uicontrol('string','delete','parent',hf,'callback',@(u,e)action('remove'));
 fn_controlpositions(u,hf,[1 1 0 0],[-(W+D) -8*H W H])
 
 ok = uicontrol('string','OK','parent',hf,'callback',@(u,e)delete(u));

@@ -10,7 +10,7 @@ classdef interactivePolygon < hgsetget
         ninterp = 20;
         points2                 % interpolated points
     end
-    properties (SetAccess = 'private')
+    properties (Access = 'private')
         hf
         ha
         hl          % handle points
@@ -20,7 +20,7 @@ classdef interactivePolygon < hgsetget
     methods
         function P = interactivePolygon(varargin)
             % Input -> set properties
-            pp = [];
+            doedit = true;
             i = 0;
             while i<nargin
                 i = i+1;
@@ -36,6 +36,8 @@ classdef interactivePolygon < hgsetget
                         case 'points'
                             i = i+1;
                             P.points = varargin{i};
+                        case 'noedit'
+                            doedit = false;
                         otherwise
                             error argument
                     end
@@ -86,11 +88,14 @@ classdef interactivePolygon < hgsetget
             P.hl2(2) = [];
             
             % Enable edition
-            set(P.hl,'hittest','on','buttondownfcn',@(u,e)editPoints(P,'move/remove'))
-            set(P.hl2,'hittest','on','buttondownfcn',@(u,e)editPoints(P,'add'))
+            if doedit
+                set(P.hl,'hittest','on','buttondownfcn',@(u,e)editPoints(P,'move/remove'))
+                set(P.hl2,'hittest','on','buttondownfcn',@(u,e)editPoints(P,'add'))
+            end
         end
         function delete(P)
-            delete([P.hl P.hl2])
+            delete(P.hl(ishandle(P.hl)))
+            delete(P.hl2(ishandle(P.hl2)))
         end
         function editPoints(P,flag)
             p = get(P.ha,'currentpoint'); p = p(1,1:2)';
@@ -130,8 +135,10 @@ classdef interactivePolygon < hgsetget
             end
         end
         function p = getPoint(P)
-            set(P.ha,'buttondownfcn',@(u,e)set(P.ha,'buttondownfcn',''))
-            waitfor(P.ha,'buttondownfcn')
+            curfcn = get(P.hf,'WindowButtonDownFcn');
+            set(P.hf,'WindowButtonDownFcn',@(u,e)set(P.hf,'WindowButtonDownFcn',''))
+            waitfor(P.hf,'WindowButtonDownFcn')
+            set(P.hf,'WindowButtonDownFcn',curfcn)
             p = get(P.ha,'currentpoint');
             p = p(1,1:2)';
             if nargout==0, clear p, end
@@ -166,6 +173,16 @@ classdef interactivePolygon < hgsetget
                 xx = 1:dx:size(pp,2);
             end
             P.points2 = interp1(pp',xx,P.interpmode)';
+        end
+        function stacktop(P)
+            uistack([P.hl P.hl2],'top')
+        end
+    end
+    
+    methods (Static)
+        function poly = drawpoly(varargin)
+            P = interactivePolygon('noedit',varargin{:});
+            poly = P.points;
         end
     end
     

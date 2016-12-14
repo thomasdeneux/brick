@@ -13,6 +13,7 @@ classdef pixelposwatcher < handle
         newgraphics
         hobj
         isfig
+        istext
         parent
         hlistparentsize
     end
@@ -34,7 +35,8 @@ classdef pixelposwatcher < handle
                 return
             end
             % check Matlab version 
-            PP.newgraphics = fn_matlabversion('newgraphics');
+            PP.istext = strcmp(get(hobj,'type'),'text');
+            PP.newgraphics = fn_matlabversion('newgraphics') && ~PP.istext;
             setappdata(hobj,'pixelposwatcher',PP)
             PP.hobj = hobj;
             PP.isfig = strcmp(get(hobj,'type'),'figure');
@@ -90,6 +92,10 @@ classdef pixelposwatcher < handle
                         inchpos = pos / fn_switch(get(PP.hobj,'units'),'inches',1,'points',72);
                         newpos = inchpos * get(0,'ScreenPixelsPerInch');
                         newpos(1:2) = newpos(1:2)+1;
+                    case 'data'
+                        pos = get(PP.hobj,'pos'); if PP.istext, pos(3:4) = 0; end
+                        ax = reshape(axis(get(PP.hobj,'parent')),2,2);
+                        newpos = (pos-ax(1,[1 2 1 2]))./(diff(ax(:,[1 2 1 2]))).*parentpos([3 4 3 4]) + [1 1 0 0];
                     otherwise
                         oldunit = get(PP.hobj,'units');
                         set(PP.hobj,'units','pixel')
@@ -98,9 +104,11 @@ classdef pixelposwatcher < handle
                 end
                 recpos = newpos; recpos(1:2) = recpos(1:2)+parentpos(1:2);
             end
+            if PP.istext, newpos(3:4) = 0; end
             if isequal(recpos,PP.pixelposrecursive)
                 return
             end
+            %disp([get(PP.hobj,'type') num2str(floor(PP.hobj)) ' [' num2str(PP.pixelpos) '] -> [' num2str(newpos) ']'])
             chgsize = any(newpos(3:4)~=PP.pixelpos(3:4));
             PP.pixelpos = newpos;
             PP.pixelposrecursive = recpos;

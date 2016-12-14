@@ -145,36 +145,45 @@ switch type
             end
             varargout = {rect};
         end
-    case {'poly' 'spline'}
+    case 'poly'
         if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
         selectiontype = get(hf,'selectionType');
-        p = get(ha,'currentpoint');
-        info = fn_pointer('xi',p(1,1),'yi',p(1,2));
-        [xi,yi] = fn_getline(ha,openline);                   % return figure units
-        if doescape && ~strcmp(get(hf,'selectionType'),selectiontype)
-            % another key was pressed -> escape
-            waitforbuttonup(hf)
-            varargout = {[]};
-            return
+        
+        p = get(ha,'currentpoint'); p = p(1,1:2);
+        pp = fn_pointer([p(1); p(2)]);
+        hl(1) = line(pp.x(1,:),pp.x(2,:),'parent',ha,'hittest','off', ...
+            'color','k');
+        hl(2) = line(pp.x(1,:),pp.x(2,:),'parent',ha,'hittest','off', ...
+            'color','w','linestyle',':');
+        set(hf,'WindowButtonMotionFcn',@(u,e)updateLine(ha,hl,pp))
+        while true
+            pp.x = pp.x(:,[1:end end]); % add a new point
+            getPoint(hf,ha)
+            if strcmp(get(hf,'SelectionType'),'open')
+                pp.x = pp.x(:,1:end-1); % last added point is not valid
+                break
+            elseif doescape && ~strcmp(get(hf,'selectionType'),selectiontype)
+                % another key was pressed -> escape
+                set(hf,'WindowButtonMotionFcn','')
+                delete(hl)
+                varargout = {[]};
+                return
+            end
         end
-        x = [xi yi];
-        if showselection,
-            if openline, back=[]; else back=1; end
-            oldnextplot=get(ha,'NextPlot'); set(ha,'NextPlot','add')
-            plot(x([1:end back],1),x([1:end back],2),'k-'),
-            plot(x([1:end back],1),x([1:end back],2),'w:'),
-            set(ha,'NextPlot',oldnextplot)
+        set(hf,'WindowButtonMotionFcn','')        
+        x = pp.x;
+        if showselection
+            if ~openline
+                set(hl,'xdata',x(1,[1:end 1]),'ydata',x(2,[1:end 1]))
+            end
+        else
+            delete(hl)
         end
         if dointerp
-            f = find(mode==':'); f = [f length(mode)+1];
-            ds = str2num(mode(f(1)+1:f(2)-1));
-            if ~openline, x(end+1,:)=x(1,:); end
-            ni = size(x,1);
-            L = zeros(ni-1,1);
-            for i=2:ni, L(i) = L(i-1)+norm(x(i,:)-x(i-1,:)); end
-            if ~isempty(L), x = interp1(L,x,0:ds:L(end)); end
+            x = interpPoly(x,mode);
         end
-        varargout={x'};
+        
+        varargout={x};
     case 'free'
         if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
         selectiontype = get(hf,'selectionType');
@@ -182,7 +191,7 @@ switch type
         hl(1) = line(p(1,1),p(1,2),'color','k','linestyle','-','parent',ha);
         hl(2) = line(p(1,1),p(1,2),'color','w','linestyle',':','parent',ha);
         fn_buttonmotion({@freeform,ha,hl},hf)
-        x = [get(hl(1),'xdata')' get(hl(2),'ydata')'];
+        x = [get(hl(1),'xdata'); get(hl(2),'ydata')];
         delete(hl)
         if doescape && ~strcmp(get(hf,'selectionType'),selectiontype)
             % another key was pressed -> escape
@@ -193,20 +202,14 @@ switch type
         if showselection,
             if openline, back=[]; else back=1; end
             oldnextplot=get(ha,'NextPlot'); set(ha,'NextPlot','add')
-            plot(x([1:end back],1),x([1:end back],2),'k-','parent',ha),
-            plot(x([1:end back],1),x([1:end back],2),'w:','parent',ha),
+            plot(x(1,[1:end back]),x(2,[1:end back]),'k-','parent',ha),
+            plot(x(1,[1:end back]),x(2,[1:end back]),'w:','parent',ha),
             set(ha,'NextPlot',oldnextplot)
         end
         if dointerp
-            f = find(mode==':'); f = [f length(mode)+1];
-            ds = str2double(mode(f(1)+1:f(2)-1));
-            if ~openline, x(end+1,:)=x(1,:); end
-            ni = size(x,1);
-            L = zeros(ni-1,1);
-            for i=2:ni, L(i) = L(i-1)+norm(x(i,:)-x(i-1,:)); end
-            if ~isempty(L), x = interp1(L,x,0:ds:L(end)); end
+            x = interpPoly(x,mode);
         end
-        varargout={x'};
+        varargout={x};
     case {'ellipse' 'ring'}
         if doescape, warning 'escape option is not valid for types ''ellipse'' and ''ring''', end
         if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
@@ -226,7 +229,7 @@ switch type
             info.flag = 'ring';
             fn_buttonmotion({@drawellipse,ha,hl,info},hf)
         end
-        x = [get(hl(1),'xdata')' get(hl(1),'ydata')'];
+        x = [get(hl(1),'xdata'); get(hl(1),'ydata')];
         ax = info.axis;
         u = (ax(:,2)-ax(:,1))/2;
         center = mean(ax,2);
@@ -235,22 +238,17 @@ switch type
         delete(hl)
         if showselection,
             oldnextplot=get(ha,'NextPlot'); set(ha,'NextPlot','add')
-            plot(x(1:end,1),x(1:end,2),'k-','parent',ha),
-            plot(x(1:end,1),x(1:end,2),'w:','parent',ha),
+            plot(x(1,1:end),x(2,1:end),'k-','parent',ha),
+            plot(x(1,1:end),x(2,1:end),'w:','parent',ha),
             set(ha,'NextPlot',oldnextplot)
         end
         if dointerp
-            f = find(mode==':'); f = [f length(mode)+1];
-            ds = str2double(mode(f(1)+1:f(2)-1));
-            ni = size(x,1);
-            L = zeros(ni-1,1);
-            for i=2:ni, L(i) = L(i-1)+norm(x(i,:)-x(i-1,:)); end
-            if ~isempty(L), x = interp1(L,x,0:ds:L(end)); end
+            x = interpPoly(x,mode);
         end
         switch nargout
             case {0 1}
                 if dointerp
-                    varargout = {x'};
+                    varargout = {x};
                 else
                     varargout = {value};
                 end
@@ -318,6 +316,24 @@ function data=drawline(ha,hl,p1)
 p2 = get(ha,'currentpoint');
 data = [p1(:) p2(1,1:2)'];
 set(hl,'xdata',data(1,:),'ydata',data(2,:))
+drawnow update
+
+%-------------------------------------------------
+function p = getPoint(hf,ha)
+
+set(hf,'windowbuttondownfcn',@(u,e)set(hf,'windowbuttondownfcn',''))
+waitfor(hf,'windowbuttondownfcn')
+p = get(ha,'currentpoint');
+p = p(1,1:2)';
+if nargout==0, clear p, end
+
+%-------------------------------------------------
+function updateLine(ha,hl,pp)
+
+p = get(ha,'currentpoint');
+p = p(1,1:2)';
+pp.x(:,end) = p;
+set(hl,'xdata',pp.x(1,:),'ydata',pp.x(2,:))            
 drawnow update
 
 %-------------------------------------------------
@@ -429,10 +445,10 @@ ydata = o(2) + u(2)*udata + v(2)*vdata;
 set(hl,'xdata',xdata,'ydata',ydata)
 drawnow update
 
-%---
+%-------------------------------------------------
 function waitforbuttonpressmsg(ha,msg)
 
-hf = get(ha,'parent');
+hf = fn_parentfigure(ha);
 
 %if isempty(msg), waitfor(hf,'windowbuttondownfcn',''), return, end
 
@@ -453,16 +469,26 @@ set(hf,'windowbuttonmotionfcn',@(f,evnt)movesub(ha,t,dd), ...
 waitfor(hf,'windowbuttondownfcn','')
 if ishandle(t), delete(t), end
 
-%---
+%-------------------------------------------------
 function waitforbuttonup(hf)
 
 set(hf,'windowbuttonupfcn',@(h,e)set(hf,'windowbuttonupfcn',''))
 waitfor(hf,'windowbuttonupfcn','')
 
-%---
+%-------------------------------------------------
 function movesub(ha,t,dd)
 
 p = get(ha,'currentpoint'); p=p(1,1:2);
 for i=1:length(t), set(t(i),'position',p(1:2)'+dd(:,i)), end
 drawnow update
 
+%-------------------------------------------------
+function x = interpPoly(x,mode)
+
+f = find(mode==':');
+ds = str2double(mode(f(1)+1:end));
+if ~openline, x(:,end+1)=x(:,1); end
+np = size(x,2);
+L = zeros(1,np);
+for i=2:np, L(i) = L(i-1)+norm(x(i,:)-x(i-1,:)); end
+if ~isempty(L), x = interp1(L,x,0:ds:L(end)); end

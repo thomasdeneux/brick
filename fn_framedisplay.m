@@ -59,7 +59,7 @@ while karg<length(varargin)
                 axesflag = a;
             case {'axisnormal' 'normalaxis'}
                 doaxisratio = false;
-            case 'in'
+            case {'in' 'parent'}
                 in = varargin{karg+1};
                 karg = karg+1;
             case 'ncol'
@@ -196,7 +196,7 @@ end
 if nc==1
     if isempty(clip), clip = '2SD'; end
     clip = fn_clip(data,clip,'getrange');
-    if ~diff(clip), clip = clip+[-.5 .5]; end
+    if any(isnan(clip)), clip = [-1 1]; elseif ~diff(clip), clip = clip+[-.5 .5]; end
 end
 
 % create axes
@@ -269,12 +269,12 @@ elseif any(nt==1)
     nfr = nt;
     % update frame ticks
     if isnumeric(tt) && isvector(tt) && ~any(diff(tt,2))
-        dt = diff(tt(1:2));
+        if isscalar(tt), dt = 0; else dt = diff(tt(1:2)); end
         t1 = (1:ncol)*dt;
-        t2left = (tt(1)-.5*dt)+(0:nrow)*(dt*ncol); % times at the left of each row
+        t2left = (tt(1)-.5*dt)+(0:nrow-1)*(dt*ncol); % times at the left of each row
         t2center = t2left + .5*(dt*ncol); % times at the center of each row
         t2 = t2center;
-    elseif ~isempty(tt)
+    elseif ~isempty(tt) % non-numeric, or non equally spaced
         t1 = [];
         t2 = tt(1:ncol:end);
     end
@@ -310,7 +310,7 @@ if fn_ismemberstr(axesflag,{'singleaxes' 'output'})
         defval = false;
     else
         m = min(data(:)); M = max(data(:));
-        if any(isnan(data(:)))
+        if isempty(data) || any(isnan(data(:)))
             defval = NaN;
         elseif m<=0 && M>=0
             defval = 0;
@@ -334,7 +334,9 @@ if fn_ismemberstr(axesflag,{'singleaxes' 'output'})
     end
     
     % display and add lines to separate frames
-    if dodisplay
+    if dodisplay && isempty(data)
+        cla(ha)
+    elseif dodisplay
         if isempty(t1) || isscalar(t1) || ~isnumeric(t1) || any(diff(diff(t1))), xscale = [1 1]; else xscale = [t1(1) diff(t1(1:2))]; end
         if isempty(t2) || isscalar(t2) || ~isnumeric(t2) || any(diff(diff(t2))), yscale = [1 1]; else yscale = [t2(1) diff(t2(1:2))]; end
         xlim = xscale(1) + xscale(2)*([0 ncol-1] + [-1 1]*(nx-1)/(2*nx));

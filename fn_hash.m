@@ -45,10 +45,37 @@ for i=1:length(varargin)
 end
 
 if isempty(inp), inp = class(inp); end
-if isnumeric(inp) || islogical(inp) || ischar(inp)
-    h = hash(inp,meth);
+inp = flatten(inp);
+h = hash(inp,meth);
+
+% crop to n digits
+if n, h = h(1:n); end
+
+% convert output
+switch outtype
+    case 'hexa'
+        % nothing to do
+    case 'HEXA'
+        h = upper(h);
+    case 'char'
+        f = (h>='0' & h<='9');
+        h(f) = h(f)-'0'+'A';
+        h(~f) = h(~f)-'a'+'K';
+    case 'num'
+        h = hex2dec(h);
+end
+
+%---
+function inp = flatten(inp)
+% transform any Matlab variable to a row vector of uint8
+
+inp = row(inp);
+if ischar(inp) || islogical(inp)
+    inp=uint8(inp);
+elseif isnumeric(inp)
+    inp=typecast(inp,'uint8');
 else
-    % transform object into cell array with numeric / character type elements
+    % convert variable to cell array
     if isstruct(inp)
         inp = orderfields(struct(inp));
         F = fieldnames(inp);
@@ -72,30 +99,12 @@ else
     end
     C = cat(1,C,{class(inp); size(inp)});
     
-    % hash each element of the cell array
-    h = cell(1,numel(C));
+    % flatten each element of the cell array
     for i=1:numel(C)
-        h{i} = fn_hash(C{i},meth);
+        C{i} = flatten(C{i});
     end
     
-    % hash the concatenation of all hash results
-    h = hash([h{:}],meth);
-end
-
-% crop to n digits
-if n, h = h(1:n); end
-
-% convert output
-switch outtype
-    case 'hexa'
-        % nothing to do
-    case 'HEXA'
-        h = upper(h);
-    case 'char'
-        f = (h>='0' & h<='9');
-        h(f) = h(f)-'0'+'A';
-        h(~f) = h(~f)-'a'+'K';
-    case 'num'
-        h = hex2dec(h);
+    % concatenate
+    inp = [C{:}];
 end
 

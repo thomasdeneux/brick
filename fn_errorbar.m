@@ -11,8 +11,6 @@ function hl = fn_errorbar(varargin)
 % same for different conditions)
 %
 % flag can be 'lines' [default], 'bar', 'thinbar', 'patch' or 'xerror'
-%
-% uses bar display instead of plot if 'bar' flag is specified
 
 % Thomas Deneux
 % Copyright 2006-2012
@@ -40,7 +38,7 @@ end
 ha = [];
 for i=1:length(opt)-1
     if ischar(opt{i}) && strcmp(opt{i},'parent')
-        ha = opt{i+1};
+        ha = opt{i+1}; break
     end
 end
 if isempty(ha), ha = gca; end
@@ -97,7 +95,11 @@ switch flag
         if isscalar(x)
             dx = 0;
         else
-            xdensity = fn_switch(fn_matlabversion('newgraphics'),ny/(ny+1.5),.8);
+            if fn_matlabversion('newgraphics') && ny<=5
+                xdensity = ny/(ny+1.5);
+            else
+                xdensity = .8;
+            end
             dx = (x(2)-x(1)) / ny * xdensity;
         end
         xdispatch = dx * (-(ny-1)/2 + (0:ny-1));
@@ -141,7 +143,8 @@ switch flag
             fn_set(hl{1}(k),opt{:})
         end
         for k=1:n
-            hl{2}(k) = line(x,y(:,k),'color',cols(k,:),'parent',ha);
+            kc = 1+mod(k-1,ncol);
+            hl{2}(k) = line(x,y(:,k),'color',cols(kc,:),'parent',ha);
             fn_set(hl{2}(k),opt{:})
         end
     case 'xerror'

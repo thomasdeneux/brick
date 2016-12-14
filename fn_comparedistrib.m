@@ -1,5 +1,5 @@
-function p = fn_comparedistrib(x,y,method,varargin)
-% function [pval =] fn_comparedistrib(x,y[,test][,'tail','left|right|both'][,'showmean'])
+function [p hl] = fn_comparedistrib(x,y,method,varargin)
+% function [pval hl] = fn_comparedistrib(x,y[,test][,'tail','left|right|both'][,'showmean'])
 %---
 % Perform any of 'ranksum', 'signrank' or 'signtest' test and display the
 % data and p-value.
@@ -52,24 +52,24 @@ if dualdisplay
     alldata = [row(x) row(y)];
     if strcmp(method,'ranksum')
         xx = [ones(1,length(x)) 2*ones(1,length(y))];
-        plot(xx,alldata,'o','color',[1 1 1]*.6) % no connecting lines
+        hl{1} = plot(xx,alldata,'o','color',[1 1 1]*.6); % no connecting lines
     else
-        plot(1:2,[row(x); row(y)],'color',[1 1 1]*.6,'marker','o') % connecting lines
+        hl{1} = plot(1:2,[row(x); row(y)],'color',[1 1 1]*.6,'marker','o'); % connecting lines
     end
     if showmean
         line(1:2,[nmean(x) nmean(y)],'color','b')
     end
     switch method
         case 'ranksum'
-            line(1:2,[nmedian(x) nmedian(y)],'color','k','linestyle','none','marker','*')
-            line(1:2,[nmedian(x) nmedian(y)],'color','k','linewidth',2)
+            hl{2}(1) = line(1:2,[nmedian(x) nmedian(y)],'color','k','linestyle','none','marker','*');
+            hl{2}(2) = line(1:2,[nmedian(x) nmedian(y)],'color','k','linewidth',2);
         otherwise
             % show individual medians, but also a slope indicating the
             % median difference (which is different from the difference
             % of the medians!)
-            line(1:2,[nmedian(x) nmedian(y)],'color','k','marker','*','linestyle','none')
+            hl{2}(1) = line(1:2,[nmedian(x) nmedian(y)],'color','k','marker','*','linestyle','none');
             yl = mean([nmedian(x) nmedian(y)])+[-.5 .5]*nmedian(y-x);
-            line(1:2,yl,'color','k','linewidth',2)
+            hl{2}(2) = line(1:2,yl,'color','k','linewidth',2);
     end
     m = min(alldata); M = max(alldata);
     set(gca,'xlim',xlim,'ylim',m+[-.1 1.3]*(M-m))

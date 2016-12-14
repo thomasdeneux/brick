@@ -1,21 +1,27 @@
-function fn_savefig(varargin)
-% function fn_savig([hf][,fname][,options...])
+function out = fn_savefig(varargin)
+% function fn_savig([hobj][,fname][,options...])
+% function im = fn_savig([hobj][,options...])
 %---
 % Save an image of one or several figure(s). Large number of options
 % are available. 
 % If function is called with no argument, or only with hf, an interface is
 % displayed that lets user choose the saving options.
+% If an output is requested, this forces 'capture' method and no file is
+% saved.
 % 
 % Input:
-% - hf          vector of figure handles [default: current figure]
+% - hobj        vector of figure handles [default: current figure], or axes
+%               handle ('capture' method only)
 % - fname       char array or cell array - file name(s) [default: prompt
-%               user] 
+%               user]
+%               if 'show', show captured image in new figure instead (of
+%               saving); if 'clipboard', copies to clipboard instead
 % - 'askname' or 'autoname'     prompt or do not prompt user for figure
 %               name, but build an automatic name, inside folder
 %               fn_cd('capture') [default]
-% - format      'png', 'bmp', 'jpg', 'eps', 'ps' or 'fig', or a cell array with
-%               several formats [default: inferred from file name, or 'png'
-%               if file name has no extension]
+% - format      'png', 'bmp', 'jpg', 'svg', 'eps', 'ps' or 'fig', or a cell
+%               array with several formats [default: inferred from file
+%               name, or 'png' if file name has no extension]
 % - 'capture' or 'savefig'  capture method: 'capture' [default unless a
 %               vector format is requested] uses Matlab function 
 %               getframe to capture an image which is saved to a file
@@ -29,7 +35,6 @@ function fn_savefig(varargin)
 % - rectangle   a 4-element vector defining the sub-part of the figure to
 %               save ('capture' method only)
 % - 'content'   cut image to remove white sides ('capture' method only)
-% - 'show' or 'showonly'    show the captured image in a new figure
 % - scaling     a scalar that defines by how much to scale the figure
 %               compared to screen display ('savefig' method only)
 % - 'append', 'append+pdf' or 'ps2pdf'  append to file (ps file only) and
@@ -52,10 +57,10 @@ if nargin==0 || (nargin==1 && all(fn_isfigurehandle(varargin{1})))
         'autoname',     {true       'logical'   'auto figure name'}, ...
         'method',       {''         {'' 'capture' 'save figure'} 'method'}, ...
         'subframe',     {'full image' {'full image' 'select sub-rectangle' 'remove white sides'} 'cut image (''capture'' only)'}, ...
-        'show',         {'save only' {'save only' 'show only' 'save and show'} 'show in new figure (''capture'' only)?'}, ...
+        'output',       {'save to file' {'save to file' 'copy to clipboard' 'show in new figure'} 'output'}, ... % option 'output' also exists
         'scaling',      {[]         'xdouble'    'scaling (''save figure'' only)'}, ...
         ... 'invertcolor',  {false      'logical'   'white background (''save figure'' only)'}, ...
-        'format',       {'png'      {'png' 'jpg' 'eps' 'ps' 'pdf' 'fig'} 'file format'}, ...
+        'format',       {'png'      {'png' 'jpg' 'svg' 'eps' 'ps' 'pdf' 'fig'} 'file format'}, ...
         'append',       {'no'       {'no' 'append' 'append+pdf'} 'append (ps file only)'} ...
         );
     s = fn_structedit(s);
@@ -66,12 +71,19 @@ if nargin==0 || (nargin==1 && all(fn_isfigurehandle(varargin{1})))
     s.format = {s.format};
     if strcmp(s.method,'save figure'), s.method = 'savefig'; end
     rect = {};
+    switch s.output
+        case 'copy to clipboard'
+            fname = {'clipboard'};
+        case 'show in new figure'
+            fname = {'show'};
+    end
+    s = rmfield(s,'output');
 else
     hfig = []; doax = false;
     fname = {};
     rect = {};
     s = struct('autoname',false,'method','','subframe','full image', ...
-        'show','save only','scaling',[],'format',{{}},'invertcolor',[],'append','no');
+        'scaling',[],'format',{{}},'invertcolor',[],'append','no');
     k = 0;
     while k<length(varargin)
         k = k+1;
@@ -81,7 +93,8 @@ else
         elseif isscalar(a) && ishandle(a) && strcmp(get(a,'type'),'axes')
             doax = true;
             ha = a;
-            if ~isempty(hfig), error argument, end
+            if ~isempty(hfig), error 'cannot specify an axes handle if some figure handle(s) was already specified', end
+            hfig = fn_parentfigure(ha);
         elseif isempty(hfig) && ~doax && all(fn_isfigurehandle(a))
             hfig = a;
         elseif isnumeric(a) && isempty(s.scaling)
@@ -93,7 +106,7 @@ else
             hfig = [hfig s.scaling]; %#ok<AGROW>
             s.scaling = a;
         elseif iscell(a)
-            if fn_ismemberstr(a{1},{'png' 'bmp' 'jpg' 'eps' 'ps' 'pdf' 'fig'})
+            if fn_ismemberstr(a{1},{'png' 'bmp' 'jpg' 'svg' 'eps' 'ps' 'pdf' 'fig'})
                 s.format = lower(a);
             else
                 fname = a;
@@ -114,16 +127,17 @@ else
                 s.subframe = 'select sub-rectangle';
             elseif strcmp(a,'content')
                 s.subframe = 'remove white sides';
-            elseif fn_ismemberstr(a,{'show' 'showonly'})
-                s.show = a;
-            elseif fn_ismemberstr(a,{'png' 'bmp' 'jpg' 'eps' 'ps' 'pdf' 'fig'})
+            elseif fn_ismemberstr(a,{'showonly' 'show only'})
+                disp 'warning: ''showonly'' or ''show only'' flags are obsolete, use ''show'' instead'
+                fname{end+1} = 'show'; %#ok<AGROW>
+            elseif fn_ismemberstr(a,{'png' 'bmp' 'jpg' 'svg' 'eps' 'ps' 'pdf' 'fig'})
                 s.format{end+1} = lower(a);
             elseif fn_ismemberstr(a,{'append','append+pdf','ps2pdf'})
                 s.append = a;
             elseif any(a==',')
                 % formats separated by commas
                 tmp = fn_strcut(a,', ');
-                if ~all(ismember(tmp,{'png' 'bmp' 'jpg' 'eps' 'ps' 'pdf' 'fig'}))
+                if ~all(ismember(tmp,{'png' 'bmp' 'jpg' 'svg' 'eps' 'ps' 'pdf' 'fig'}))
                     disp(['interpreting ''' a ''' as a file name'])
                     fname{end+1} = a; %#ok<AGROW>
                 else
@@ -138,16 +152,19 @@ else
             error argument
         end
     end
+    if nargout>=1
+        fname{end+1} = 'output';
+    end
 end
 % (figure(s))
-if isempty(hfig) && ~doax, hfig = gcf; end
-nfig = length(hfig) + doax;
-if doax, hfig = fn_parentfigure(ha); end
+if isempty(hfig), hfig = gcf; end
+nfig = length(hfig);
 % (file names)
-if strcmp(s.show,'showonly')
-    % no need for file names
-elseif ~isempty(fname)
-    if length(fname)~=nfig
+if ~isempty(fname)
+    if ~isscalar(fname) && nfig==1
+        nfig = length(fname);
+        hfig = repmat(hfit,1,nfig);
+    elseif length(fname)~=nfig
         error 'number of file names does not match number of figures';
     end
 elseif s.autoname
@@ -157,52 +174,56 @@ else
     fname = cell(1,nfig);
     for k=1:nfig
         fname{k} = fn_savefile( ...
-            '*.png;*.PNG;*.bmp;*.BMP;*.jpg;*.JPG;*.eps;*.EPS;*.ps;*.PS;*.pdf;*.PDF;*.fig;*.FIG', ...
+            '*.png;*.PNG;*.bmp;*.BMP;*.jpg;*.JPG;*.svg;*.SVG;*.eps;*.EPS;*.ps;*.PS;*.pdf;*.PDF;*.fig;*.FIG', ...
             ['Select file where to save figure ' figname(hfig(k))]);
         if ~fname{k}, return, end
     end
 end
-% (format)
-format = cell(1,nfig);
-if strcmp(s.show,'showonly')
-    [format{:}] = deal('');
-else
-    for k=1:nfig
-        [p base ext] = fileparts(fname{k});
-        fname{k} = fullfile(p,base); %#ok<AGROW>
-        if isempty(ext)
-            if isempty(s.format), format{k} = {'png'}; else format{k} = s.format; end
-        else
-            ext = lower(ext(2:end)); % remove the dot and use lower case
-            if ~isempty(s.format) && ~isequal(s.format,{ext})
-                %disp 'incompatible format definitions'
-                fname{k} = [fname{k} '.' ext]; %#ok<AGROW>
-                format{k} = s.format;
-            else
-                format{k} = {ext};
-            end
-        end
-    end
-end
-% (method)
-if any(ismember([format{:}],{'eps' 'ps' 'pdf' 'fig'})) || ~isempty(s.scaling)
-    if strcmp(s.method,'capture'), error '''capture'' cannot save vector format files or adjust the scaling', else s.method='savefig'; end
-end
-if ~strcmp(s.subframe,'full image') || ~strcmp(s.show,'save only') || doax
-    if strcmp(s.method,'savefig'), error '''savefig'' method cannot save a figure subpart', else s.method = 'capture'; end
-    if ~strcmp(s.subframe,'full image') && doax, error 'cannot select a subpart of an axes', end
-end
-if isempty(s.method), s.method = 'capture'; end
 
 % Save
 for k=1:nfig
-    if doax, hobj = ha; else hobj = hfig(k); end
-    formatk = format{k};
-    switch s.method
+    hfk = hfig(k);
+    fnamek = fname{k};
+    
+    % format
+    format = cell(1,nfig);
+    [p base ext] = fileparts(fnamek);
+    fbasek = fullfile(p,base);
+    dosavefile = ~ismember(fnamek,{'clipboard' 'show' 'output'});
+    if ~dosavefile
+        formatk = fnamek;
+    elseif isempty(ext)
+        if isempty(s.format), formatk = {'png'}; else formatk = s.format; end
+    else
+        ext = lower(ext(2:end)); % remove the dot and use lower case
+        if ~isempty(s.format) && ~isequal(s.format,{ext})
+            %disp 'incompatible format definitions'
+            fbasek = [fbasek '.' ext]; %#ok<AGROW>
+            formatk = s.format;
+        else
+            formatk = {ext};
+        end
+    end
+    
+    % determine method
+    method = s.method;
+    if ismember(formatk,{'svg' 'eps' 'ps' 'pdf' 'fig'}) || ~isempty(s.scaling)
+        if strcmp(method,'capture'), error '''capture'' cannot save vector format files or adjust the scaling', end
+        method = 'savefig';
+    end
+    if ismember(formatk,{'clipboard' 'show' 'output'}) || ~strcmp(s.subframe,'full image') || doax
+        if strcmp(method,'savefig'), error '''savefig'' method cannot save a figure subpart', end
+        if ~strcmp(s.subframe,'full image') && doax, error 'cannot select a subpart of an axes', end
+        method = 'capture';
+    end
+    if isempty(method), method = 'capture'; end
+    
+    % save image using specified method
+    switch method
         case 'savefig'
             % remove as many callbacks as possible, prepare uicontrols
-            if doax, error 'not implemented yet', end
-            state = preparefig(hobj,any(strcmp(formatk,'fig')));
+            if doax, error 'when saving only an axes, only ''capture'' method is available', end
+            state = preparefig(hfk,any(strcmp(formatk,'fig')));
             % add an axes to prevent ps2pdf bug on images
             if any(ismember(formatk,{'ps' 'pdf'}))
                 ha = findall(hfig(k),'tag','axes_for_ps2pdf_bug');
@@ -212,33 +233,31 @@ for k=1:nfig
                 uistack(ha,'bottom')
             end
             % change paperposition property
-            pos = fn_getpos(hobj,'inches'); % position in the screen
+            pos = fn_getpos(hfk,'inches'); % position in the screen
             if isempty(s.scaling), s.scaling = 1; end
             paperpos = [0 0 pos([3 4])*s.scaling];
-            set(hobj,'paperUnits','inches','paperposition',paperpos)     % keep the same image ratio
+            set(hfk,'paperUnits','inches','paperposition',paperpos)     % keep the same image ratio
             invertcolor = s.invertcolor;
             if isempty(invertcolor)
-                invertcolor = isempty(findall(hobj,'type','uicontrol'));
+                invertcolor = isempty(findall(hfk,'type','uicontrol'));
             end
-            set(hobj,'inverthardcopy',fn_switch(invertcolor))
+            set(hfk,'inverthardcopy',fn_switch(invertcolor))
             printflags = fn_switch(invertcolor,{},{'-loose'});
             for i=1:length(formatk)
-                % fnamei = [fname{k} '.' fn_switch(formatk{i},'pdf','ps',formatk{i})];   % [old: pdf through ps] 
-                % formatki = fn_switch(formatk{i},{'eps' 'ps' 'pdf'},'psc2',formatk{i}); % [old: pdf through ps] 
-                fnamei = [fname{k} '.' formatk{i}];                              % [new: pdf direct] 
+                fnamei = [fbasek '.' formatk{i}];                              % [new: pdf direct] 
                 formatki = fn_switch(formatk{i},{'eps' 'ps'},'psc2',formatk{i}); % [new: pdf direct]
                 if strcmp(formatki,'fig')
-                    saveas(hobj,fnamei)
+                    saveas(hfk,fnamei)
                 else
-                    if strcmp(formatk{i},'ps') && any(strfind(s.append,'append')) && exist([fname{k} '.ps'],'file')
+                    if strcmp(formatk{i},'ps') && any(strfind(s.append,'append')) && exist([fbasek '.ps'],'file')
                         printflags{end+1}='-append'; %#ok<AGROW>
                     end
                     if ~strcmp(s.append,'ps2pdf')
-                        print(hobj,fnamei,['-d' formatki],printflags{:})
+                        print(hfk,fnamei,['-d' formatki],printflags{:})
                     end
                     % if strcmp(formatk{i},'pdf') || (strcmp(formatk{i},'ps') && any(strfind(s.append,'pdf'))) % [old: pdf through ps] 
                     if strcmp(formatk{i},'ps') && any(strfind(s.append,'pdf')) % [new: pdf direct] 
-                        ps2pdf('psfile',[fname{k} '.ps'],'pdffile',[fname{k} '.pdf'], ...
+                        ps2pdf('psfile',[fbasek '.ps'],'pdffile',[fbasek '.pdf'], ...
                             'gspapersize',fn_strcat(paperpos(3:4),'x'),'deletepsfile',1,'verbose',0)
                     end
                 end
@@ -247,9 +266,11 @@ for k=1:nfig
             restorefig(state)
         case 'capture'
             if strcmp(s.subframe,'select sub-rectangle')
-                rect = {fn_figselection(hobj)};
+                rect = {fn_figselection(hfk)};
+            elseif doax
+                rect = {fn_pixelpos(ha,'recursive','strict')};
             end
-            im = getfield(getframe(hobj,rect{:}),'cdata');
+            im = getfield(getframe(hfk,rect{:}),'cdata');
             if strcmp(s.subframe,'remove white sides')
                 bg = im(1,1,:);
                 isbg = all(fn_eq(im,bg),3);
@@ -261,17 +282,23 @@ for k=1:nfig
                 % remove sides
                 im = im(2:end-1,2:end-1,:);
             end
-            if ~strcmp(s.show,'show only')
+            if dosavefile
                 for i=1:length(formatk)
-                    imwrite(im,[fname{k} '.' formatk{i}],formatk{i})
+                    imwrite(im,[fbasek '.' formatk{i}],formatk{i})
                 end
-            end
-            if ~strcmp(s.show,'save only')
-                [ny nx nc] = size(im); %#ok<ASGLU>
-                hfnew = figure; fn_setfigsize(hfnew,nx,ny);
-                axes('pos',[0 0 1 1]) 
-                image(im)
-                set(gca,'xtick',[],'ytick',[])
+            else 
+                switch formatk
+                    case 'show'
+                        [ny nx nc] = size(im); %#ok<ASGLU>
+                        hfnew = figure; fn_setfigsize(hfnew,nx,ny);
+                        axes('pos',[0 0 1 1])
+                        image(im)
+                        set(gca,'xtick',[],'ytick',[])
+                    case 'clipboard'
+                        imclipboard('copy',im)
+                    case 'output'
+                        out = permute(im,[2 1 3]);
+                end
             end
     end
 end
