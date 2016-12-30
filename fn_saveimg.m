@@ -9,6 +9,7 @@ function fn_saveimg(a,fname,varargin)
 
 if nargin<1, help fn_saveimg, return, end
 if nargin<2 || isempty(fname), fname=fn_savefile; end
+if isequal(fname,0), return, end
 
 clip = 'auto'; zoom = 1; cmap = []; delaytime = .1;
 k=0;

@@ -44,20 +44,15 @@ for k=1:length(varargin)
         errorval = a;
     end
 end
-if iscell(A) && ~isempty(mode)
-    error 'the ''columns'' or ''rows'' flags are not applicable on a cell array input'
-end
 
 % Handle mode
-if ~iscell(A)
-    switch mode
-        case ''
-            A = num2cell(A);
-        case 'columns'
-            A = num2cell(A,1);
-        case 'rows'
-            A = num2cell(A,2);
-    end
+switch mode
+    case ''
+        if ~iscell(A), A = num2cell(A); end
+    case 'columns'
+        A = num2cell(A,1);
+    case 'rows'
+        A = num2cell(A,2);
 end
 s = size(A);
 

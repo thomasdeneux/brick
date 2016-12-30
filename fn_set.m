@@ -79,17 +79,18 @@ if ~isstruct(x)
             error 'cell argument must be of a vector of length nfield or an array of size nobj x nfield'
         end
     end
-    % special case: color
-    icol = find(strcmp(f,'color'));
-    if length(icol)>1, error 'several ''color'' specifications', end
-    if ~isempty(icol) && nobj>1 && ~iscell(x{icol})
-        xi = x{icol};
-        if ischar(xi)
-            % e.g. fn_set([hl1 hl2],'color','br')
-            x{icol} = num2cell(xi);
-        elseif size(xi,1)>1
-            % e.g. fn_set([hl1 hl2],'color',[0 0 1; 1 0 0])
-            x{icol} = row(num2cell(xi,2));
+    % color: convert array to cell array
+    icol = fn_find(strfind(lower(f),'color')); % indices of field names containing 'color'
+    for i = icol
+        if nobj>1 && ~iscell(x{i})
+            xi = x{i};
+            if ischar(xi) && length(xi)==nobj && all(ismember(xi,'wkbrgmyc'))
+                % e.g. fn_set([hl1 hl2],'color','br')
+                x{i} = num2cell(xi);
+            elseif isnumeric(xi) && size(xi,1)==nobj
+                % e.g. fn_set([hl1 hl2],'color',[0 0 1; 1 0 0])
+                x{i} = row(num2cell(xi,2));
+            end
         end
     end
     % convert

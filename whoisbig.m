@@ -13,7 +13,7 @@ for k=1:length(varargin)
     if isequal(a,0)
         minsize = a;
     elseif ischar(a)
-        tokens = regexpi(a,'^([\d.]*)([KMG]{0,1})$','tokens');
+        tokens = regexpi(a,'^([\d.]*)([KMG]{0,1})B{0,1}$','tokens');
         if ~isempty(tokens)
             [n u] = deal(tokens{1}{:});
             minsize = fn_switch(isempty(n),1,str2double(n)) * 2^fn_switch(lower(u),'',0,'k',10,'m',20,'g',30);

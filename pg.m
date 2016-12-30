@@ -2,6 +2,7 @@ function pg(varargin)
 % function pg(prompt,i,max)
 % function pg(i,max)
 % function pg(i)
+% function pg('i')
 %---
 % this is a shortcut for using fn_progress: instead of initializing before
 % a loop with fn_progress(prompt,max), and then updating at each loop with
