@@ -3,6 +3,9 @@ function fn_exportvar(x)
 %---
 % Export data to a Matlab variable in base workspace
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Variable name
 ivar = 1;
 while evalin('base',['exist(''var' num2str(ivar) ''',''var'')']), ivar = ivar+1; end

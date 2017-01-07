@@ -35,7 +35,7 @@ function out = fn_framedisplay(varargin)
 % - ha      if axflax is 'multaxes', the output is the set of axes handles
 
 % Thomas Deneux
-% Copyright 2011-2012
+% Copyright 2011-2017
 
 if nargin==0, help fn_framedisplay, return, end
 % Input

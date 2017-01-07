@@ -25,7 +25,7 @@ function x = fn_imvect(x,mask,varargin)
 % See also fn_indices, fn_maskavg, fn_maskselect
 
 % Thomas Deneux
-% Copyright 20011-2017
+% Copyright 2011-2017
 
 if nargin==0, help fn_imvect, return, end
 

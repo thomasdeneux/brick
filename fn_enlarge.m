@@ -19,6 +19,9 @@ function data=fn_enlarge(data,varargin)
 %               in extra space in case that new size is not a perfect
 %               multiple of the original size [default: NaN]
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Note that the function guesses whether to interpret its second argument
 % as 'fact' or 'size'. It chooses 'size' if all elements of the vector are
 % larger than the size of data in the corresponding dimensions.

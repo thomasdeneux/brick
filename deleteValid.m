@@ -5,6 +5,9 @@ function deleteValid(varargin)
 %
 % See also disableListener
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 for i=1:nargin
     obj = varargin{i};
     if isempty(obj), return, end

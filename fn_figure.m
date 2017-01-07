@@ -5,6 +5,9 @@ function hf = fn_figure(name,varargin)
 % or return an existing figure handle depending on whether a figure with
 % this name already exists
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if isnumeric(name)
     if ishandle(name)
         hf = name;

@@ -11,6 +11,9 @@ function hl = fn_circle(x,y,r,varargin)
 % 
 % See also fn_drawpoly
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 n = unique([numel(x),numel(y),numel(r)]);
 if ~isscalar(n)

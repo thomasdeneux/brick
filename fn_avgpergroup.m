@@ -22,6 +22,9 @@ function [averages nrep] = fn_avgpergroup(data,conds,dim,nrepmax)
 %
 % See also fn_arrangepercond
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % sizes
 s = size(data);
 if isvector(data) && nargin<3, dim = find(s~=1); end

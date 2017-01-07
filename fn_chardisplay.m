@@ -9,7 +9,7 @@ function [out errormsg] = fn_chardisplay(varargin)
 % 
 
 % Thomas Deneux
-% Copyright 20013-2013
+% Copyright 2013-2017
 
 if nargin==0, help fn_chardisplay, return, end
 

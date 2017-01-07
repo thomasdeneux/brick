@@ -13,7 +13,7 @@ function fn_controlpositions(hu,hp,posrel,pospix)
 % - pospix  position in pixels to add to 'posrel' and size of control
 
 % Thomas Deneux
-% Copyright 2008-2013
+% Copyright 2008-2017
 
 if nargin==0, help fn_controlpositions, return, end
 

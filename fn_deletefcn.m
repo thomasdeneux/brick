@@ -4,6 +4,9 @@ function fn_deletefcn(hu,deletefcn)
 % Set the 'DeleteFcn' property of a graphic object in such a way that
 % several functions can be executed upon its deletion.
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if ishandle(hu)
     
     if isappdata(hu,'fn_deletefcn')

@@ -4,7 +4,7 @@ function i = fn_localmax(x)
 % find local maxima in vector x (cannot be extremities)
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 if nargin==0, help fn_localmax, return, end
 

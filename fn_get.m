@@ -16,7 +16,7 @@ function varargout = fn_get(h,varargin)
 % See also fn_set
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 if nargin==0, help fn_get, return, end
 

@@ -3,6 +3,9 @@ function [subframe hdeco] = fn_figselection(hf)
 %---
 % Select a rectangle area inside a figure
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 if nargin==0, hf = gcf; end
 

@@ -14,6 +14,9 @@ function p = fn_chi2indenpendencetest(table)
 % enough.
 % See http://stattrek.com/statistics/dictionary.aspx?definition=Chi-square%20test%20for%20independence
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 [nx ny] = size(table);
 
 % total number of observations

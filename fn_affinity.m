@@ -26,7 +26,7 @@ function [y weight] = fn_affinity(x,M,varargin)
 % See also fn_register, fn_translate
 
 % Thomas Deneux
-% Copyright 2014
+% Copyright 2014-2017
 
 % Input
 shapeflag = 'full'; method = 'cubic'; datatype = class(x);

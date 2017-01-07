@@ -4,7 +4,6 @@ function varargout = fn_fit(x,y,fun,startpoint)
 %---
 % Fit the parameters of a given function
 
-
 % Thomas Deneux
 % Copyright 2008-2017
 

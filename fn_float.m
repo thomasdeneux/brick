@@ -6,7 +6,7 @@ function x = fn_float(x)
 % number remain the same)
 
 % Thomas Deneux
-% Copyright 2012-2012
+% Copyright 2012-2017
 
 if nargin==0, help fn_float, return, end
 

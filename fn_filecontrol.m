@@ -11,6 +11,9 @@ function hu = fn_filecontrol(varargin)
 %                           - 'mode' can be set to 'get', 'save' [default] or 'dir'
 %                           - 'filter' indicates a filter to user [default is '*']
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 if mod(nargin,1)
     hu = varargin{1};

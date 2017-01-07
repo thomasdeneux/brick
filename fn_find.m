@@ -20,7 +20,7 @@ function idx = fn_find(fun,A,varargin)
 % See also fn_map, fn_isemptyc
 
 % Thomas Deneux
-% Copyright 2016
+% Copyright 2016-2017
 
 if nargin==0, help fn_find, return, end
 

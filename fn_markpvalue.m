@@ -11,9 +11,10 @@ if isnan(p), return, end
 topt = varargin;
 kparent = find(strcmp(varargin(1:2:end),'parent'));
 if ~isempty(kparent)
-    popt=varargin(2*kparent-1:2*kparent); topt(2*kparent-1:2*kparent)=[];
+    popt=varargin(2*kparent-1:2*kparent); ha = popt{2};
+    topt(2*kparent-1:2*kparent)=[];
 else 
-    popt={};
+    popt={}; ha = gca;
 end
 displaymode = 'default'; orientation = 'horizontal';
 while ~isempty(topt) && ischar(topt{1})
@@ -53,8 +54,9 @@ else
 end
 
 % display
+if isempty(y), ylim = get(ha,'ylim'); y = ylim(1)*.1+ylim(2)*.9; end
 xs = mean(x); ys = y(end);
-h = text(xs,ys,stars,'horizontalalignment','center','verticalalignment','middle',popt{:});
+h = text(xs,double(ys),stars,'horizontalalignment','center','verticalalignment','middle',popt{:});
 if length(x)==2
     h(2) = line(x,y(1)*[1 1],'color','k',popt{:});
 end

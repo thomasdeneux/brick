@@ -4,4 +4,7 @@ function x = column(x)
 %
 % See also row, matrix, third, fourth
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 x = x(:);

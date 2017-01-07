@@ -4,6 +4,9 @@ function fn_display(varargin)
 %---
 % Display a variable name and value in a single line
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin==0, help fn_display, return, end
 
 % Input

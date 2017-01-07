@@ -5,7 +5,7 @@ function hl = fn_lines(varargin)
 % draw a series of vertical and/or horizontal lines
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 % Input
 % (x or y only?)

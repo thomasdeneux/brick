@@ -1,3 +1,7 @@
+% Get information about how many Matlab floating licenses are used on the network 
+
+% Thomas Deneux
+% Copyright 2013-2017
 
 swd = cd;
 cd(matlabroot)

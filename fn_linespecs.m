@@ -24,7 +24,7 @@ function lineoptions = fn_linespecs(varargin)
 %                              h     hexagram
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 if mod(nargin,2)==1
     flag = varargin{1};

@@ -9,6 +9,9 @@ function c = disableListener(hl)
 %
 % See also deleteValid (and Matlab onCleanup documentation)
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargout==0
     error 'function disableListener should be used with an output argument (onCleanup object), use enableListener(hl,false) to simply disable a listener'
 end

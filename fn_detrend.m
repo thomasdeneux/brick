@@ -15,6 +15,9 @@ function x = fn_detrend(x,frames,varargin)
 %           'keepmean' subtracts the linear part (i.e. the mean over the
 %           reference frames remains the same)
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 if islogical(frames)
     nframes = sum(frames);

@@ -5,4 +5,7 @@ function y = fn_cast(i,varargin)
 %
 % See also fn_switch
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 y = varargin{i};

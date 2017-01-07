@@ -13,6 +13,9 @@ function [p hl] = fn_comparedistrib(x,y,method,varargin)
 %           'signtest' (=default if y is scalar)
 %           'bootstrap' (test on the mean)
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 if nargin<2, y = 0; end
 if nargin<3, method = fn_switch(isscalar(y),'signtest','ranksum'); end

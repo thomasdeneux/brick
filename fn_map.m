@@ -16,7 +16,7 @@ function B = fn_map(fun,A,varargin)
 % See also fn_isemptyc, fn_itemlengths, fn_find
 
 % Thomas Deneux
-% Copyright 2006-2012
+% Copyright 2006-2017
 
 if nargin==0, help fn_map, return, end
 

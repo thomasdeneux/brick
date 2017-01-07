@@ -2,6 +2,9 @@ function x = fn_editsignal(x)
 % function x = fn_editsignal(x)
 % function x = fn_editsignal(hl)
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 
 if ishandle(x)
     hl = x;

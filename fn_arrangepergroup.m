@@ -30,6 +30,9 @@ function [data1 npergroup] = fn_arrangepergroup(data,conds,dim,varargin)
 %
 % See also fn_avgpercond
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 s = size(data);
 if isvector(data) && nargin<3, dim = find(s~=1); end

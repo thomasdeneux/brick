@@ -21,7 +21,7 @@ function [pos cmd] = fn_framedesign(grob,pos,resetflag)
 % - cmd         as above
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 % Input
 % (make grob a structure with a 'hf' field)
