@@ -2,3 +2,7 @@ alias.mat
 fn_email.mat
 *.asv
 desktop.ini
+examples/example_interface.mat
+helpsource/autohelp/
+html - old/
+helpsource/manualhelp - old/
