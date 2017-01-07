@@ -3,7 +3,7 @@ function m = nmean(x,dim)
 %---
 % returns average while ignoring NaNs
 %
-% see also nstd, nste, nmedian
+% see also nstd, nste, nrms, nmedian
 
 %NANMEAN Mean value, ignoring NaNs.
 %   M = NANMEAN(X) returns the sample mean of X, treating NaNs as missing

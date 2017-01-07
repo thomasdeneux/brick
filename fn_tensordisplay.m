@@ -6,7 +6,7 @@ function h = fn_tensordisplay(varargin)
 % X,Y,Txx,Txy,Tyy
 
 % Thomas Deneux
-% Copyright 2006-2012
+% Copyright 2006-2017
 
 if isstruct(varargin{1}) || isstruct(varargin{3})
     if isstruct(varargin{1}), nextarg=1; else nextarg=3; end

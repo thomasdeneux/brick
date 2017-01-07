@@ -8,7 +8,7 @@ function y = fn_add(u,v,varargin)
 % See also fn_mult, fn_subtract, fn_div, fn_eq
 
 % Thomas Deneux
-% Copyright 2002-2012
+% Copyright 2002-2017
 
 y = bsxfun(@plus,u,v);
 for i=1:length(varargin), y = bsxfun(@plus,y,varargin{i}); end

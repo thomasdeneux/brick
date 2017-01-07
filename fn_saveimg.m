@@ -5,7 +5,7 @@ function fn_saveimg(a,fname,varargin)
 % clip can be a 2-values vector, or 'fit' [default], or '?SD', or 'none'
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 if nargin<1, help fn_saveimg, return, end
 if nargin<2 || isempty(fname), fname=fn_savefile; end

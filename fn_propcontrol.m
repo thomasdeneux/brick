@@ -1,9 +1,12 @@
 classdef fn_propcontrol < hgsetget
 % function fn_propcontrol(obj,prop,spec,graphic object options...)
 % function fn_propcontrol(obj,prop,spec,{graphic object options...})
-% function fn_propcontrol(obj,prop,control)
+% function hu = fn_propcontrol.createcontrol(...)
 %---
 % Create a control that will be synchronized to an object property value.
+% Use the static method fn_propcontrol.createcontrol (3rd syntax above) to
+% return the graphic handle of the control rather than the fn_propcontrol
+% object.
 % 
 % Input:
 % - obj     the object whose property is observed
@@ -59,6 +62,7 @@ properties (SetAccess='private')
     dodefaultvalue = false
     defaultvalue
     doother = false
+    docolor = false
     % property listener
     proplistener
 end
@@ -112,33 +116,32 @@ methods
             if M.dodefaultvalue && ~ismember(spec,{'menu' 'menuval' 'menugroup'})
                 error 'default value is possible only for ''menu'', ''menuval'' or ''menugroup'' options, otherwise the number of labels must be equal to the number of values'
             end
-        elseif ismember(spec,{'listbox' 'popupmenu'})
+        elseif ischar(spec) && ismember(spec,{'listbox' 'popupmenu'})
             kstring = strcmpi(varargin(1:2:end),'string');
             if isempty(kstring), error 'missing list of values', end
             M.valuelist = cellstr(varargin{kstring});
         end
         
         % special: color
-        docolor = false;
-        if ~isempty(regexpi('color',prop)) && ~isempty(M.valuelist) && any(fn_map(@ischar,M.valuelist))
+        M.docolor = false;
+        if ~isempty(regexpi(prop,'color')) && ~isempty(M.valuelist) && any(fn_map(@ischar,M.valuelist))
             % try converting color names to colors
             try
-                colorlist = M.valuelist;
-                deflinecol = get(0,'defaultlinecolor');
-                for i=1:length(colorlist)
-                    set(0,'defaultlinecolor',M.valuelist{i})
-                    colorlist{i} = get(0,'defaultlinecolor');
+                [colornum colorname] = deal(cell(1,length(M.valuelist)));
+                for i=1:length(colornum)
+                    [colornum{i} colorname{i}] = fn_colorbyname(M.valuelist{i},'strict');
                 end
-                set(0,'defaultlinecolor',deflinecol)
-                M.valuelist = colorlist;
-                if isempty(M.labellist), M.labellist = repmat({'X'},1,length(colorlist)); end
-                docolor = true;
+                M.valuelist = colornum;
+                if isempty(M.labellist), M.labellist = repmat({'X'},1,length(colornum)); end
+                if isempty(M.shortlabels), M.shortlabels = colorname; end
+                M.docolor = true;
             catch
                 set(0,'defaultlinecolor',deflinecolor)
             end
         end
-        if ~isempty(M.valuelist) && isempty(M.labellist)
-            M.labellist = fn_num2str(M.valuelist);
+        if ~isempty(M.valuelist)
+            if isempty(M.labellist), M.labellist = fn_num2str(M.valuelist); end
+            if isempty(M.shortlabels), M.shortlabels = M.labellist; end
         end
         
         % set type and style
@@ -188,7 +191,6 @@ methods
                         % if label is not set, label will be automatically
                         % updated to display current value
                         if M.doautolabel
-                            if isempty(M.shortlabels), M.shortlabels = M.labellist; end
                             klab = find(strcmpi(varargin(1:2:end),'label'));
                             if isempty(klab)
                                 M.toplabel = M.prop;
@@ -203,7 +205,7 @@ methods
                 dosep = ~isempty(get(mparent,'children'));
                 for i=1:n
                     M.hu(i) = uimenu(mparent,'label',M.labellist{i});
-                    if docolor, set(M.hu(i),'foregroundcolor',colorlist{i}), end
+                    if M.docolor, set(M.hu(i),'foregroundcolor',colornum{i}), end
                     if i==1 && dosep, set(M.hu(i),'separator','on'), end
                     if ~isempty(varargin), set(M.hu(i),varargin{:}); end
                 end
@@ -238,7 +240,7 @@ methods
         if ishandle(obj)
             fn_deletefcn(obj,@(u,e)delete(M))
         else
-            addlistener(obj,'Delete',@(u,e)delete(M));
+            addlistener(obj,'ObjectBeingDestroyed',@(u,e)delete(M));
         end
         set(M.hu,'deletefcn',@(u,e)delete(M))
     end
@@ -252,6 +254,11 @@ end
 methods
     function updatevalue(M)
         curval = get(M.obj(1),M.prop);
+        if M.docolor
+            % try to convert color to nice string representation
+            [colornum colorname] = fn_colorbyname(curval);
+            if ~isempty(colornum), curval = colornum; end
+        end
         switch M.style
             % type logical
             case 'menu'
@@ -266,16 +273,22 @@ methods
             % list of values
             case 'menugroup'
                 set(M.hu,'checked','off')
-                idx = fn_find(curval,M.valuelist);
+                if M.docolor
+                    idx = fn_find(curval,M.valuelist); % color values are stored as numerical values
+                else
+                    idx = fn_find(curval,M.valuelist);
+                end
                 set(M.hu(idx),'checked','on')
                 if isempty(idx) && M.doother
                     set(M.hu(end),'checked','on')
                 end
                 if M.doautolabel
-                    if isempty(idx)
-                        valstr = fn_num2str(curval);
-                    else
+                    if ~isempty(idx)
                         valstr = M.shortlabels{idx};
+                    elseif M.docolor && ~isempty(colorname)
+                        valstr = colorname;
+                    else
+                        valstr = fn_num2str(curval);
                     end
                     if isempty(valstr), valstr = '(none)'; end
                     set(M.hparent,'label',[M.toplabel ': ' valstr])
@@ -310,10 +323,12 @@ methods
             case {'checkbox' 'radiobutton'}
                 set(M.obj,M.prop,logical(get(M.hu,'value')));
             % edit
-            case 'char'
-                set(M.obj,M.prop,get(M.hu,'value'));
             case 'edit'
-                set(M.obj,M.prop,fn_chardisplay(get(M.hu,'value'),M.type));
+                if strcmp(M.type,'char')
+                    set(M.obj,M.prop,get(M.hu,'string'));
+                else
+                    set(M.obj,M.prop,fn_chardisplay(get(M.hu,'value'),M.type));
+                end
             % list of values
             case 'menugroup'
                 if (i==0 || strcmp(get(M.hu(i),'checked'),'on')) && M.dodefaultvalue
@@ -352,6 +367,14 @@ methods
     function set.enabled(M,b)
         M.enabled = fn_switch(b,'logical');
         set([M.hparent M.hu],'enabled',fn_switch(b,'on/off')) %#ok<*MCSUP>
+    end
+end
+
+% Create control and return the graphic handle
+methods (Static)
+    function hu = createcontrol(varargin)
+        M = fn_propcontrol(varargin{:});
+        hu = M.hu;
     end
 end
 

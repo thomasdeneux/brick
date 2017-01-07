@@ -23,7 +23,7 @@ function y = fn_timevector(x,t,outputtype)
 % - times       row vector or cell array of row vectors
 
 % Thomas Deneux
-% Copyright 2010-2012
+% Copyright 2010-2017
 
 if nargin==0, help fn_timevector, return, end
 

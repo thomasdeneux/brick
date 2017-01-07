@@ -4,7 +4,7 @@ function x = fn_readbin(fname,precision,headerlength)
 % read binary file
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 if nargin==0, help fn_readbin, return, end
 

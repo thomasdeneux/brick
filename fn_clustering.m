@@ -4,7 +4,7 @@ function c = fn_clustering(x,nclust)
 % performs correlation-based clustering of data x
 
 % Thomas Deneux
-% Copyright 2012-2012
+% Copyright 2012-2017
 
 
 % input

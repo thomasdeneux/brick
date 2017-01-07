@@ -9,7 +9,7 @@ function fn_figmenu(hf,varargin)
 % you should use 'fn_cd edit' to define where is this directory 'capture'.
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 if nargin==0
     hfs = findobj('type','figure');

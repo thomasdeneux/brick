@@ -10,7 +10,7 @@ function [out1 out2] = fn_pixelsize(hobj,varargin)
 % See also fn_pixelpos, fn_pixelposlistener, fn_pixelsizelistener
 
 % Thomas Deneux
-% Copyright 2011-2012
+% Copyright 2011-2017
 
 % strict?
 strict = fn_flags({'recursive' 'strict'},varargin);

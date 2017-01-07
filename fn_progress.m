@@ -15,7 +15,7 @@ function fn_progress(varargin)
 % See also pg
 
 % Thomas Deneux
-% Copyright 2003-2012 
+% Copyright 2003-2017 
 
 persistent x            % structure with persistent information
 persistent ht0          % default place for displaying progress (handle or '' for command prompt)

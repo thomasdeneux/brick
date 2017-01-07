@@ -7,7 +7,7 @@ function a = fn_readmovie(filename,frames)
 % See also fn_savemovie
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 if nargin<1
     filename = fn_getfile('*.avi');

@@ -30,7 +30,7 @@ function varargout = fn_mouse(varargin)
 % See also fn_maskselect, interactivePolygon
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 % Input
 i=1;

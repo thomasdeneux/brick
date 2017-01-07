@@ -29,7 +29,7 @@ function img = fn_cubeview(data,d,r)
 % - img     an image showing the cube, with a white background
 
 % Thomas Deneux
-% Copyright 2010-2012
+% Copyright 2010-2017
 
 % Input
 if ndims(data)~=3, error('data bust be a 3D array'), end

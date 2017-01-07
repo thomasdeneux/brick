@@ -21,7 +21,7 @@ function varargout = fn_fileparts(f,varargin)
 %               'b.c' respectively, rather than 'a.b' and 'c'
 
 % Thomas Deneux
-% Copyright 2003-2012
+% Copyright 2003-2017
 
 if nargin==0, help fn_fileparts, return, end
 

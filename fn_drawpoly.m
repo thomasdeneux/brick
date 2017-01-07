@@ -6,7 +6,7 @@ function hl = fn_drawpoly(poly,varargin)
 % See also fn_circle
 
 % Thomas Deneux
-% Copyright 2006-2012
+% Copyright 2006-2017
 
 if nargin==0, help fn_drawpoly, end
 

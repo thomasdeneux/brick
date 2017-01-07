@@ -18,7 +18,7 @@ function y = fn_switch(varargin)
 % See also fn_cast
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 
 x = varargin{1};

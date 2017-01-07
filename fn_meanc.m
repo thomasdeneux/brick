@@ -8,7 +8,7 @@ function fn_meanc(x,dim,alpha)
 % alors (m-mu)*sqrt(n)/s ~ Student(n-1)
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 if nargin<1, help fn_meanc, return, end
 

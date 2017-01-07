@@ -27,11 +27,11 @@ if ishandle(hu)
 
 elseif isobject(hu)
     
-    addlistener(hu,'Delete',deletefcn);
+    addlistener(hu,'ObjectBeingDestroyed',deletefcn);
     
 else
     
-    error 'hu must be a graphic handle or an object that has a ''Delete'' event'
+    error 'hu must be a handle object'
     
 end
 

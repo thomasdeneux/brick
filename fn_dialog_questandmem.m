@@ -17,7 +17,7 @@ function answer = fn_dialog_questandmem(question,identifier)
 % See also fn_reallydlg
 
 % Thomas Deneux
-% Copyright 2010-2012
+% Copyright 2010-2017
 
 if nargin==0, help fn_dialog_questandmem, return, end
 

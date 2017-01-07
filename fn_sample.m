@@ -1,5 +1,7 @@
 function idx = fn_sample(p,nsample)
 % function idx = fn_sample(p,nsample|size)
+%---
+% Draw samples, i.e. indices from 1 to length(p), from distribution p
 
 if nargin<2, nsample=1; end
 

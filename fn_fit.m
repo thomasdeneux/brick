@@ -1,10 +1,12 @@
 function varargout = fn_fit(x,y,fun,startpoint)
 % function [par1 ... parN yfit] = fn_fit(x,y,@(x,par1,..,parN)fun,startpoint)
 % function [a b yfit] = fn_fit(x,y,'affine')
+%---
+% Fit the parameters of a given function
 
 
 % Thomas Deneux
-% Copyright 2008-2012
+% Copyright 2008-2017
 
 if nargin==0, help fn_fit, return, end
 

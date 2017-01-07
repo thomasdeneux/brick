@@ -9,7 +9,7 @@ function fn_playmovie(M,varargin)
 % See also fn_movie
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 % input
 clip = {}; doloop = true; fps = 1000; doaxisimage = true;

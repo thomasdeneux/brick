@@ -2,6 +2,10 @@ classdef interface < hgsetget
     % Interface class provide utilities for designing a graphic interface,
     % such as allowing the user to resize the graphical elements, loading
     % and auto-saving program options, etc..
+    % 
+    % To start a new class, it is recommended to copy and edit file
+    % interface_template.m
+    % A simple example usage is also provided in [Brick toolbox dir]/examples/example_interface
     %
     % Notes:
     % - to make a new interface, define a new class having interface as a
@@ -24,10 +28,9 @@ classdef interface < hgsetget
     %       description values (which can be a string or a cell with
     %       possible values)
     %
-    % An example is provided in [Brick toolbox dir]/examples/example_interface
     
     % Thomas Deneux
-    % Copyright 2007-2012
+    % Copyright 2007-2017
     
     properties (Access='private')
         figtitle

@@ -4,7 +4,7 @@ function lisse = fn_smooth(t,sigma)
 % - sigma   param�tre de la gaussienne
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 s = size(t);
 

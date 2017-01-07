@@ -33,7 +33,7 @@ function fn_scrollwheelregister(hobj,arg,arg2)
 
 
 % Thomas Deneux
-% Copyright 2012-2012
+% Copyright 2012-2017
 
 if nargin==0, help fn_scrollwheelregister, return, end
 

@@ -64,7 +64,7 @@ classdef fn_supercontrol < hgsetget
     % See also fn_control
  
     % Thomas Deneux
-    % Copyright 2010-2012
+    % Copyright 2010-2017
    
     % Content
     properties

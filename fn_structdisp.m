@@ -13,7 +13,7 @@ function fn_structdisp(Xname)
 % arrays and cell should be displayed completely or not
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 if ischar(Xname)
     X = evalin('caller',Xname);

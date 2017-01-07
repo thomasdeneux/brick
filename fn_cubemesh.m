@@ -23,7 +23,7 @@ function fn_cubemesh(data,fname)
 % - text    vector with values for each vertex
 
 % Thomas Deneux
-% Copyright 2010-2012
+% Copyright 2010-2017
 
 % Input
 if ndims(data)~=3, error('input data must be 3-dimensional'), end

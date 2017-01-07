@@ -27,7 +27,7 @@ function [data maskbin] = fn_bin(data,bins,varargin)
 % See also fn_enlarge
 
 % Thomas Deneux
-% Copyright 2010-2012
+% Copyright 2010-2017
 
 if nargin==0, help fn_bin, return, end
 

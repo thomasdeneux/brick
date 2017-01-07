@@ -7,7 +7,7 @@ function fn_setfigsize(hf,w,h)
 % outside
 
 % Thomas Deneux
-% Copyright 2011-2012
+% Copyright 2011-2017
 
 if nargin==0, help fn_setfigsize, return, end
 

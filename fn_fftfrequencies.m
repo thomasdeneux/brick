@@ -16,7 +16,7 @@ function varargout = fn_fftfrequencies(data,fs,flag)
 %           Niquist-limit' frequencies
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 if nargin==0, help fn_fftfrequencies, return, end
 

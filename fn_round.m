@@ -5,7 +5,7 @@ function x = fn_round(x,y,mode)
 % rounds to the nearest multiple of y if a second argument is given
 
 % Thomas Deneux
-% Copyright 2009-2012
+% Copyright 2009-2017
 
 if nargin==0, help fn_round, end
 

@@ -6,7 +6,7 @@ function [m I] = fn_min(a)
 % See also fn_max
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 if nargin==0, help fn_min, return, end
 

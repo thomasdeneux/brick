@@ -7,7 +7,7 @@ function b = fn_sizecompare(s1,s2)
 % fn_sizecompare(3,[1 3]) returns false
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 l1 = length(s1);
 l2 = length(s2);

@@ -2,7 +2,7 @@ function fn_evalcallback(fun,hobj,evnt)
 % function fn_evalcallback(fun,hobj,evnt)
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 if nargin==0, help fn_evalcallback, return, end
 

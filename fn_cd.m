@@ -20,7 +20,7 @@ function repout = fn_cd(flag,varargin)
 %   inside your home directory.
 
 % Thomas Deneux
-% Copyright 2002-2012
+% Copyright 2002-2017
 
 if nargin==0, help fn_cd, return, end
 

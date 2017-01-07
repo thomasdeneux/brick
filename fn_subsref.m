@@ -28,7 +28,7 @@ function y = fn_subsref(x,varargin)
 % - fn_subsref([2 3],'1','1 3','local')  returns the indices {[1] [1 3]}
 % - fn_subsref([2 3],'1','1 3')          returns the indices [1 5]
 %
-% See also fn_indices
+% See also fn_indices, cellpop
 
 % Thomas Deneux
 % Copyright 2006-2012

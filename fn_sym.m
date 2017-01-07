@@ -12,7 +12,7 @@ function varargout = fn_sym(varargin)
 % use 'U' to match the C++ implementation
 
 % Thomas Deneux
-% Copyright 2003-2012
+% Copyright 2003-2017
 
 if nargin==0, help fn_sym, return, end
 

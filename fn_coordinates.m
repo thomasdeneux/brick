@@ -18,7 +18,7 @@ function varargout = fn_coordinates(varargin)
 % xy = fn_coordinates(1,'b2a',[10 10],'position')
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 if nargin<1, help fn_coordinates, return, end
 

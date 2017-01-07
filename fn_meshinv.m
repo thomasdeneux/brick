@@ -3,7 +3,7 @@ function mesh = fn_meshinv(mesh)
 % function faces = fn_meshinv(faces)
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 if iscell(mesh), faces = mesh{2}; else faces = mesh; end
 if size(faces,1)~=3, faces=faces'; if size(faces,1)~=3, error('faces component should have 3 rows'), end, end

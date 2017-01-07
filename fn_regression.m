@@ -13,7 +13,7 @@ function [hl cor pvalue] = fn_regression(x,y,varargin)
 % - 'nodisplay'     no display
 
 % Thomas Deneux
-% Copyright 2011-2012
+% Copyright 2011-2017
 
 % Input
 ha = [];

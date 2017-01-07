@@ -6,7 +6,7 @@ function I = fn_smooth3(I,sigma)
 % window length is 2*ceil(sigma)+1
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 n = 2*ceil(sigma)+1;
 filt = fspecial('gaussian',[n 1],sigma);

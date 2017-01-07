@@ -7,5 +7,4 @@ function tokens = fn_regexptokens(a,expr)
 % if there are several
 
 tokens = regexp(a,expr,'tokens');
-tokens = tokens{1};
-if isscalar(tokens), tokens = tokens{1}; end
+while isscalar(tokens), tokens = tokens{1}; end

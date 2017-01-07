@@ -5,7 +5,7 @@ function y = fn_coerce(x,m,M)
 % y = min(max(x,m),M);
 
 % Thomas deneux
-% Copyright 2002-2012
+% Copyright 2002-2017
 
 if nargin==2,
     M = m(2);

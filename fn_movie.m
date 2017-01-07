@@ -25,7 +25,7 @@ classdef fn_movie < hgsetget
     % See also fn_playmovie
 
 % Thomas Deneux
-% Copyright 2008-2012
+% Copyright 2008-2017
 
     properties
         opt

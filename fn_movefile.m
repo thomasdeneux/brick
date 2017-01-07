@@ -5,7 +5,7 @@ function fn_movefile(pattern,rep)
 % regexprep syntax
 
 % Thomas Deneux
-% Copyright 2012-2012
+% Copyright 2012-2017
 
 d = dir;
 for i=3:length(d)

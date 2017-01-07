@@ -12,7 +12,7 @@ function x = fn_imageop(x,par)
 %           .xhigh      high-pass filter
 
 % Thomas Deneux
-% Copyright 2011-2012
+% Copyright 2011-2017
 
 if nargin==0, help fn_imageop, return, end
 

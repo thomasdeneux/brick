@@ -29,7 +29,7 @@ function [y weight J dweight] = fn_translate(x,shift,varargin)
 % See also fn_register
 
 % Thomas Deneux
-% Copyright 2009-2012
+% Copyright 2009-2017
 
 % Input
 shapeflag = 'full'; method = 'cubic'; datatype = class(x);

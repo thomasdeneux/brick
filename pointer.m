@@ -5,7 +5,7 @@ classdef pointer < handle
     % x = getvalue(p)
     
     % Thomas Deneux
-    % Copyright 2007-2012
+    % Copyright 2007-2017
 
     properties
         x

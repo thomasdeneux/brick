@@ -7,7 +7,7 @@ function ha = fn_subplot(varargin)
 % if only 3 arguments, nrow and ncol are guessed from ngraphs
 
 % Thomas Deneux
-% Copyright 2008-2012
+% Copyright 2008-2017
 
 % input
 if nargin==1

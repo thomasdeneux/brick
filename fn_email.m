@@ -6,7 +6,7 @@ function m = fn_email(flag)
 % prompts for recipient, title, attachments and text
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 if nargin==1 
     if ~strcmp(flag,'setserver'), error argument, end

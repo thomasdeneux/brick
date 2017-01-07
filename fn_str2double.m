@@ -7,7 +7,7 @@ function y = fn_str2double(x,donan)
 % See also fn_num2str
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 if nargin<2, donan = true; end
 

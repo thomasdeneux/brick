@@ -20,7 +20,7 @@ function fn_review(x,varargin)
 % see also fn_review_showres
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 if nargin==0, help fn_review, return, end
 

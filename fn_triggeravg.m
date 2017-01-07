@@ -22,7 +22,7 @@ function y = fn_triggeravg(x,dim,indices,varargin)
 %               placed where data is missing
 
 % Thomas Deneux
-% Copyright 2008-2012
+% Copyright 2008-2017
 
 % Input
 nframes = 0;

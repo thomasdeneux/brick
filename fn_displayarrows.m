@@ -11,7 +11,7 @@ function fn_displayarrows(varargin)
 % USES MATLAB CONVENTIONS FOR IMAGES (i.e. rows <-> y, columns <-> x)
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 % Input
 x = []; y = []; img = []; arrows = []; sub = 1; flag = 'fit';

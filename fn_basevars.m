@@ -8,7 +8,7 @@ function fn_basevars(varargin)
 % Performs inverse operation if first argument is numeric
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 % get or send?
 flag = 'get';

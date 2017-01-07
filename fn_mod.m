@@ -5,7 +5,7 @@ function x = fn_mod(x,y)
 % y must be a positive integer
 
 % Thomas Deneux
-% Copyright 2008-2012
+% Copyright 2008-2017
 
 if ~mod(y,0) || y<=0, error('y must be a positive integer'), end
 x = 1 + mod(x-1,y);

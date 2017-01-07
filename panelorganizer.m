@@ -19,10 +19,6 @@ classdef panelorganizer < hgsetget
         extents
     end
     
-    events
-        Delete
-    end
-    
     % Constructor and split method
     methods
         function O = panelorganizer(hparent,splitmode,varargin)
@@ -41,7 +37,6 @@ classdef panelorganizer < hgsetget
         function delete(O)
             if ~isvalid(O) && ~isprop(O,'szlistener'), return, end
             deleteValid(O.szlistener)
-            notify(O,'Delete')
         end
         function split(O,mode,n,dorelative,xx)
             % input, checks

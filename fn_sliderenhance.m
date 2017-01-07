@@ -2,7 +2,7 @@ function fn_sliderenhance(hu,varargin)
 % function fn_sliderenhance(sliderhandle)
 %---
 % allows a slider uicontrol to evaluate its callback during scrolling
-% (instead of only at the moment that the mouse if released)
+% (instead of only at the moment that the mouse if released):
 % just call 'fn_sliderenhance(sliderhandle)' once
 %
 % notes: 
@@ -16,7 +16,7 @@ function fn_sliderenhance(hu,varargin)
 % See also fn_slider
 
 % Thomas Deneux
-% Copyright 2009-2012
+% Copyright 2009-2017
 
 if nargin==0, hu=evalin('base','u'); end
 

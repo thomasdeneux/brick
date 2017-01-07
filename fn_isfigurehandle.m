@@ -5,7 +5,7 @@ function [b c] = fn_isfigurehandle(x)
 % positive integer), and opens the figure if it does not exist yet.
 
 % Thomas Deneux
-% Copyright 2008-2012
+% Copyright 2008-2017
 
 if ~isscalar(x)
     b = false(size(x));

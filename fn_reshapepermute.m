@@ -18,7 +18,7 @@ function y = fn_reshapepermute(x,varargin)
 % - y           output array
 
 % Thomas Deneux
-% Copyright 2010-2012
+% Copyright 2010-2017
 
 if nargin==0, help fn_reshapepermute, end
 

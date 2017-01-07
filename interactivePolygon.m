@@ -1,7 +1,17 @@
 classdef interactivePolygon < hgsetget
 % function P = interactivePolygon([ha][,'linear|spline'][,'open|closed'][,'points','current'|'init'|p])
 %---
-% see also fn_mouse
+% Draw a polygon.
+% 
+% Example:
+%  imagesc                                      % display an image
+%  P = interactivePolygon('spline','closed')    % create the object
+%  use mouse to initialize,
+%  drag to zoom in, right-click to zoom out,
+%  double-click to finish initialization,
+%  continue to edit by adding/moving/removing points
+%  access landmark points in P.points and fine-grain shape in P.points2
+%  to erase the drawing, type 'delete(P)'
 
     properties (SetAccess = 'private')
         interpmode = 'linear';

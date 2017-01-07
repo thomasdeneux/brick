@@ -8,7 +8,7 @@ function b = fn_isemptyc(varargin)
 % See also fn_find, fn_map, fn_itemlengths
 
 % Thomas Deneux
-% Copyright 2011-2012
+% Copyright 2011-2017
 
 if nargin==0, help fn_isemptyc, return, end
 

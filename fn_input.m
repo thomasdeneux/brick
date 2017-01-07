@@ -15,7 +15,7 @@ function x = fn_input(varargin)
 % See also fn_structedit, fn_control, fn_reallydlg
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 % input
 % (handle the input flexibility)

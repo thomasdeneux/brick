@@ -14,7 +14,7 @@ classdef fn_slider < hgsetget
     % See also fn_sliderenhance, fn_sensor, fn_control
     
     % Thomas Deneux
-    % Copyright 2007-2012
+    % Copyright 2007-2017
     properties
         inc = 0;
         minmax = [0 1];
@@ -73,11 +73,6 @@ classdef fn_slider < hgsetget
         right           
         center      
         pointpos
-    end
-    
-    % Events
-    events
-        Delete
     end
     
     % Constructor/Destructor
@@ -142,7 +137,6 @@ classdef fn_slider < hgsetget
             sliderposition(U)
         end
         function delete(U)
-            notify(U,'Delete')
             if ~isempty(U.deletefcn)
                 fn_evalcallback(U.deletefcn,U.hpanel,[])
                 U.deletefcn = '';

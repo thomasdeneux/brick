@@ -8,7 +8,7 @@ function fn_review_showres(x,info)
 % See also fn_review
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 
 plot(squeeze(x),'parent',info.ha), axis tight

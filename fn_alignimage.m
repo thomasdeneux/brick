@@ -30,7 +30,7 @@ function [s grid] = fn_alignimage(a,b,varargin)
 %   shift=fn_alignimage(X,Y)
 
 % Thomas Deneux
-% Copyright 2011-2012
+% Copyright 2011-2017
 
 % Input
 a = double(a);

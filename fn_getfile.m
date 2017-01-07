@@ -12,7 +12,7 @@ function [filename filterindex] = fn_getfile(varargin)
 % See also fn_savefile
 
 % Thomas Deneux
-% Copyright 2003-2012
+% Copyright 2003-2017
 
 persistent rep
 

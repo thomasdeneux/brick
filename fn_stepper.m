@@ -3,7 +3,7 @@ classdef fn_stepper < hgsetget
     % See also fn_slider, fn_control
     
     % Thomas Deneux
-    % Copyright 2008-2012
+    % Copyright 2008-2017
     
     properties
         nx

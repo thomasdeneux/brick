@@ -12,7 +12,7 @@ function [out ncol] = fn_colorset(varargin)
 % 'prismN' with N=4,5,6,9 or 15
 
 % Thomas Deneux
-% Copyright 2008-2012
+% Copyright 2008-2017
 
 % input
 setname = 'plot12';

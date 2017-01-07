@@ -13,7 +13,7 @@ classdef fn_buttongroup < hgsetget
     % possible  that no button is selected
     
     % Thomas Deneux
-    % Copyright 2010-2012   
+    % Copyright 2010-2017   
     
     properties
         callback

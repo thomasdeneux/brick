@@ -21,7 +21,7 @@ function hl = fn_eegplot(varargin)
 % See also fn_gridplot
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 % Input
 % (data at position 1 or 2)

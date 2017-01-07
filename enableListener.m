@@ -1,8 +1,8 @@
 function c = enableListener(hl,val)
 % function c = disableListener(hl)
 %---
-% Disable a listener (or list thereof) and returns an onCleanup object
-% which will reanable it (or them) upon deletion.
+% Enable/disable a listener (or list thereof). Use rather disableListener
+% function for momentarily disabling a listener.
 %
 % See also disableListener, deleteValid
 

@@ -7,9 +7,6 @@ classdef fn_pointer < dynamicprops & hgsetget
     % fn_pointer is actually a small wrapper for Matlab 'dynamicprops'
     % class
     
-    events
-        Delete
-    end
     
     methods
         function X = fn_pointer(varargin)
@@ -30,9 +27,6 @@ classdef fn_pointer < dynamicprops & hgsetget
                 f = F{k};
                 X = subsasgn(X,substruct('.',f),s.(f));
             end 
-        end
-        function delete(X)
-            notify(X,'Delete')
         end
         function X = subsasgn(X,f,x)
             switch f(1).type

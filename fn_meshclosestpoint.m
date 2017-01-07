@@ -15,7 +15,7 @@ function [i, p] = fn_meshclosestpoint(P,p)
 % - i       indice of the vertex that is closest to p
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 if nargin<1, help fn_meshclosestpoint, return, end
 

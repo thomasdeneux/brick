@@ -16,7 +16,7 @@ function a=fn_readasciimatrix(filename,nheaders)
 % See also fn_saveasciimatrix, fn_readdatlabview, fn_readtext, fn_readbin
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 if nargin==0, filename=fn_getfile; end
 if filename==0, disp(['Could not open file ' filename]), a=[]; return, end 

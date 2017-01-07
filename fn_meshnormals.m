@@ -3,7 +3,7 @@ function normals = fn_meshnormals(vertex,faces)
 % function normals = fn_meshnormals(vertex,faces)
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 if nargin==1, faces=vertex{2}; vertex=vertex{1}; end
 

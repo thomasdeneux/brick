@@ -4,7 +4,7 @@ function y = fn_means(varargin)
 % average all arguments (they need to be same size)
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 if nargin<1, help fn_means, return, end
 

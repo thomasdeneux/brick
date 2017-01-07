@@ -11,7 +11,7 @@ function c = fn_ismemberstr(a,b,doerrorflag)
 
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 if ~iscell(a)
     a = {a}; 

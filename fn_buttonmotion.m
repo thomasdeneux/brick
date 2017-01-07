@@ -8,7 +8,7 @@ function varargout = fn_buttonmotion(fun,varargin)
 % See also fn_moveobject
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 % Note on the implementation: unfortunately, it is not possible to simply
 % use the figure 'BusyAction' and 'Interruptible' properties. Indeed, they

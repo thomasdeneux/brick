@@ -13,7 +13,7 @@ function hl = fn_errorbar(varargin)
 % flag can be 'lines' [default], 'bar', 'thinbar', 'patch' or 'xerror'
 
 % Thomas Deneux
-% Copyright 2006-2012
+% Copyright 2006-2017
 
 if nargin==0, help fn_errorbar, return, end
 

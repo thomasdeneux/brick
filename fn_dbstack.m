@@ -4,7 +4,7 @@ function str = fn_dbstack
 % displays current function name, with indent according to stack length
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 
 ST = dbstack;

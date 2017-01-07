@@ -4,7 +4,7 @@ function fn_mkdir(D)
 % creates directory D if it does not exist
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 if nargin==0, help fn_mkdir, end
 

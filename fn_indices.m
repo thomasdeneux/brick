@@ -22,7 +22,7 @@ function varargout = fn_indices(s,varargin)
 % See also fn_imvect, fn_subsref
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 if nargin<2, help fn_indices, return, end
 

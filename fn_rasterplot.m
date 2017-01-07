@@ -7,7 +7,7 @@ function [hl hlsep] = fn_rasterplot(times,varargin)
 % See also fn_spikedisplay
 
 % Thomas Deneux
-% Copyright 2008-2012
+% Copyright 2008-2017
 
 if nargin==0, help fn_rasterplot, help fn_spikedisplay, return, end
 

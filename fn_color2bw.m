@@ -2,7 +2,7 @@ function b = fn_color2bw(a)
 % function b = fn_color2bw(a)
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 % input
 [nx ny ncol] = size(a);

@@ -8,7 +8,7 @@ function fn_savetext(a,filename)
 % See also fn_readtext, fn_readxml, fn_readasciimatrix, fn_readbin
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 if nargin==0, help fn_savetext, return, end
 

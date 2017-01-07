@@ -24,7 +24,7 @@ function [hl y] = fn_spikedisplay(times,varargin)
 % See also fn_rasterplot
 
 % Thomas Deneux
-% Copyright 2012-2012
+% Copyright 2012-2017
 
 if nargin==0, help fn_spikedisplay, return, end
 

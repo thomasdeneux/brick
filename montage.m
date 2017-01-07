@@ -14,10 +14,6 @@ classdef montage < interface
         showinactive = true;
     end
     
-    events
-        Delete
-    end
-    
     methods
         function M = montage(fname)
             hf = figure('name','montage','integerhandle','off');
@@ -34,9 +30,6 @@ classdef montage < interface
             else
                 load_example(M)
             end
-        end
-        function delete(M)
-            notify(M,'Delete')
         end
         function init_grob(M)
             M.grob.ha = axes( ...

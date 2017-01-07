@@ -13,7 +13,7 @@ function [i, p, tr] = fn_meshselectpoint(mesh,p)
 % - tr      indice of the selected triangle
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 
 % Select point in figure ?

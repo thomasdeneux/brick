@@ -13,7 +13,7 @@ function hl = fn_plotscale(varargin)
 % See also fn_scale
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 if nargin==0, help fn_plotscale, return, end
     
@@ -136,9 +136,9 @@ function [sz label] = autoScaleLength(ha,flag,factor)
 axsz = fn_pixelsize(ha);
 switch flag
     case 'x'
-        target = 0.2 * diff(get(ha,'xlim'))*(min(axsz)/axsz(1));
+        target = 0.15 * diff(get(ha,'xlim'))*(min(axsz)/axsz(1));
     case 'y'
-        target = 0.2 * diff(get(ha,'ylim'))*(min(axsz)/axsz(2));
+        target = 0.15 * diff(get(ha,'ylim'))*(min(axsz)/axsz(2));
 end
 leads = [1 2 5];                        % possible leading number
 dlog = log10(target./leads);             % corresponding exponent

@@ -20,7 +20,7 @@ function axout = fn_axis(varargin)
 %   fn_axis('tight',[1 1.2])
 
 % Thomas Deneux
-% Copyright 2010-2012
+% Copyright 2010-2017
 
 % Input
 ha = []; flag = 'tight'; doy0 = []; sidefactor = [];

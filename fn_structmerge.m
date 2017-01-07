@@ -18,7 +18,7 @@ function s = fn_structmerge(s,varargin)
 % See also fn_structcat
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 % Input
 if nargin>=2 && isstruct(varargin{1})

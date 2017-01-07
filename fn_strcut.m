@@ -5,7 +5,7 @@ function y = fn_strcut(x,c,doempty)
 % tab + linefeed + white space), and returns a cell array of sub-strings y.
 
 % Thomas Deneux
-% Copyright 2006-2012
+% Copyright 2006-2017
 
 if nargin<2, c = [9 10 32]; end
 if nargin<3, doempty = false; end

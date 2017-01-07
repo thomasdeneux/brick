@@ -8,7 +8,7 @@ function b = fn_reallydlg(varargin)
 % See also fn_dialog_questandmem
 
 % Thomas Deneux
-% Copyright 2009-2012
+% Copyright 2009-2017
 
 if nargin==0, help fn_reallydlg, return, end
 

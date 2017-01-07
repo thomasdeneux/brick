@@ -132,7 +132,7 @@ function varargout = fn_4Dview(varargin)
 
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 % last modification: September 20th, 2007
 
 % try to execute action

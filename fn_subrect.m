@@ -6,7 +6,7 @@ function [isel jsel] = fn_subrect(a)
 % indices corresponding to this selection
 
 % Thomas Deneux
-% Copyright 2010-2012
+% Copyright 2010-2017
 
 if nargin<1
     h = 0;

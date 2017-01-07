@@ -6,7 +6,7 @@ function hu=fn_okbutton(varargin)
 % See also fn_nextbutton
 
 % Thomas Deneux
-% Copyright 2009-2012
+% Copyright 2009-2017
 
 if nargin>=1
     flag = varargin{1};

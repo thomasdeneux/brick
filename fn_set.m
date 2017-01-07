@@ -25,7 +25,7 @@ function fn_set(h,varargin)
 % See also fn_get
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 if nargin==0, help fn_set, return, end
 

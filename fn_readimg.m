@@ -10,7 +10,7 @@ function a = fn_readimg(fname,flag)
 % Matlab y-x convention
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 % Input
 if nargin<1

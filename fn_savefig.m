@@ -45,7 +45,7 @@ function out = fn_savefig(varargin)
 
 
 % Thomas Deneux
-% Copyright 2003-2012
+% Copyright 2003-2017
 
 
 % Input

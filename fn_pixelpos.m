@@ -9,7 +9,7 @@ function pos = fn_pixelpos(hobj,varargin)
 % See also fn_pixelsize 
 
 % Thomas Deneux
-% Copyright 2011-2012
+% Copyright 2011-2017
 
 if nargin==0, help fn_pixelpos, return, end
 [recursive strict] = fn_flags({'recursive' 'strict'},varargin);

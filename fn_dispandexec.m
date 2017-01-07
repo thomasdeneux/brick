@@ -5,7 +5,7 @@ function fn_dispandexec(varargin)
 % display and execute commands or functions
 
 % Thomas Deneux
-% Copyright 2011-2012
+% Copyright 2011-2017
 
 if nargin==0, help fn_dispandexec, return, end
 

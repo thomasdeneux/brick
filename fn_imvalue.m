@@ -23,7 +23,7 @@ function fn_imvalue(varargin)
 % 'ButtonDownFcn' property as it is already used by fn_imvalue.
 
 % Thomas Deneux
-% Copyright 2003-2012
+% Copyright 2003-2017
 
 if nargin>0 && fn_ismemberstr(varargin{1}, ...
         {'clean','end','chgx','chgy','chgxy','register','unregister','demo'})
@@ -120,7 +120,7 @@ C = {'fn_imvalue image'
     'signal = sin(2*pi*t);'
     'subplot(223), plot(t,signal)'
     'subplot(224), plot(t,signal+rand(1,nt))'};
-fn_dispandexec(C)
+fn_dispandexec(C{:})
 
 %-------------------------
 % Init and Terminate Axes

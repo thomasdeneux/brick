@@ -12,7 +12,7 @@ function b = fn_eq(u,v,flag)
 % See also fn_add, bsxfun
 
 % Thomas Deneux
-% Copyright 2012-2012
+% Copyright 2012-2017
 
 b = bsxfun(@eq,u,v);
 if nargin>=3

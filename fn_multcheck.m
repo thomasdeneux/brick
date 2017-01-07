@@ -5,7 +5,7 @@ classdef fn_multcheck < hgsetget
     % custom uicontrol (row of check boxes)
     
     % Thomas Deneux
-    % Copyright 2009-2012
+    % Copyright 2009-2017
     properties
         nx
         value

@@ -3,7 +3,7 @@ function pargout=fn_meshplot(varargin)
 % function ho=fn_meshplot({vertex, faces}[, vcolor])
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 % Input
 if nargin==0

@@ -7,7 +7,7 @@
     
     <!-- Supply the following six elements in the order specified -->
     <!-- (Required) element; matlabrelease content is not currently used -->
-    <matlabrelease>2011b</matlabrelease>
+    <matlabrelease>2013a</matlabrelease>
     <!-- (Required) The name element appears in the Contents pane -->
     <name>Brick</name>
     <!-- (Required) The type elementidentifies your package; pick one: -->

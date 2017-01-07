@@ -102,7 +102,7 @@ classdef fn_control < hgsetget
     % See also fn_structedit, fn_input, fn_propcontrol
     
     % Thomas Deneux
-    % Copyright 2007-2012
+    % Copyright 2007-2017
     
     properties
         fun

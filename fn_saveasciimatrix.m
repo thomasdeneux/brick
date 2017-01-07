@@ -6,7 +6,7 @@ function fn_saveasciimatrix(a,filename)
 % See also fn_readasciimatrix, fn_readdatlabview, fn_savebin, fn_savetext
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 if nargin==0, help fn_saveasciimatrix, return, end
 

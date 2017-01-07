@@ -15,7 +15,7 @@ function dp = fn_moveobject(hobj,varargin)
 % See also fn_buttonmotion, fn_pan
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 % Special: move by a fixed vector
 if nargin==2 && isnumeric(varargin{1})

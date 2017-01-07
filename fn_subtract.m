@@ -8,7 +8,7 @@ function y=fn_subtract(u,v)
 % See also fn_add, fn_mult, fn_div
 
 % Thomas Deneux
-% Copyright 2012-2012
+% Copyright 2012-2017
 
 y = bsxfun(@minus,u,v);
 

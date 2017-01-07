@@ -37,7 +37,7 @@ function [x clip] = fn_clip(x,varargin)
 % - clip        the clipping range 
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 if nargin==0, help fn_clip, return, end
 

@@ -5,9 +5,9 @@ function fn_savexml(fname,s)
 % File Exchange
 
 % Jarek Tuszynski (function xml_write.m)
-% Copyright 2007-2012
+% Copyright 2007-2017
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 ext = fn_fileparts(fname,'ext');
 if isempty(ext), fname = [fname '.xml']; end

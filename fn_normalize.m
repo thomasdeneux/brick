@@ -10,7 +10,7 @@ function x = fn_normalize(x,dim,flag)
 %           can be a cell array for multiple actions 
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 if nargin<2, dim=1; end
 if nargin<3, flag='div'; end

@@ -8,7 +8,7 @@ function varargout = fn_register(varargin)
 % See also fn_translate, fn_xregister
 
 % Thomas Deneux
-% Copyright 2011-2012
+% Copyright 2011-2017
 
 if nargin==0, help fn_register, end
 

@@ -29,7 +29,7 @@ function M = fn_savemovie(a,varargin)
 % See also fn_readmovie, fn_movie
 
 % Thomas Deneux
-% Copyright 2004-2012
+% Copyright 2004-2017
 
 if nargin<1, help fn_savemovie, return, end
 

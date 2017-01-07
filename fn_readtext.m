@@ -8,7 +8,7 @@ function a = fn_readtext(filename)
 % See also fn_savetext, fn_readasciimatrix
 
 % Thomas Deneux
-% Copyright 2005-2012
+% Copyright 2005-2017
 
 if nargin<1, filename=fn_getfile; end
 

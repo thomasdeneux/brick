@@ -7,7 +7,7 @@ function hx = fn_scale(barsize,label,col)
 % See also fn_plotscale, fn_nicegraph, fn_labels
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 if nargin==0, help fn_scale, return, end
 if nargin<3, col='black'; end    

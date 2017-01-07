@@ -10,7 +10,7 @@ function varargout = fn_flags(varargin)
 % values 
 
 % Thomas Deneux
-% Copyright 2007-2012
+% Copyright 2007-2017
 
 % additional checks might be useful...
 if iscell(varargin{1})

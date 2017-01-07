@@ -3,7 +3,7 @@ classdef fn_uicontrol < hgsetget
     % see also fn_slider, fn_counter, fn_sensor, fn_control
     
     % Thomas Deneux
-    % Copyright 2006-2012
+    % Copyright 2006-2017
     
     properties (Access='protected')
         hu
