@@ -12,6 +12,9 @@ function indices = fn_listedit(varargin)
 %               number of kept items in the lists - the indices of kept
 %               items from all lists
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin==0
     varargin = {num2cell('a':'z') {'hello' 'kitty'}};
 end

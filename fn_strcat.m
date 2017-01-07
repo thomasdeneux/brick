@@ -10,6 +10,9 @@ function str = fn_strcat(c,varargin)
 % right of the final string.
 % If no input is requested, display the result.
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin==0, help fn_strcat, return, end
 
 % Input

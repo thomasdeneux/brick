@@ -20,6 +20,9 @@ function hl = fn_arrow(xdata,ydata,varargin)
 % - 'line' or 'patch'       arrow style [default: line]
 % - parameter/value pairs   line or patch properties
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 if isscalar(xdata)
     xdata = xdata([1 1]);

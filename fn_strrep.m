@@ -3,6 +3,9 @@ function str = fn_strrep(str,varargin)
 %---
 % Same as Matlab strrep, but allows multiple pattern replacements
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin==0, help fn_strrep, return, end
 
 if ~mod(nargin,2), error 'pattern and replacement strings must come as pairs', end

@@ -12,6 +12,9 @@ function y = fn_roiavg(x,ind)
 %
 % See also fn_maskavg
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 s = size(x); if length(s)<3, s(3)=1; end
 x = reshape(x,[s(1)*s(2) s(3:end)]);
 y = reshape(mean(x(ind,:),1),s(3:end));

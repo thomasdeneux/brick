@@ -5,6 +5,9 @@ classdef pixelposwatcher < handle
     % compatibility reason.
     % See also: fn_pixelposlistener, fn_pixelsizelistener, fn_pixelpos, fn_pixelsize
    
+    % Thomas Deneux
+    % Copyright 2015-2017
+
     properties (SetAccess='private')
         pixelpos
         pixelposrecursive

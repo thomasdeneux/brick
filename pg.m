@@ -9,6 +9,9 @@ function pg(varargin)
 % fn_progress(i), only write pg(promt,i,max) inside the loop (the proper
 % initialization will be called at the appropriate time)
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 
 persistent ilast curprompt curmax ndigit format tlast
 

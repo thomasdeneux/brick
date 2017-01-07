@@ -7,6 +7,9 @@ classdef fn_pointer < dynamicprops & hgsetget
     % fn_pointer is actually a small wrapper for Matlab 'dynamicprops'
     % class
     
+    % Thomas Deneux
+    % Copyright 2015-2017
+
     
     methods
         function X = fn_pointer(varargin)

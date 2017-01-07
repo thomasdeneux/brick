@@ -1,5 +1,5 @@
 classdef interface < hgsetget
-    % Interface class provide utilities for designing a graphic interface,
+    % Interface class provides utilities for designing a graphic interface,
     % such as allowing the user to resize the graphical elements, loading
     % and auto-saving program options, etc..
     % 

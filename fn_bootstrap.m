@@ -16,6 +16,9 @@ function p = fn_bootstrap(a,b,varargin)
 %
 % This syntax is not definitive!!!
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 if nargin<2
     nx = 1;

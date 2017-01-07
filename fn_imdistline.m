@@ -3,8 +3,10 @@ function fn_imdistline
 %---
 % enhanced version of Malab IMDISTLINE
 
-% Copyright 2005-2017 The MathWorks, Inc.
-% Copyright 2009-2017 Thomas Deneux
+% The MathWorks, Inc.
+% Copyright 2005-2017 
+% Thomas Deneux
+% Copyright 2009-2017
 
 pointer = get(gcf,'pointer');
 set(gcf,'pointer','hand')

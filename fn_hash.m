@@ -24,7 +24,7 @@ function h = fn_hash(inp,varargin)
 % key.
 
 % Michael Kleder (function hash.m)
-% Copyright 2005-2017
+% Copyright 2005-2007
 % Thomas Deneux
 % Copyright 2007-2017
 

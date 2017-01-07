@@ -43,7 +43,6 @@ function out = fn_savefig(varargin)
 % 
 % See also: fn_saveimg
 
-
 % Thomas Deneux
 % Copyright 2003-2017
 

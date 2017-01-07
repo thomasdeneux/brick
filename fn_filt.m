@@ -65,6 +65,9 @@ function y = fn_filt(x,tau,varargin)
 % Output:
 % - y       filtered data
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin==0, help fn_filt, return, end
 
 % Input

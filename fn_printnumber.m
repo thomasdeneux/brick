@@ -28,6 +28,9 @@ function im = fn_printnumber(im,elems,varargin)
 %           col is a scalar, N-element vector, 1x3 vector or Nx3 array
 %           default is black ([0 0 0]) if im has color frames, 0 otherwise
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin==0, help fn_printnumber, return, end
 
 % input

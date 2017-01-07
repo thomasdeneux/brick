@@ -13,6 +13,9 @@ classdef interactivePolygon < hgsetget
 %  access landmark points in P.points and fine-grain shape in P.points2
 %  to erase the drawing, type 'delete(P)'
 
+% Thomas Deneux
+% Copyright 2015-2017
+
     properties (SetAccess = 'private')
         interpmode = 'linear';
         closed = false;

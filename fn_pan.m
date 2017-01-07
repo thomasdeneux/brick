@@ -5,6 +5,9 @@ function fn_pan(ha,mode)
 %
 % See also fn_buttonmotion, fn_moveobject
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin<2, mode = 'xy'; end
 
 ax0 = axis(ha);

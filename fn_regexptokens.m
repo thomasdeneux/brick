@@ -6,5 +6,8 @@ function tokens = fn_regexptokens(a,expr)
 % returns the unique token if there is only one, or a cell array of tokens
 % if there are several
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 tokens = regexp(a,expr,'tokens');
 while isscalar(tokens), tokens = tokens{1}; end

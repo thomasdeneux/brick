@@ -1,5 +1,9 @@
 classdef memorypoolitem < handle
+    % See memorypool
     
+    % Thomas Deneux
+    % Copyright 2015-2017
+
     properties
         data
         memsize

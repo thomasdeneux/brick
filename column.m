@@ -1,4 +1,5 @@
 function x = column(x)
+% function x = column(x)
 %---
 % reshape x to a column vector
 %

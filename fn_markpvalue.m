@@ -5,6 +5,9 @@ function fn_markpvalue(x,y,p,varargin)
 % If x and y are 2-elements vectors, draws a line segment (x,y(1)) and mark
 % star(s) at (mean(x),y(2)).
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if isnan(p), return, end
 
 % Input

@@ -5,6 +5,9 @@ function b = fn_matlabversion(flag)
 % returns true if the current Matlab version is equal to or newer than the
 % specified version
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % current version
 v = sscanf(cell2mat(regexp(version,'^\d*.\d*','match')),'%i.%i')';
 

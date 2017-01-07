@@ -7,6 +7,9 @@ function fn_savevar(fname,varargin)
 %
 % See also fn_loadvar
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 ext = fn_fileparts(fname,'ext');
 if isempty(ext), fname = [fname '.mat']; end
 nvar = length(varargin);

@@ -6,6 +6,9 @@ function str = fn_idx2str(val)
 % Example:
 % fn_idx2str([1 2 3 4 6 8 10 15]) returns '1:4 6:2:10 15'
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 d = diff(val);
 if isempty(val)
     str = '';

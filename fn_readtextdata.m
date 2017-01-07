@@ -7,6 +7,9 @@ function [numdata numdataheaders textdata textdataheaders] = fn_readtextdata(fil
 % contains headers and the subsequent rows can contain both numerical and
 % text data
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin==0, filename = fn_getfile('Please select text file'); end
 
 % Read file

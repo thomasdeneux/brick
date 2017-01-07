@@ -16,6 +16,9 @@ function [p beta out3] = fn_GLMtest(X,y,h,testflag)
 %       if a T-test, h must be scalar; use negative value for testing a <0
 %       instead of >0
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % input
 [nobs nrep ntest] = size(y);
 n = nobs*nrep;

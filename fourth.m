@@ -4,4 +4,7 @@ function x = fourth(x)
 %
 % See also column, row, third, matrix
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 x = shiftdim(x(:),-3);

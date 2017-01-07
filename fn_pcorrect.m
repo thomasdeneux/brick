@@ -12,6 +12,9 @@ function pcorr = fn_pcorrect(pvalues,method,varargin)
 % - alpha       statistical level for test
 % - dim         dimension(s) on which to apply the correction
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 alpha = []; dim = [];
 for i=1:length(varargin)

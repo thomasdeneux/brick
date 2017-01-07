@@ -4,6 +4,9 @@ classdef windowcallbackmanager < hgsetget
     %
     % See also fn_scrollwheelregister, fn_buttonmotion
     
+    % Thomas Deneux
+    % Copyright 2015-2017
+
     % Note on 'queuing' system: if an action is already active, new actions
     % are canceled, but the number of scroll wheel counts is memorized so
     % that it will be added to the next action when system will not be busy

@@ -5,6 +5,9 @@ function hl = fn_stairs(varargin)
 % x can be of the same length as y (centers of time intervals), have one
 % additional element (edges of time intervals), or be a 2*n or n*2 array
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin<2 || ischar(varargin{2})
     y = varargin{1};
     opt = varargin(2:end);

@@ -5,6 +5,9 @@ function m =fn_mean(x,dim,varargin)
 % if additional arguments are defined, the result of averaging is sent to
 % fn_reshapepermute with these arguments
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin<2
     m = mean(x(:));
     return

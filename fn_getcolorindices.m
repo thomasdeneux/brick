@@ -3,6 +3,9 @@ function [a mincdist] = fn_getcolorindices(x,cm)
 %---
 % get indices in colormap for each pixel in image
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 [nx ny nc] = size(x);
 if nc~=3, error 'first argument expected to be a color image', end
 [ncol nc] = size(cm);

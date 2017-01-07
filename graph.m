@@ -7,6 +7,9 @@ classdef graph < hgsetget
 % nemax]. When calling G.pack(), nvmax and nemax are reset to nv and ne and
 % the indices of a given vertex or edge might change.
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 
     properties (Dependent, SetAccess='private')
         nv              % number of vertices

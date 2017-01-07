@@ -1,4 +1,5 @@
 classdef interface_template < interface
+    % Write some help about your class here
     
     properties
     end

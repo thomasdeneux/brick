@@ -13,8 +13,10 @@ function d = fn_xregister(a,b,maxshift)
 %
 % See also fn_register
 
-%   Copyright 1993-2010 The MathWorks, Inc.
-%   Copyright 2014-2014 Thomas Deneux
+% The MathWorks, Inc.
+% Copyright 1993-2010 
+% Thomas Deneux
+% Copyright 2014-2017
 
 if nargin==0, help fn_xregister, return, end
 if nargin<3, maxshift = 0.2; end

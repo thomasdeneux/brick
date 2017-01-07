@@ -1,5 +1,13 @@
 classdef panelorganizer < hgsetget
+    % function O = panelorganizer(hparent,'V|H',n[,dorelative[,xx]])
+    % function hp = setSubPanel(O,idx,uipanel options...)
+    % function O1 = setSubOrg(O,idx,'V|H',n[,dorelative[,xx]])
+    %---
+    % Divide a figure into resizeable panels
     
+    % Thomas Deneux
+    % Copyright 2015-2017
+
     properties (SetAccess='private')
         hobj
         splitmode

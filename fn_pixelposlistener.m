@@ -9,6 +9,9 @@ function hl = fn_pixelposlistener(hobj,callback)
 %
 % See also fn_pixelpos, fn_pixelsizelistener
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if fn_matlabversion('newgraphics')
     hl = [addlistener(hobj,'LocationChanged',callback) addlistener(hobj,'SizeChanged',callback)];
 else

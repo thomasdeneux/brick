@@ -11,7 +11,7 @@ function s = fn_readxml(fname,version)
 %               'xmlread' to use code provided in the Matlab help for xmlread
 
 % Thomas Deneux
-% Copyright 2007-2015
+% Copyright 2007-2017
 
 if nargin==0, help fn_readxml, return, end
 if nargin<2, version = 'xml_read'; end

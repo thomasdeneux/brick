@@ -5,9 +5,10 @@ function y = nstd(x,w,dim)
 %
 % see also nmean, nste
 
-% (Matlab code for NANSTD and NANVAR modified)
-
-%   Copyright 1993-2006 The MathWorks, Inc.
+% The MathWorks, Inc.
+% Copyright 1993-2006
+% Thomas Deneux
+% Copyright 2015-2017
 
 
 % COMPUTE NANVAR

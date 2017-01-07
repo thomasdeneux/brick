@@ -6,6 +6,9 @@ function s = fn_structinit(varargin)
 % and of size siz.
 % If size is a scalar n, the structure will be a row vector of length n.
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % input
 if isstruct(varargin{1})
     model = varargin{1};

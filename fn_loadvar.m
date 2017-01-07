@@ -5,6 +5,9 @@ function varargout = fn_loadvar(fname,varargin)
 %
 % See also fn_savevar
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin<1, fname = fn_getfile; if ~fname, return, end, end
 if ~exist(fname,'file')
     fnamemat = [fname '.mat'];

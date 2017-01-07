@@ -18,6 +18,9 @@ function [y freqs yticklog yticklabel] = fn_spectrogram(x,dt,varargin)
 %           'f', or 'sqrt(f)' - indicates how to rescale the data
 %           frequency-by-frequency [default: no rescale]
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if nargin==0, help fn_spectrogram, end
 
 % display?

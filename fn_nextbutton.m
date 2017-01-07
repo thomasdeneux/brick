@@ -7,6 +7,9 @@ function fn_nextbutton(resetskipflag)
 % if 'SKIP' is pressed, it will return immediately at next function calls,
 % unless argument 'resetskip' is used
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 persistent m u
 
 % Create menu

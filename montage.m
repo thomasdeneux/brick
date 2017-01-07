@@ -1,4 +1,8 @@
 classdef montage < interface
+    % GUI program for manual alignment of a large set of images
+    
+    % Thomas Deneux
+    % Copyright 2015-2017
 
     properties
         im = immodel('empty');

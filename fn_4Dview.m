@@ -130,7 +130,6 @@ function varargout = fn_4Dview(varargin)
 % - double-click with right button  -> cancel all selections
 %   (or point with right button outside of axis)
 
-
 % Thomas Deneux
 % Copyright 2004-2017
 % last modification: September 20th, 2007

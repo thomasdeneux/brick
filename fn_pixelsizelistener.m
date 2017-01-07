@@ -9,6 +9,9 @@ function hl = fn_pixelsizelistener(hobj,callback)
 %
 % See also fn_pixelsize, fn_pixelposlistener
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 if fn_matlabversion('newgraphics')
     hl = addlistener(hobj,'SizeChanged',callback);
 else

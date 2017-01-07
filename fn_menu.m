@@ -7,7 +7,7 @@ function varargout = fn_menu(varargin)
 % inside
 
 % Thomas Deneux
-% Copyright 2006-2014
+% Copyright 2006-2017
 
 % Create figure?
 if nargin==0 || ischar(varargin{1})

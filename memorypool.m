@@ -23,6 +23,9 @@ classdef memorypool < handle
     %           recover(item,a)
     %       end
     
+    % Thomas Deneux
+    % Copyright 2015-2017
+
     properties (Transient)
         maxmem = 2^30; % 1GB
         items = memorypoolitem.empty(1,0);

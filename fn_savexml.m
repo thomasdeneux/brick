@@ -5,7 +5,7 @@ function fn_savexml(fname,s)
 % File Exchange
 
 % Jarek Tuszynski (function xml_write.m)
-% Copyright 2007-2017
+% Copyright 2007-2012
 % Thomas Deneux
 % Copyright 2007-2017
 

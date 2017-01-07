@@ -3,6 +3,9 @@ function varargout = hsl2rgb(hue,sat,lum)
 % function rgb = hsl2rgb(hsl)
 % function [r g b] = hsl2rgb(...)
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % input
 if nargin==1
     [hue sat lum] = dealc(num2cell(hsl,1));

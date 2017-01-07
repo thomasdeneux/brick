@@ -3,6 +3,9 @@ classdef fn_extractsvgdata < handle
     %---
     % Display SVG data and provide tools to extract curve data.
     
+    % Thomas Deneux
+    % Copyright 2015-2017
+
     % SVG format (as far as i could get)
     % .svg                      full document
     %  .metadata                (ignored)

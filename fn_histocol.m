@@ -4,6 +4,9 @@ function fn_histocol(x,xwidth,cidx,cmap)
 % Draw a histogram of x values with bins of width xwidth, and color each
 % element according to the provided color indices cidx and color map cmap
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 ok = ~isnan(x) & ~isnan(cidx);
 x = x(ok);

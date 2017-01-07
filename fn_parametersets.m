@@ -2,6 +2,9 @@ function x = fn_parametersets(varargin)
 % function x = fn_parametersets(s)
 % function x = fn_parametersets('fieldname1',{values1a values1b...},'fieldname2',{values2a values2b ...},...)
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % build initial structure
 if nargin==1
     s = varargin{1};

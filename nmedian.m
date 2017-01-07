@@ -5,6 +5,9 @@ function m = nmedian(x,dim)
 %
 % see also nmean, nstd, nste
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % dimension on which to apply median
 sz = size(x);
 if nargin<2

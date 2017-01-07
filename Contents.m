@@ -63,7 +63,7 @@
 %   fn_mod            - Return modulus between 1 and n instead of between 0 and n-1
 %   fn_regexptokens   - Get the tokens of a regexp as a simple cell array
 % - tools
-%   fn_progress       - Print the state of a calculation 
+%   fn_progress, pg   - Print the state of a calculation 
 %   fn_hash           - Unique hash number for an array/cell/structure (Copyright M Kleder)
 % - debugging
 %   fn_dbstack        - Display current function name, with indent according to stack length 
@@ -253,10 +253,11 @@
 %   fn_color2bw       - GUI to let user choose the best conversion to convert color image to grayscale
 %   fn_editsignal     - Manually edit your signals data points!
 % 
-% RECOMMENDED
+% HIGHLIGHTS
 %   fn_imvalue        - Type 'fn_imvalue demo' to see how the fn_imvalue functions connects different displays for zooming, etc. 
+%   fn_buttonmotion   - Type 'fn_buttonmotion demo' then click and drag in the figure
 %   fn_figmenu        - Type 'fn_figmenu' to get a useful new menu in every figure 
-%   pg, fn_progress   - Type 'for i=1:100, pg i, svd(rand(1000)); end' and check a very simple progress indicator 
+%   pg                - Type 'for i=1:100, pg i, svd(rand(1000)); end' and check a very simple progress indicator 
 %   whoisbig          - Type 'whoisbig' to check which data takes a lot of memory 
 %
 % For more help type 'doc', then go to Supplemental Software > Brick Toolbox. 

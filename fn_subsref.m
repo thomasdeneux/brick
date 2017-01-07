@@ -31,7 +31,7 @@ function y = fn_subsref(x,varargin)
 % See also fn_indices, cellpop
 
 % Thomas Deneux
-% Copyright 2006-2012
+% Copyright 2006-2017
 
 % Input
 argisarray = ~isvector(x) || length(x)>5;

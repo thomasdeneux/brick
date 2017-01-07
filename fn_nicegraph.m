@@ -4,7 +4,7 @@ function fn_nicegraph(ha)
 % see also fn_labels, fn_scale, fn_plotscale
 
 % Thomas Deneux
-% Copyright 2005-2016
+% Copyright 2005-2017
 
 if nargin==0, ha = gca; end
 

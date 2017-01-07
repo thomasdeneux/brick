@@ -43,6 +43,9 @@ classdef fn_propcontrol < hgsetget
 %
 % See also: fn_menugroup, fn_control
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 properties (SetAccess='private')
     % controled object
     obj

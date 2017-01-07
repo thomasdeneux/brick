@@ -6,6 +6,9 @@ function mask = fn_poly2mask(xpoly,ypoly,m,n)
 % Except use different convention!! I.e. x = first coordinate, y = second
 % coordinate.
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % input
 switch nargin
     case 0

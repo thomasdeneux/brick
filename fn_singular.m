@@ -16,6 +16,9 @@ function sentence = fn_singular(varargin)
 % >> fn_singular('We found ',1,' occurenceS, among which ',1,' WERE A perfect matchES.')
 % We found 1 occurence, among which 1 was a perfect match.
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 forms = {
     'a '        ''
     ''          'es'   

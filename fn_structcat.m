@@ -9,6 +9,9 @@ function S = fn_structcat(varargin)
 %
 % See also fn_structmerge
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 if iscell(varargin{1})
     s = varargin{1};

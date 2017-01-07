@@ -6,6 +6,9 @@ function whoisbig(varargin)
 %           workspace]
 % - minsize e.g.: 10M [default], G, 100k, 0
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 var = []; minsize = [];
 for k=1:length(varargin)

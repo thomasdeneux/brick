@@ -10,6 +10,9 @@ function [s anychg] = fn_listorganize(s,namefield,addfun)
 % - addfun      function to execute when the 'add' button is pressed, with 
 %               prototype: structitem = addfun()
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % input
 simplelist = iscell(s);
 if simplelist

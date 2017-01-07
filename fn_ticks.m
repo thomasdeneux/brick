@@ -5,6 +5,9 @@ function fn_ticks(varargin)
 % set(gca,'xtick',1:length(xticklabel),'xticklabel',xticklabel, ...
 %     'xtick',1:length(xticklabel),'xticklabel',xticklabel)
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 if isscalar(varargin{1}) && ishandle(varargin{1}) && strcmp(get(varargin{1},'type'),'axes')
     ha = varargin{1};

@@ -4,4 +4,7 @@ function x = matrix(x)
 %
 % See also row, column, threed
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 x = x(:,:);

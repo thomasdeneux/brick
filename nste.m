@@ -6,9 +6,10 @@ function y = nste(x,dim)
 %
 % see also nmean, nstd
 
-% (Matlab code for NANSTD and NANVAR was modified)
-
-%   Copyright 1993-2006 The MathWorks, Inc.
+% The MathWorks, Inc.
+% Copyright 1993-2006
+% Thomas Deneux
+% Copyright 2015-2017
 
 % Input
 sz = size(x);

@@ -6,6 +6,9 @@ function varargout = fn_userconfig(flag,varargin)
 % Save or load variables in/from the file 
 % [prefdir '/interface_options/' flag '.mat']
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Folder
 [configfolder codefolder] = userfolders();
 if fn_ismemberstr(flag,{'configfolder' 'codefolder'})

@@ -19,10 +19,10 @@ if filename==0, disp(['Could not open file ' filename]), return, end
 fid=fopen(filename,'w');
 
 if ~iscell(a), a = cellstr(a); end
+a = fn_strrep(a,'%','%%','\','\\');
 a = a(:)';
 [a{2,:}] = deal('\n');
 s = char([a{:}]);
-s = strrep(s,'%','%%');
 fprintf(fid,s);
 
 fclose(fid);

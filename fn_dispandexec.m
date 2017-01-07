@@ -9,6 +9,7 @@ function fn_dispandexec(varargin)
 
 if nargin==0, help fn_dispandexec, return, end
 
+if isscalar(varargin) && iscell(varargin{1}), varargin = varargin{1}; end
 switch class(varargin{1})
     case 'char'
         for k=1:length(varargin)

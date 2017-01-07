@@ -27,6 +27,9 @@ function hl = fn_gridplot(varargin)
 %
 % See also fn_eegplot
 
+% Thomas Deneux
+% Copyright 2015-2017
+
 % Input
 organize = []; coloridx = 3; colors = [];
 steps = '3STD'; donum = false; dotop = false; callback = [];

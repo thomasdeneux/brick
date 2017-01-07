@@ -31,7 +31,6 @@ function fn_scrollwheelregister(hobj,arg,arg2)
 %
 % See also windowcallbackmanager
 
-
 % Thomas Deneux
 % Copyright 2012-2017
 

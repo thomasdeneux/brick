@@ -93,7 +93,7 @@ classdef fn_sensor < fn_uicontrol
             else
                 displayvalue(S,flag)
                 setappdata(S.hf,'previouspoint',p0)
-                fn_buttonmotion(@()move(S,val0,p0,flag))
+                fn_buttonmotion(@()move(S,val0,p0,flag),S.hf)
             end
             displayvalue(S)
         end
