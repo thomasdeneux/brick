@@ -1,6 +1,6 @@
 classdef fn_movie < hgsetget
-    % function fn_movie(M.Y[,M.opt])
-    % function fn_movie(M.Y,option1,value1,...)
+    % function fn_movie(data,option1,value1,...)
+    % function fn_movie(data,optstruct)
     %---
     % available options are
     % - temporal manipulations:
@@ -14,6 +14,7 @@ classdef fn_movie < hgsetget
     % - colors (M.fr denotes the M.fr at the instant an option is cM.hanged)
     %       brightness  bias in the center of clipping range ((max(M.fr)-min(M.fr))*brightness)
     %       contrast    amplitude of clipping range ((max(M.fr)-min(M.fr))/contrast)
+    %       clip        directly define the clipping range
     %       cmap        choose colormap
     %       overlay     overlay computed frames on top of the average M.fr in
     %                   grayscale

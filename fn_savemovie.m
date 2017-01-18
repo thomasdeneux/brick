@@ -38,10 +38,12 @@ if (ndims(a)==4)
     truecolors = true;
     [ni nj nc nt] = size(a);
     if nc~=3
-        if nt==3
+        if nc==1
+            truecolors = false;
+        elseif nt==3
             a = permute(a,[1 2 4 3]);
             [ni nj nc nt] = size(a);
-        else
+        else            
             error('if data is 4D, third dimension should be 3 (true colors)')
         end
     end
@@ -78,7 +80,11 @@ while i<=length(varargin)
                 case 'i420'
                     compression = x;
                 otherwise
-                    fname = x;
+                    if isempty(fname)
+                        fname = x;
+                    else
+                        map = feval(x,256);
+                    end
             end
         end
     elseif isscalar(x)
@@ -162,6 +168,8 @@ if zoom~=1
         % necessitate low-pass filtering before interpolation
         sigma = 1/(2*zoom);
         h = fspecial('gaussian',5*ceil(sigma),sigma);
+    elseif ~mod(zoom,1)
+        disp 'zoom>1 will perform interpolation, use negative zoom value to enlarge without interpolation'
     end
     [xx yy] = meshgrid(1:nj,1:ni); 
     [xx2 yy2] = meshgrid(1:1/zoom:nj,1:1/zoom:ni);
@@ -175,7 +183,7 @@ if isempty(hf)
     % convert to frames
     for i=1:nt
         fr = permute(a(:,:,:,i),[2 1 3]);
-        if ~strcmp(class(fr),'uint8'), fr = double(fr); end
+        if ~isa(fr,'uint8'), fr = double(fr); end
         if zoom~=1
             fn_progress(i);
             if zoom<1, fr = filter2(h,fr); end

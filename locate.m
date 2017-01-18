@@ -1,12 +1,21 @@
-function locate(fun)
-% function locate(fun)
+function locate(f)
+% function locate(f)
 %---
-% Will open Windows explorer and select the file of function fun
+% Reveal file or folder in Windows Explorer. f can also be the name of a
+% Maltlab function on the path.
 
 % Thomas Deneux
 % Copyright 2015-2017
 
-f = which(fun);
-cmd = ['!explorer /select,"' f '"'];
+if exist(f,'dir')
+    % folder
+    cmd = ['!explorer "' f '"'];
+else
+    % file
+    if ~exist(f,'file')
+        f = which(f);
+    end
+    cmd = ['!explorer /select,"' f '"'];
+end
 disp(cmd)
 eval(cmd)

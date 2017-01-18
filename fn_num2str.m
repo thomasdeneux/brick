@@ -50,5 +50,10 @@ end
 
 % convert back to char if required
 if ~docell
-    s = fn_strcat(s,' ');
+    % add spaces in the 2nd dimension
+    if size(s,2)>1
+        s = fn_interleave(2,s,repmat({' '},size(s)));
+        s(:,end,:) = [];
+    end
+    s = cell2mat(s);
 end

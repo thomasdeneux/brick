@@ -110,7 +110,7 @@ switch fontsize
             ]];
 
         patterns = fn_num2str(permute(patterns,[1 3 2]),'%.3i0'); % nrow x ncol x npattern
-        [nrow ncol npattern] = size(patterns); %#ok<NASGU>
+        [nrow ncol npattern] = size(patterns);  %#ok<ASGLU>
         patterns = permute(patterns,[2 1 3]); % ncol x nrow x npattern
         patterns = (patterns=='1'); % converted to logical
         patterns = squeeze(num2cell(patterns,1:2)); % convert to cell of length npattern
@@ -128,7 +128,7 @@ switch fontsize
                 a = a(2:289,:); % remove left border
                 a = fn_reshapepermute(a,[8+1 32 16 8],[1 3 2 4],[8+1 16 256]);
         end
-        [ncol nrow npattern] = size(a); %#ok<NASGU>
+        [ncol nrow npattern] = size(a);  %#ok<ASGLU>
         patterns = squeeze(num2cell(a,1:2)); % convert to cell of length npattern
 end
 
