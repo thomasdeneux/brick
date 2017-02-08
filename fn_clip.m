@@ -11,7 +11,7 @@ function [x clip] = fn_clip(x,varargin)
 %               'fit','mM' or 'minmax'  use minimum and maximum [default]
 %               'Xstd'                  use mean and X times standard deviation
 %               'prcA-B'                use percentiles (if B is omitted,
-%                                       use B = 100-A)
+%                                       use B = 100-A; if B<30, uses 100-B)
 %               add '[value]' at the end (e.g. 'fit[0]') to center the
 %               clipping range on the specified value
 %               

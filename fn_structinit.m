@@ -26,7 +26,7 @@ switch length(varargin)
 end
 
 % initialize structure
-if isempty(model)
+if ~isstruct(model)
     s = struct;
 else
     C = row(fieldnames(model)); [C{2,:}] = deal([]);

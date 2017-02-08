@@ -176,7 +176,7 @@ switch convtype
         for i=find(count)'
             ci = count(i);
             times(idx+(1:ci)) = t0+(i-1)*dt;
-            idx = idx+ci;
+            idx = idx+double(ci);
         end
         y = times;
 end

@@ -34,7 +34,7 @@ function y = fn_subsref(x,varargin)
 % Copyright 2006-2017
 
 % Input
-argisarray = ~isvector(x) || length(x)>5;
+argisarray = ~isnumeric(x) || ~isvector(x) || length(x)>5;
 if argisarray
     A = x;
     siz = size(A);

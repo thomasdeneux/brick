@@ -206,7 +206,8 @@ end
 %---
 function copypart(hf,flag)
 
-ha = gca;
+hv = get(hf,'handlevisibility');
+set(hf,'handlevisibility','on'), ha = gca; set(hf,'handlevisibility',hv)
 if fn_parentfigure(ha)~=hf, errormsg 'select axes first', return, end
 
 switch flag
