@@ -18,11 +18,12 @@ anonymouschar = true;
 appendflag = false;
 for k=1:nvar
     str = inputname(k+1);
-    if strcmp(str,'-APPEND'), appendflag = k; continue, end
-    anonymouschar = anonymouschar && ischar(varargin{k}) && isempty(str);
+    val = varargin{k};
+    if strcmp(val,'-APPEND'), appendflag = k; continue, end
+    anonymouschar = anonymouschar && ischar(val) && isempty(str);
     if isempty(str), str = ['var' num2str(k)]; end
     varnames{k} = str;
-    if iscell(varargin{k}), varargin{k} = {varargin{k}}; end %#ok<CCAT1>
+    if iscell(val), varargin{k} = {val}; end 
 end
 if appendflag
     varnames(k) = [];

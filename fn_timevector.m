@@ -174,9 +174,9 @@ switch convtype
         times = zeros(1,sum(count));
         idx = 0;
         for i=find(count)'
-            ci = count(i);
+            ci = double(count(i));
             times(idx+(1:ci)) = t0+(i-1)*dt;
-            idx = idx+double(ci);
+            idx = idx+ci;
         end
         y = times;
 end
