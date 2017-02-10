@@ -90,7 +90,7 @@ set(hf,'numbertitle','off','name','fn_review')
 clf(hf), fn_figmenu(hf)
 info = struct('X',{x},'idx',[1 1 1], ...
     's',s,'dims',dims,'show',show,'fact',fact,'command',command, ...
-    'ha',axes('parent',hf));
+    'hf',hf,'ha',axes('parent',hf));
 setappdata(hf,'fn_review',info)
 
 if ~singleelem
@@ -195,8 +195,16 @@ try
         evalin('base',info.command)
         axis(info.ha,'tight')
     end
-    if ishandle(info.ha), title(info.ha,num2str(info.idx(info.show))), end
+    if ishandle(info.ha)
+        title(info.ha,num2str(info.idx(info.show)))
+    else
+        set(info.hf,'name',['fn_review [' num2str(info.idx(info.show)) ']'])
+    end
 catch ME
     disp(['Error in fn_review display: ' ME.message])
-    if ishandle(info.ha), title(info.ha,[num2str(info.idx(info.show)) ' [ERROR OCCURED]']), end
+    if ishandle(info.ha)
+        title(info.ha,[num2str(info.idx(info.show)) ' [ERROR OCCURED]'])
+    else
+        set(info.hf,'name',['fn_review [' num2str(info.idx(info.show)) ' -> ERROR OCCURED]'])
+    end
 end

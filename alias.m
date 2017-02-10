@@ -44,9 +44,9 @@ classdef alias
                 str = [c{:}];
                 disp(['saving alias objects found in base workspace: ' str(2:end)])
                 if doappend
-                    str = ['save(''' fmat '''' str ')'];
-                else
                     str = ['save(''' fmat '''' str ',''-APPEND'')'];
+                else
+                    str = ['save(''' fmat '''' str ')'];
                 end
                 evalin('base',str)
             end
