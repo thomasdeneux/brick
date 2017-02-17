@@ -50,7 +50,9 @@ while i<length(varargin)
 end
 if isempty(s1), return, end
 if any(size(s1)~=size(s))
-    if isscalar(s)
+    if isempty(s)
+        s = repmat(fn_structinit(s),size(s1));
+    elseif isscalar(s)
         s = repmat(s,size(s1));
     elseif isscalar(s1)
         s1 = repmat(s1,size(s));
