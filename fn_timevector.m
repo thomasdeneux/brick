@@ -36,7 +36,9 @@ if xisarray
     inputtype = 'count';
 else
     if iscell(x), xtest=x{1}; else xtest=x; end
-    if all(xtest) || any(mod(xtest,1)) || length(xtest)<10 || ~any(xtest==0)
+    if any(isnan(xtest))
+        inputtype = 'count';
+    elseif all(xtest) || any(mod(xtest,1)) || length(xtest)<10 || ~any(xtest==0)
         inputtype = 'times';
     else
         inputtype = 'count';
