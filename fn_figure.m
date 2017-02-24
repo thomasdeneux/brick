@@ -1,5 +1,5 @@
 function hf = fn_figure(name,varargin)
-% function hf = fn_figure(name[,w,h][,options...])
+% function hf = fn_figure(name[,w,h][,'noerase'][,'nofocus'][,options...])
 %---
 % returns a figure handle associated with a unique name: create the figure
 % or return an existing figure handle depending on whether a figure with
@@ -20,23 +20,41 @@ else
         hf = figure('name',name,'tag',name,'integerhandle','off','numbertitle','off');
     end
 end
-if ~isempty(varargin) && isnumeric(varargin{1})
-    if length(varargin)>=2 && isnumeric(varargin{2})
-        [w h] = deal(varargin{1:2});
-        varargin(1:2)=[];
+[doerase dofocus] = deal(true);
+i = 0;
+while i<length(varargin)
+    i = i+1;
+    a = varargin{i};
+    if isnumeric(a)
+        if isscalar(a)
+            w = a;
+            i = i+1;
+            h = varargin{i};
+        else
+            [w h] = dealc(a);
+        end
+        fn_setfigsize(hf,w,h)
     else
-        wh = varargin{1};
-        varargin(1) = [];
-        w = wh(1); h = wh(2);
+        switch a
+            case 'noerase'
+                doerase = false;
+            case 'nofocus'
+                dofocus = false;
+            otherwise
+                set(hf,varargin{i:end})
+                break
+        end
     end
-    fn_setfigsize(hf,w,h)
 end
-if ~isempty(varargin)
-    set(hf,varargin{:})
+if doerase
+    delete(get(hf,'children'))
 end
-delete(get(hf,'children'))
-if nargout==0
+if dofocus
     figure(hf)
-    clf(hf)
+else
+    set(groot,'CurrentFigure',hf)
+    
+end
+if nargout==0
     clear hf
 end

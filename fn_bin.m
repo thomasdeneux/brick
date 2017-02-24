@@ -1,5 +1,5 @@
 function [data maskbin] = fn_bin(data,bins,varargin)
-% function data = fn_bin(data,bins(vector)|xybin(scalar)[,'same'][,'sum|mode'][,'mask',mask][,'and|or')
+% function data = fn_bin(data,bins(vector)|xybin(scalar)[,fun][,'same'][,'mask',mask])
 % function [data maskbin] = fn_bin(data,xybin(scalar)[,'mask',mask])
 %---
 % bin data according to vector describing which binning to apply for each 
@@ -10,13 +10,16 @@ function [data maskbin] = fn_bin(data,bins,varargin)
 % - data    array of size s
 % - bins    vector of length up to ndims(data); use negative values to
 %           specify desired output sizes rather than bin sizes
-% - flags:
-%   'same'      make binned data same size as original
-%   'sum'       sum over each block rather than averaging
-%   'mode'      take most frequent value inside block rather than averaging
+% - fun:
+%   'mean'      average over each bin [=default]
+%   'sum'       sum over each bin
+%   'mode'      take most frequent value inside each bin
 %   'min|max'   take min or max over each bin
 %   'and|or'    performs a logical 'and' or 'or' rather than averaging;
 %               note that if data is a logical, 'and' is chosen by default
+% - other flags:
+%   'same'      make binned data same size as original
+%   'sum'       sum over each block rather than averaging
 %   'smart'     cover all the data; for this all blocks do not have exactly the
 %               same number of elements
 %   'mask',mask the first dimension in data corresponds to pixels
