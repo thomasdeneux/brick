@@ -74,14 +74,21 @@ classdef fn_extractsvgdata < handle
             
             % Read element by element
             nfail = 0;
+            warnings = false;
             for i=1:length(g)
                 %try 
-                    readoneelem(E,g(i))
+                    warnings = warnings | readoneelem(E,g(i));
                 %catch
                 %    nfail = nfail+1;
                 %end
             end
             if nfail, fprintf('Failed to display %i elements out of %i\n',nfail,length(g)), end
+            
+            % Display encountered warnings
+            [warncurve] = dealc(warnings);
+            if warncurve
+                disp('Bézier commands and elliptical arcs will not be displayed properly')
+            end
             
             % Add zoom-in ability
             set(E.ha,'buttondownfcn',@(u,e)zoomin(E))
@@ -94,7 +101,7 @@ classdef fn_extractsvgdata < handle
             assignin('base','E',E)
         end
         
-        function readoneelem(E,g)
+        function warnings = readoneelem(E,g)
             
             %             % id
             %             id = x.ATTRIBUTE.id;
@@ -104,7 +111,10 @@ classdef fn_extractsvgdata < handle
                 if isfield(g.ATTRIBUTE,'transform')
                     warning 'group transformation not handled yet'
                 end
-                readoneelem(E,g.g)
+                warnings = false;
+                for i=1:length(g.g)
+                    warnings = warnings | readoneelem(E,g.g(i));
+                end
                 return
             end
             
@@ -121,6 +131,9 @@ classdef fn_extractsvgdata < handle
                     case 'translate'
                         translation = column(str2num(tokens{2}));
                         rotation = 1;
+                    case 'scale'
+                        translation = [0;0];
+                        rotation = column(str2num(tokens{2}));
                     case 'matrix'
                         spec = str2num(tokens{2}); %#ok<ST2NM>
                         if length(spec)~=6, error 'could not read matrix data', end
@@ -134,92 +147,111 @@ classdef fn_extractsvgdata < handle
                 rotation = 1;
             end
             
+            warncurve = false;
+            
             % path (https://www.w3.org/TR/SVG/paths.html#DAttribute)
-            if ~isfield(g,'path') || isempty(g.path), return, end
-            d = g.path.ATTRIBUTE.d;
-            parts = regexp(d,'[a-zA-Z][\d-. ,]+','match');
-            polys = {};
-            poly = [];
-            for k=1:length(parts)
-                partk = parts{k};
-                command = partk(1);
-                points = reshape(str2num(partk(2:end)),2,[]);
-                if k==1 && ~ismember(command,'mM'), error 'path must begin with a ''moveto'' instruction', end
-                switch command
-                    case {'m' 'M'}
-                        % moveto
-                        if k>1
-                            p0 = poly(:,end);
-                            polys{end+1} = fn_add(translation,rotation*poly); %#ok<AGROW>
-                            poly = [];
-                        else
-                            p0 = 0;
-                        end
-                        if strcmp(command,'m')
-                            % relative moveto
-                            points = fn_add(p0,cumsum(points,2));
-                        end
-                    case 'L'
-                        % absolute lineto: nothing to do
-                    case 'l'
-                        % relative lineto
-                        points = fn_add(poly(:,end),cumsum(points,2));
-                    otherwise
-                        error('path instruction ''%s'' not handled yet',command)
+            if ~isfield(g,'path'), warnings = false; return, end
+            for i=1:length(g.path)
+                d = g.path(i).ATTRIBUTE.d;
+                parts = regexp(d,'[a-zA-Z][\d-. ,]+','match');
+                polys = {};
+                poly = [];
+                for k=1:length(parts)
+                    partk = parts{k};
+                    command = partk(1);
+                    points = reshape(str2num(partk(2:end)),2,[]);
+                    if k==1 && ~ismember(command,'mM'), error 'path must begin with a ''moveto'' instruction', end
+                    switch command
+                        case {'m' 'M'}
+                            % moveto
+                            if k>1
+                                p0 = poly(:,end);
+                                polys{end+1} = fn_add(translation,rotation*poly); %#ok<AGROW>
+                                poly = [];
+                            else
+                                p0 = 0;
+                            end
+                            if strcmp(command,'m')
+                                % relative moveto
+                                points = fn_add(p0,cumsum(points,2));
+                            end
+                        case 'L'
+                            % absolute lineto: nothing to do
+                        case 'l'
+                            % relative lineto
+                            points = fn_add(poly(:,end),cumsum(points,2));
+                        case {'C' 'S' 'Q' 'T' 'A'}
+                            % absolute Bézier/arc
+                            warncurve = true;
+                            points = points(:,end); % the target point
+                        case {'c' 's' 'q' 't' 'a'}
+                            % relative Bézier/arc
+                            warncurve = true;
+                            points = poly(:,end)+points(:,end); % the target point
+                    end
+                    poly = [poly points]; %#ok<AGROW>
                 end
-                poly = [poly points]; %#ok<AGROW>
-            end
-            polys{end+1} = fn_add(translation,rotation*poly);
-            
-            % style
-            style = g.path.ATTRIBUTE.style;
-            tokens = regexp(style,'([^:;]*):([^:;]*)','tokens');
-            ok = false(1,length(tokens));
-            for i=1:length(tokens)
-                [name value] = deal(tokens{i}{:});
-                switch name
-                    case 'stroke'
-                        ok(i) = true;
-                        if strcmp(value,'none')
-                            tokens{i} = {'linestyle','none'};
-                        else
-                            tokens{i} = {'color',getcolor(value)};
-                        end
-                end
-            end
-            style = [tokens{ok}];
-            
-            % ignore path with no stroke
-            idx = find(strcmp(style(1:2:end),'linestyle'),1);
-            if ~isempty(idx) && strcmp(style{2*idx},'none')
-                return
-            end
-            
-            % display
-            for kpoly = 1:length(polys)
-                poly = polys{kpoly};
+                polys{end+1} = fn_add(translation,rotation*poly); %#ok<AGROW>
                 
-                % try connecting lines that look like in continuation of each other
-                if ~isempty(E.elements)
-                    lastelem = E.elements(end);
-                    doconnect = ~isempty(lastelem.poly) && isequal(style,lastelem.style) && norm(poly(:,1)-lastelem.poly(:,end))<.1;
-                else
-                    doconnect = false;
+                % style
+                style = g.path(i).ATTRIBUTE.style;
+                tokens = regexp(style,'([^:;]*):([^:;]*)','tokens');
+                ok = false(1,length(tokens));
+                for i=1:length(tokens)
+                    [name value] = deal(tokens{i}{:});
+                    switch name
+                        case 'stroke'
+                            ok(i) = true;
+                            if strcmp(value,'none')
+                                tokens{i} = {'linestyle','none'};
+                            else
+                                tokens{i} = {'color',getcolor(value)};
+                            end
+                    end
                 end
-                if doconnect
-                    poly = [lastelem.poly poly(:,2:end)];
+                style = [tokens{ok}];
+                
+                % ignore path with no stroke
+                idx = find(strcmp(style(1:2:end),'linestyle'),1);
+                if ~isempty(idx) && strcmp(style{2*idx},'none')
+                    continue
                 end
                 
                 % display
-                if doconnect
-                    set(lastelem.hl,'xdata',poly(1,:),'ydata',poly(2,:))
-                    E.elements(end).poly = poly;
-                else
-                    idx = length(E.elements)+1;
-                    hl = line(poly(1,:),poly(2,:),style{:},'buttondownfcn',@(u,e)linepress(E,idx));
-                    E.elements(idx) = struct('poly',poly,'style',{style},'hl',hl);
+                for kpoly = 1:length(polys)
+                    poly = polys{kpoly};
+                    
+                    % try connecting lines that look like in continuation of each other
+                    doconnect = false;
+                    if ~isempty(E.elements)
+                        lastelem = E.elements(end);
+                        if ~isempty(lastelem.poly) && isequal(style,lastelem.style) 
+                            if norm(poly(:,1)-lastelem.poly(:,end))<.1
+                                % connect to the end of previous
+                                poly = [lastelem.poly poly(:,2:end)];
+                                doconnect = true;
+                            elseif norm(poly(:,end)-lastelem.poly(:,1))<.1
+                                % connect to the begin of previous
+                                poly = [poly lastelem.poly(:,2:end)];
+                                doconnect = true;
+                            end
+                        end
+                    end
+                    
+                    % display
+                    if doconnect
+                        set(lastelem.hl,'xdata',poly(1,:),'ydata',poly(2,:))
+                        E.elements(end).poly = poly;
+                    else
+                        idx = length(E.elements)+1;
+                        hl = line(poly(1,:),poly(2,:),style{:},'buttondownfcn',@(u,e)linepress(E,idx));
+                        E.elements(idx) = struct('poly',poly,'style',{style},'hl',hl);
+                    end
                 end
             end
+            
+            % output warning(s)
+            warnings = warncurve;
             
         end
         

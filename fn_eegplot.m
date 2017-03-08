@@ -33,6 +33,7 @@ else
     varargin(1) = [];
     t = 1:size(data,1);
 end
+data = fn_float(data);
 % (other arguments)
 lineopt = {}; donum = ''; ystep = [];
 for i = 1:length(varargin)

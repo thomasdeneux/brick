@@ -12,7 +12,7 @@ if exist(f,'dir')
     cmd = ['!explorer "' f '"'];
 else
     % file
-    if ~exist(f,'file')
+    try %#ok<TRYNC>
         f = which(f);
     end
     cmd = ['!explorer /select,"' f '"'];

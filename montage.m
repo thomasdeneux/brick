@@ -82,7 +82,9 @@ classdef montage < interface
                 'bin__images',  {1  'double'}, ...
                 'alpha',    {.7     'slider 0 1'}, ...
                 'white',    {0      'slider 0 1'}, ...
-                'clip',     {'fit'  'char'});
+                'clip',     {'fit'  'char'}, ...
+                'checkerboard',     {[]     'xstepper 1 3 Inf'}, ...
+                'checkerinvert',    {false  'logical'});
             M.X = fn_control(s,@(s)updatePar(M),M.grob.x);
         end
         function init_context(M)
@@ -114,6 +116,7 @@ classdef montage < interface
     % Display
     methods
         function show(M,varargin)
+            % function show(M[,idx][,flag])
             ha = M.grob.ha;
             % no image?
             if isempty(M.im)
@@ -157,6 +160,7 @@ classdef montage < interface
             end
             for i=idx
                 s = M.im(i);
+                if ~s.active && ~doactive, continue, end
                 doredraw = isempty(s.h) || ~all(ishandle(s.h));
                 % compute
                 if doimage || doalpha
@@ -180,6 +184,20 @@ classdef montage < interface
                         alpha = outmask*M.X.white + ~outmask*M.X.alpha;
                     else
                         alpha = [];
+                    end
+                    % add checkerboard transparency
+                    if ~isempty(M.X.checkerboard) && any(getSelection(M)==i)
+                        squareside = round(min(ni,nj)/M.X.checkerboard);
+                        nsqx = ceil(ni/squareside); nsqy = ceil(nj/squareside);
+                        checker = mod(fn_add(column(1:nsqx),row(1:nsqy)),2);
+                        checker = fn_enlarge(checker,[nsqx nsqy]*squareside);
+                        checker = checker(1:ni,1:nj);
+                        if M.X.checkerinvert, checker = 1-checker; end
+                        if isempty(alpha)
+                            alpha = checker*M.X.alpha;
+                        else
+                            alpha = checker*alpha;
+                        end
                     end
                 else
                     [ni nj ncol] = size(s.data); %#ok<ASGLU>
@@ -348,6 +366,8 @@ classdef montage < interface
             end
         end
         function selectimages(M,idx)
+            % memorize current selection
+            oldidx = M.getSelection();
             % select in list
             idxlist = false(1,length(M.im));
             idxlist(idx) = true;
@@ -360,6 +380,10 @@ classdef montage < interface
                 h = cat(1,M.im(idx).h);
                 if ~isempty(h), set(h(:,2:3),'color','r'), end
             end
+            % update checkerboards if appropriate
+            if ~isempty(M.X.checkerboard)
+                M.show(union(oldidx,idx),'image')
+            end
         end
         function set.showmarks(M,x)
             M.showmarks = x;
@@ -368,7 +392,7 @@ classdef montage < interface
         function updatePar(M)
             if ismember('bin',M.X.changedfields)
                 M.show()
-            elseif ismember('clip',M.X.changedfields)
+            elseif any(ismember({'checkerboard' 'checkerinvert' 'clip' 'bin__images'},M.X.changedfields))
                 M.show('image')
             else
                 M.show('alpha')
@@ -399,16 +423,26 @@ classdef montage < interface
             i = getSelection(M);
             if ~any([M.im(i).active]), return, end
             ax = axis(M.grob.ha);
-            step = mean(diff(ax([1 3; 2 4]))/400)*M.motionfactor;
+            tstep = mean(diff(ax([1 3; 2 4]))/400)*M.motionfactor;
+            rstep = pi/180/5*M.motionfactor;
+            zstep = 1.001^M.motionfactor;
             switch(e.Key)
                 case 'leftarrow'
-                    [M.im(i).xc] = dealc([M.im(i).xc]-step);
+                    [M.im(i).xc] = dealc([M.im(i).xc]-tstep);
                 case 'rightarrow'
-                    [M.im(i).xc] = dealc([M.im(i).xc]+step);
+                    [M.im(i).xc] = dealc([M.im(i).xc]+tstep);
                 case 'uparrow'
-                    [M.im(i).yc] = dealc([M.im(i).yc]-step);
+                    [M.im(i).yc] = dealc([M.im(i).yc]-tstep);
                 case 'downarrow'
-                    [M.im(i).yc] = dealc([M.im(i).yc]+step);
+                    [M.im(i).yc] = dealc([M.im(i).yc]+tstep);
+                case 'multiply'
+                    [M.im(i).rot] = dealc([M.im(i).rot]+rstep);
+                case 'divide'
+                    [M.im(i).rot] = dealc([M.im(i).rot]-rstep);
+                case 'add'
+                    [M.im(i).scale] = dealc([M.im(i).scale]*zstep);
+                case 'subtract'
+                    [M.im(i).scale] = dealc([M.im(i).scale]/zstep);
                 case 'pagedown'
                     M.stackImages(i,'bottom')
                     return
@@ -416,7 +450,7 @@ classdef montage < interface
                     M.stackImages(i,'top')
                     return
                 otherwise
-                    %disp(e.Key)
+                    disp(e.Key)
                     return
             end
             M.show('move',i)
@@ -440,7 +474,11 @@ classdef montage < interface
                         return
                     case 'normal'
                         if strcmp(flag,'axes')
-                            M.selectimages([])
+                            idx = M.getSelection();
+                            if ~isempty(idx)
+                                M.selectimages([])
+                                M.show(idx,'image')
+                            end
                             return
                         end
                 end
@@ -960,7 +998,7 @@ classdef montage < interface
                 case 'align'
                     a = cell(1,n);
                 case 'montage'
-                    a = zeros(nx,ny);
+                    a = zeros(nx,ny,size(img(1).data,3));
                 otherwise
                     error('unknown flag ''%s''',flag)
             end
@@ -1011,7 +1049,7 @@ classdef montage < interface
                 end
             end
             if strcmp(flag,'montage')
-                a = a./contrib;
+                a = fn_div(a,contrib);
                 a(isnan(a)) = 0;
             end
         end

@@ -43,6 +43,7 @@ else
     doz = (length(axis)==6);
 end
 if doz && ~(dox && doy), error 'argument', end
+x = fn_float(x); y = fn_float(y); z = fn_float(z);
 % (other options)
 ha = gca; doclose = false; lineopt = {'color' 'k'};
 for i=1:length(varargin)
