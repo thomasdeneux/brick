@@ -4,14 +4,16 @@ classdef memorypoolitem < handle
     % Thomas Deneux
     % Copyright 2015-2017
 
-    properties
+    properties (Transient)
         data
+    end
+    properties
         memsize
         description
         weight
         rank
     end
-    properties (Access='private')
+    properties (Access='private', Transient)
         pool
     end
     
@@ -30,8 +32,8 @@ classdef memorypoolitem < handle
             end
             
             % input
-            if nargin<2, description = [fn_strcat(size(data),'x') ' ' class(data)]; end
-            if nargin<3, weight = 1; end
+            if nargin<3, description = [fn_strcat(size(data),'x') ' ' class(data)]; end
+            if nargin<4, weight = 1; end
             
             % basic properties
             item.pool = pool;

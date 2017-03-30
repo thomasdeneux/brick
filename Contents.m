@@ -151,6 +151,9 @@
 %   fn_arrow          - Draw an arrow
 %   fn_circle         - Draw a circle
 %   fn_lines          - Draw a series of vertical and/or horizontal lines
+% - bar displays
+%   fn_histocol       - Display an histogram of values with colors
+%                       indicating another set of values (e.g. p-values)
 % - time courses displays
 %   fn_stairs         - Display stairs in an intuitive way
 %   fn_errorbar       - Display nice error bars 

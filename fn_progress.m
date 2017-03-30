@@ -1,4 +1,4 @@
-function fn_progress(varargin)
+function out = fn_progress(varargin)
 % function fn_progress(prompt,max[,ht][,'ignoresub'][,'noerase'])
 % function fn_progress(prompt,'%',[,ht][,'ignoresub'][,'noerase'])
 % function fn_progress(text)
@@ -9,6 +9,8 @@ function fn_progress(varargin)
 % function fn_progress('in',ht|[])
 % function fn_progress('screen') 
 % function fn_progress('elapsed|elapsedmin')
+% function x = fn_progress(prompt,...)
+% function fn_progress(i,x)
 %---
 % progress indicator
 %
@@ -23,7 +25,14 @@ persistent ht0          % default place for displaying progress (handle or '' fo
 % detect nested call to fn_progress
 stack = dbstack; 
 if isscalar(stack), caller = ''; else caller = stack(2).name; end
-if isempty(x) || ~isfield(x,'caller')
+if nargout==1
+    % syntax x = fn_progress(prompt,...)
+    calllevel = 0;
+elseif nargin>=2 && isstruct(varargin{2})
+    % syntax fn_progress(i,x)
+    calllevel = 1;
+    x = varargin{2};
+elseif isempty(x) || ~isfield(x,'caller')
     calllevel = 0; 
 elseif strcmp(caller,x(1).caller) 
     calllevel = 1; 
@@ -163,6 +172,10 @@ if ischar(varargin{1})
     % start timers
     x(1).timer = tic;
     x(1).lastdisp = tic-1e6; % trick: save the time it was 1s before, so that next display attempt will detect a delay > 1s and will not cancel the display
+    % output?
+    if nargout==1
+        out = x;
+    end
 else
     
     % STATE PROGRESS

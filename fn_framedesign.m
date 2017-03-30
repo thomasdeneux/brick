@@ -107,11 +107,11 @@ if nargin>1
             newgrob = true;
         end
         if isfield(pos,f)
-            if strcmp(f,'hf')
-                % do not move the figure, only resize it
-                fn_setfigsize(grob.hf,pos.hf(3:4))
-                continue
-            end
+            %             if strcmp(f,'hf')
+            %                 % do not move the figure, only resize it
+            %                 fn_setfigsize(grob.hf,pos.hf(3:4))
+            %                 continue
+            %             end
             for i=1:min(size(pos.(f),1),numel(grob.(f)))
                 obji = grob.(f)(i);
                 posi = pos.(f)(i,:);
@@ -126,12 +126,12 @@ if nargin>1
     end
 end
 
-% Correct figure position however to make it visible if necessary
-screensize = get(0,'screenSize');
-if ~isempty(pos) && isfield(pos,'hf') && ...
-        (pos.hf(1)+pos.hf(3)>screensize(3) || pos.hf(2)+pos.hf(4)>screensize(4))
-    set(grob.hf,'position',[4 screensize(4)-pos.hf(4)-52 pos.hf(3:4)])
-end
+% % Correct figure position however to make it visible if necessary
+% screensize = get(0,'screenSize');
+% if ~isempty(pos) && isfield(pos,'hf') && ...
+%         (pos.hf(1)+pos.hf(3)>screensize(3) || pos.hf(2)+pos.hf(4)>screensize(4))
+%     set(grob.hf,'position',[4 screensize(4)-pos.hf(4)-52 pos.hf(3:4)])
+% end
 
 % Finish if we don't want to (re)define the positions
 if isempty(resetflag), resetflag = newgrob; end

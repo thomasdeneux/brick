@@ -11,7 +11,7 @@ function varargout = fn_regexptokens(a,expr)
 % Copyright 2015-2017
 
 tokens = regexp(a,expr,'tokens');
-while isscalar(tokens), tokens = tokens{1}; end
+while iscell(tokens) && isscalar(tokens), tokens = tokens{1}; end
 if nargout<=1
     varargout = {tokens};
 else

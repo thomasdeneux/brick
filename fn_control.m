@@ -69,14 +69,12 @@ classdef fn_control < hgsetget
     % xstepper, xclip, xcolor'
     %               additional display of a check box: value will be empty
     %               if the box is not checked
-    %               it is possible to specify a starting value inside
+    %               it is possible to specify a default value inside
     %               brackets at the end of the flag, for example:
     %               'xchar 12 [yes we can]' (here the brackets do not mean
     %               that this starting value is optional, but they must
     %               appear in the string)
     % 'file|dir'    button for selecting file name / directory name
-    %
-    % Special specifications in spec:
     % 'label'       field name will be displayed (usually labels a new
     %               section) but does not correspond to any data
     % 'struct' or full specification sub-structure
@@ -89,6 +87,11 @@ classdef fn_control < hgsetget
     %               to be launched
     %               in this case callback fun will be called with action
     %               string as an argument (instead of structure s)
+    %
+    % Specification can be followed with a sequence '< name', indicating
+    % that the control of interest should be enabled only if a preceding
+    % control with name 'name' has value true (logical control) or
+    % non-empty value (other controls).
     % 
     % One might want to display small sentences rather than simple names
     % when prompting user. For this, the following syntaxes are allowed:
@@ -98,7 +101,10 @@ classdef fn_control < hgsetget
     %   3-elements structures), the second element containing the long-name
     %   version for each field.
     %
-    % 
+    % Example: 
+    % Type 'fn_control demo' or simply 'fn_control' for a small
+    % example.
+    %
     % See also fn_structedit, fn_input, fn_propcontrol
     
     % Thomas Deneux
@@ -112,6 +118,7 @@ classdef fn_control < hgsetget
         mode              % which special buttons: 'none', 'ok', 'execfun' 
         controls
         names
+        dependencies
         entries
         hp
         himupd
@@ -234,6 +241,7 @@ classdef fn_control < hgsetget
                 'check',{},'log',{},'min',{},'max',{},'step',{},'shift',{},'format',{}, ...
                 'mode',{},'values',{} ...
                 );
+            X.dependencies = false(nf);
             
             %-
             % SET PARAMETERS  
@@ -317,12 +325,12 @@ classdef fn_control < hgsetget
                     xk.style = 'struct';
                 else
                     % (string describing the control)
-                    % check first flag
-                    tmp = regexp(opt,'^[^ ]*','match'); tmp = tmp{1};
+                    [type args defval dep] = fn_regexptokens(opt,'^([^ ]+)([^\[<]*)(\[.*\])*( *<.*)*$');
+                    opt = [type args];
                     % check box?
-                    if tmp(1) == 'x'
+                    if type(1) == 'x'
                         xk.check = true;
-                        tmp(1) = [];
+                        type(1) = [];
                         % initial checking of the box
                         xk.defaultcheck = ~isempty(xk.value);
                     else
@@ -330,7 +338,7 @@ classdef fn_control < hgsetget
                         xk.defaultcheck = true;
                     end
                     % define value type and display style
-                    switch tmp
+                    switch type
                         case 'label'
                             xk.style = 'label';
                             xk.label = true;
@@ -340,12 +348,12 @@ classdef fn_control < hgsetget
                             xk.check = true;
                         case 'multcheck'
                             xk.type = 'logical';
-                            xk.style = tmp;
+                            xk.style = type;
                         case 'multlist'
                             error 'multlist option should be passed in the form of a cell array, together with individual entry names'
                         case {'slider' 'logslider' 'loglogslider'}
                             xk.type = 'double';
-                            xk.log = sum(logical(strfind(tmp,'log'))); % count how many 'log'
+                            xk.log = sum(logical(strfind(type,'log'))); % count how many 'log'
                             xk.style = 'slider';
                         case 'stepper'
                             xk.type = 'double';
@@ -360,9 +368,9 @@ classdef fn_control < hgsetget
                         case {'file','dir'}
                             xk.type = 'char';
                             xk.style = 'file';
-                            xk.mode = fn_switch(tmp,'file','save','dir','dir');
+                            xk.mode = fn_switch(type,'file','save','dir','dir');
                         case {'char' 'double' 'single' 'int8' 'int16' 'int32' 'int64' 'uint8' 'uint16' 'uint32' 'uint64'}
-                            xk.type = tmp;
+                            xk.type = type;
                             xk.style = 'edit';
                         case 'struct'
                             xk.type = 'struct';
@@ -376,17 +384,25 @@ classdef fn_control < hgsetget
                         case 'unknown'
                             xk.style = 'exclude';
                         otherwise
-                            error('unknown control flag: ''%s''',tmp)
+                            error('unknown sub-control type: ''%s''',type)
                     end
                     
                     % starting value (will be set only if xk.value is
                     % empty!)
-                    idx = find(opt=='[');
-                    if ~isempty(idx) && isempty(xk.value)
-                        str = opt(idx+1:end-1);
+                    if ~isempty(defval) && isempty(xk.value)
+                        str = fn_regexptokens(defval,'\[(.*)\]');
                         xk.startval = str2val(str,xk.type);
                     end
-                    opt(idx:end) = [];
+                    
+                    % dependencie
+                    if ~isempty(dep)
+                        name = fn_regexptokens(dep,'< *([^ ]*)');
+                        kdep = find(strcmp(name,X.names(1:k-1)));
+                        if isempty(kdep)
+                            error 'error in establishing dependency'
+                        end
+                        X.dependencies(kdep,k) = true;
+                    end
                 end
                 
                 % [initial value, control width, and style-specific parameters] 
@@ -468,14 +484,14 @@ classdef fn_control < hgsetget
                             xk.value = opt{xk.startval};
                         end
                         xk.values = opt;
-                        tmp = char(opt{:}); 
+                        args = char(opt{:}); 
                         switch xk.style
                             case 'popupmenu'
-                                xk.n_val = 1+min(25,size(tmp,2))*.8;
+                                xk.n_val = 1+min(25,size(args,2))*.8;
                             case {'togglebutton' 'pushbutton'}
-                                xk.n_val = length(opt) + numel(tmp)*.8;
+                                xk.n_val = length(opt) + numel(args)*.8;
                             case 'radiobutton'
-                                xk.n_val = 4*length(opt) + numel(tmp)*.8;
+                                xk.n_val = 4*length(opt) + numel(args)*.8;
                         end
                     case 'slider'
                         % remember: xk.value is in the regular scale, but
@@ -628,14 +644,14 @@ classdef fn_control < hgsetget
                         elseif isempty(xk.startval)
                             xk.startval = '';
                         end
-                        tmp = regexp(opt,'[^ ]*','match');
-                        if length(tmp)>=2 % length is specified
-                            xk.n_val = str2double(tmp{2});
+                        args = regexp(opt,'[^ ]*','match');
+                        if length(args)>=2 % length is specified
+                            xk.n_val = str2double(args{2});
                         else
                             xk.n_val = max(4,length(xk.startval));
                         end
-                        if strcmp(xk.type,'char') && length(tmp)>=3
-                            nlin = str2double(tmp{3});
+                        if strcmp(xk.type,'char') && length(args)>=3
+                            nlin = str2double(args{3});
                             if nlin<=0 || mod(nlin,1), error('number of lines must be a positive integer'), end
                             xk.n_line = nlin;
                             xk.n_val = xk.n_val+8;
@@ -946,6 +962,7 @@ classdef fn_control < hgsetget
                     end
                 end
                 X.controls(k) = xk;
+                checkEnabled(X,[],k)
             end
             
             % Special action buttons
@@ -1192,8 +1209,11 @@ classdef fn_control < hgsetget
             % store the information on which fields were changed
             X.changedfields = union(X.changedfields,xk.name);
 
-            % update value and eval function
+            % update value and dependencies
             X.controls(k).value = val;
+            X.checkEnabled(k)
+            
+            % eval function
             if X.immediateupdate
                 evalfun(X)
             end
@@ -1280,6 +1300,38 @@ classdef fn_control < hgsetget
                     % nothing to do
                 otherwise
                     error programming
+            end
+        end
+        function checkEnabled(X,kdep,kk)
+            if isempty(kdep)
+                kdep = find(X.dependencies(:,kk));
+                if isempty(kdep), return, end
+            elseif nargin<3 || isempty(kk)
+                kk = find(X.dependencies(kdep,:));
+            end
+            xkdep = X.controls(kdep);
+            if strcmp(xkdep.type,'logical')
+                enable = xkdep.value;
+            else
+                enable = ~isempty(xkdep.value);
+            end
+            for k = row(kk)
+                xk = X.controls(k);
+                % Enable name
+                set(xk.hname,'enable',fn_switch(enable))
+                % Enable control
+                switch xk.style
+                    case {'popupmenu' 'radiobutton' 'togglebutton' 'edit' 'text'}
+                        set(xk.hval,'enable',fn_switch(enable))
+                    case 'multcheck'
+                    case 'multlist'
+                    case 'slider'
+                        xk.hval.enabled = enable;
+                    case 'stepper'
+                    case 'sensor'
+                    case 'color'
+                    case 'file'
+                end
             end
         end
     end
@@ -1379,8 +1431,8 @@ end
 %---
 function [s args] = demo %#ok<STOUT>
 
-C = {'s = struct(''a'',false,''b'',1,''c'',2,''d'',''hello'',''e'',[0 1],''f'',pwd,''g'',''red'',''h'',[0 1]);'
-    'spec = struct(''c'',''xslider 0 10 1'',''d'',{{''hello'',''yo''}},''e'',''clip'',''f'',''dir'',''g'',''color'',''h'',{{''multcheck'' ''mom'' ''dad''}});'
+C = {'s = struct(''a'',0,''b'',false,''c'',[],''d'',''hello'',''e'',[0 1],''f'',pwd,''g'',''red'',''h'',[0 1]);'
+    'spec = struct(''c'',''xslider 0 10 1 [2] < b'',''d'',{{''hello'',''yo''}},''e'',''clip'',''f'',''dir'',''g'',''color'',''h'',{{''multcheck'' ''mom'' ''dad''}});'
     'myfun = @disp;'
     'fn_control(s,spec,myfun);'};
 for k=1:4, disp(C{k}), end

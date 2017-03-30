@@ -241,6 +241,8 @@ classdef interface < hgsetget
                     changedlist = true;
                 case 'saveas'
                     name = inputdlg('Name of new position configuration','Enter name',1,{curname});
+                    if isempty(name), return, end % user canceled
+                    name = name{1};
                     if isempty(name) || (~strcmp(name,curname) && fn_ismemberstr(name,{pos.name}))
                         errordlg('Invalid name (empty or already exists)')
                         return

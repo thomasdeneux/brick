@@ -48,6 +48,7 @@ classdef fn_slider < hgsetget
     end
     properties
         layout = 'auto';    % 'left', 'right', 'up', 'down' or 'auto'
+        enabled = true;
     end
     properties (SetAccess='private')
         sliderscrolling = false;
@@ -649,6 +650,7 @@ classdef fn_slider < hgsetget
     % Callbacks
     methods
         function event(U,flag,nscroll)
+            if ~U.enabled, return, end
             % special case: double-click in area mode
             if U.area && strcmp(flag,'slider') ...
                     && strcmp(get(U.hf,'selectiontype'),'open')

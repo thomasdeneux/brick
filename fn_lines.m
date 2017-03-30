@@ -1,6 +1,6 @@
-function hl = fn_lines(varargin)
-% function hl = fn_lines([xcoordinates,ycoordinates[,zcoordinates]][,ha][,'close'][,line options])
-% function hl = fn_lines('x|y'[,xorycoordinates][,ha][,'close'][,line options])
+function out = fn_lines(varargin)
+% function hl = fn_lines([xcoordinates,ycoordinates[,zcoordinates]][,ha][,'close'][,'bottom'][,line options])
+% function hl = fn_lines('x|y'[,xorycoordinates][,ha][,'close'][,'bottom'][,line options])
 %---
 % draw a series of vertical and/or horizontal lines
 
@@ -45,16 +45,21 @@ end
 if doz && ~(dox && doy), error 'argument', end
 x = fn_float(x); y = fn_float(y); z = fn_float(z);
 % (other options)
-ha = gca; doclose = false; lineopt = {'color' 'k'};
+ha = gca; doclose = false; dostackbottom = false; lineopt = {'color' 'k'};
 for i=1:length(varargin)
     a = varargin{i};
     if isscalar(a) && ishandle(a) && strcmp(get(a,'type'),'axes')
         ha = a;
-    elseif ischar(a) && strcmp(a,'close')
-        doclose = true;
-    else
-        lineopt = [lineopt varargin(i:end)];
-        break
+    elseif ischar(a)
+        switch a
+            case 'close'
+                doclose = true;
+            case 'bottom'
+                dostackbottom = true;
+            otherwise
+                lineopt = [lineopt varargin(i:end)];
+                break
+        end
     end
 end
 
@@ -109,14 +114,24 @@ else
     end
 end
 
-if nargout==1
-    if doz
-        hl = {hlxy hlxz hlyz};
-    elseif dox && doy
-        hl = {hlx hly};
-    elseif dox
-        hl = hlx;
-    elseif doy
-        hl = hly;
-    end
+% output
+if doz
+    hl = {hlxy hlxz hlyz};
+elseif dox && doy
+    hl = {hlx hly};
+elseif dox
+    hl = hlx;
+elseif doy
+    hl = hly;
 end
+if nargout==1
+    out = hl;
+end
+    
+% stack to bottom
+if dostackbottom
+    if iscell(hl), hl = fn_map(hl,@row,'array'); end
+    uistack(hl,'bottom')
+end
+
+

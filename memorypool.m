@@ -30,6 +30,9 @@ classdef memorypool < handle
         maxmem = 2^30; % 1GB
         items = memorypoolitem.empty(1,0);
     end
+    properties (Transient, Dependent)
+        curload
+    end
     
     % Constructor
     methods
@@ -88,9 +91,16 @@ classdef memorypool < handle
             pool = memorypool;
             displayitems(pool.items)
         end
+        function x = getcurload()
+            pool = memorypool;
+            x = pool.curload;
+        end
     end
    
     methods
+        function x = get.curload(pool)
+            x = sum([pool.items.memsize]);
+        end
         function checkmemory(pool,safeitem)
             if nargin<2, safeitem = []; end
             poolitems = [pool.items];
