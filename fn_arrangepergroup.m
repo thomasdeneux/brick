@@ -47,11 +47,11 @@ for i=1:length(varargin)
 end
 
 % Define groups
-if iscell(conds)
+if iscell(conds) && isnumeric(conds{1})
     groups = conds(:);
     if ~isempty(subconds), groups = groups(subconds); end
     ngroup = length(groups);
-else
+else % TODO: code below seems not to handle all cases, and does not match code in fn_avgpergroup
     % input
     if ~isvector(conds) || length(conds)~=s(dim)
         error '''conds'' must be either a vector cell array, or a vector  of length matching size of ''data'' in dimension ''dim'''

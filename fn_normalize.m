@@ -6,7 +6,8 @@ function x = fn_normalize(x,dim,flag)
 % - dim     dimensions on which to operate; can be a cell array for
 %           multiple actions
 % - action  'div'[default], 'sub', 'std' or 'zscore', 'norm2', 'detrend', 
-%           'proba' (divide by the sum rather than by the mean), 'max'
+%           'proba' (divide by the sum rather than by the mean), 'max',
+%           'minmax'
 %           can be a cell array for multiple actions 
 
 % Thomas Deneux
@@ -28,13 +29,16 @@ end
     
 nd = length(dim);
 if ~isa(x,'single'), x = double(x); end
-m = x;
+m = x; M = x;
 for k=1:nd
     switch flag
         case 'max'
             m = max(m,[],dim(k));
         case 'proba'
             m = sum(m,dim(k)); 
+        case 'minmax'
+            m = min(m,[],dim(k));
+            M = max(M,[],dim(k));
         otherwise
             m = nmean(m,dim(k)); 
     end
@@ -42,6 +46,8 @@ end
 switch flag
     case {'div','/','proba','max'}
         x = fn_div(x,m);
+    case 'minmax'
+        x = fn_div(fn_subtract(x,m),M-m);
     case {'sub','-'}
         x = fn_subtract(x,m);
     case {'std','zscore'}

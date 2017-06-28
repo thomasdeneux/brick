@@ -1,6 +1,7 @@
 function varargout = fn_fit(x,y,fun,startpoint)
 % function [par1 ... parN yfit] = fn_fit(x,y,@(x,par1,..,parN)fun,startpoint)
 % function [a b yfit] = fn_fit(x,y,'affine')
+% function [low high thr slope yfit] = fn_fit(x,y,'sigmoid')
 %---
 % Fit the parameters of a given function
 
@@ -15,6 +16,7 @@ nx = length(x);
 if size(y,1)==1, y=y'; end
 
 % Special cases
+bounds = [];
 if ischar(fun)
     switch fun
         case 'affine'
@@ -22,18 +24,28 @@ if ischar(fun)
             ab = A\y;
             varargout = {ab(1) ab(2) A*ab};
             return
+        case 'sigmoid'
+            fun = @(x,low,high,thr,slope)low + (high-low)./(1+exp(-(x-thr)*slope));
+            if nargin<4, startpoint = [min(y) max(y) median(x) 10/(max(x)-min(x))]; end
+            bounds = [min(y) max(y); min(y) max(y); min(x) max(x); 0 Inf];
     end
 end
 
 % General case
-opt = optimset('display','iter','algo','active-set');
-
 proto = regexp(func2str(fun),'@\([^\)]*\)','match');
 npar = sum(proto{1}==',');
 if length(startpoint)~=npar, error 'starting point lengh does not match the number of parameters', end
-
-% pars = fmincon(@(p)energy(x,y,fun,p),startpoint,[],[],[],[],[],[],[],opt);
-pars = fminunc(@(p)energy(x,y,fun,p),startpoint,opt);
+if isempty(bounds)
+    opt = optimoptions('fminunc','algo','quasi-newton', ...
+        'display','iter', ...
+        'maxfunevals',10000,'maxiter',1000);
+    pars = fminunc(@(p)energy(x,y,fun,p),startpoint,opt);
+else
+    opt = optimoptions('fmincon','algo','active-set', ...
+        'display','iter', ...
+        'maxfunevals',10000,'maxiter',1000);
+    pars = fmincon(@(p)energy(x,y,fun,p),startpoint,[],[],[],[],bounds(:,1),bounds(:,2),[],opt);
+end
 [e fit] = energy(x,y,fun,pars); %#ok<ASGLU>
 varargout = [num2cell(pars) fit];
 

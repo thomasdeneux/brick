@@ -1029,18 +1029,23 @@ classdef montage < interface
             % loadimage(M,a[,names|structure])
             % loadimage(M,'file')
             % loadimage(M,'matlab')
-            name = []; doconfirmnames = true; sim = [];
+            name = []; doconfirmnames = true; sim = []; domergestruct = false;
             if isnumeric(varargin{1}) || iscell(varargin{1})
                 a = varargin{1};
                 if ~iscell(a), a = {a}; end
+                for i=1:length(a)
+                    if ischar(a{i}), a{i}=fn_readimg(a{i}); end
+                end
                 if nargin>=3
                     if nargin>3, b = struct(varargin{2:end}); else b = varargin{2}; end
                     if isstruct(b)
                         sim = b;
                         if isfield(sim,'name'), name = {sim.name}; doconfirmnames = false; end
+                        domergestruct = true;
                     else
                         name = varargin{2};
-                        if ~iscell(name), name = {name}; doconfirmnames = false; end
+                        if ~iscell(name), name = {name}; end
+                        doconfirmnames = false; 
                     end
                 end
             else
@@ -1073,6 +1078,9 @@ classdef montage < interface
             for i=1:nim
                 simi = struct('name',name{i},'data',a{i},'xc',0,'yc',0,'scale',1,'rot',0);
                 if ~isempty(sim), simi = fn_structmerge(simi,sim(i)); end
+                if domergestruct
+                    simi = fn_structmerge(simi,b(i));
+                end
                 M.im(nprev+i) = fn_structmerge(model,simi);
             end
             % update display

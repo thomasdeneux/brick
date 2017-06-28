@@ -66,7 +66,7 @@ while i<length(varargin)
     elseif strcmp(a,'callback')
         i = i+1;
         callback = varargin{i};
-    elseif ismember(a,{'color' 'colors'})
+    elseif strcmp(a,'colors')
         i = i+1;
         colors = varargin{i};
     elseif strcmp(a,'offset')
@@ -232,9 +232,12 @@ else
         % only one time point: add marker for good visibility
         plotopt = [{'marker' '*' 'linestyle' 'none'} plotopt];
     end
-    hl = plot(x1(:,:),y1(:,:),plotopt{:});
+    hl = plot(x1(:,:),y1(:,:));
     if nt>1, hl = reshape(hl,[s(2:1+nd) 1]); end % problem if nt=1
     if ~isempty(color), fn_set(hl,'color',color(:)), end
+    if ~isempty(plotopt)
+        set(hl,plotopt{:})
+    end
     if ~isempty(callback)
         for i=1:prod(s(2:1+nd))
             idx = fn_indices(s(2:1+nd),i);
