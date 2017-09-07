@@ -1,5 +1,5 @@
-function fn_playmovie(M,varargin)
-% function fn_playmovie(M[,clip][,fps][,'once'][,'axisnormal'])
+function playbutton = fn_playmovie(M,varargin)
+% function playbutton = fn_playmovie(M[,clip][,fps][,'once'][,'axisnormal'])
 %---
 % Simple display of movie.
 % For color movie, time must be the 3rd dimension and color the 4th
@@ -12,7 +12,7 @@ function fn_playmovie(M,varargin)
 % Copyright 2005-2017
 
 % input
-clip = {}; doloop = true; fps = 1000; doaxisimage = true;
+clip = {}; doloop = true; fps = 20; doaxisimage = true;
 for k=1:length(varargin)
     a = varargin{k};
     if ischar(a)
@@ -31,9 +31,9 @@ for k=1:length(varargin)
     end
 end
 
-colormap gray
-
+% prepare display
 clf
+colormap gray
 if ndims(M)==4 && size(M,3)==3
     n = size(M,4);
     im = imagesc(permute(M(:,:,:,1),[2 1 3]),clip{:});
@@ -49,18 +49,38 @@ set(ha,'buttondownfcn',@(u,e)axeshit);
 setappdata(pt,'mode','normal')
 setappdata(pt,'play',true)
 ok = uicontrol('style','toggle','pos',[10 17 35 15],'string','play','value',1,'callback',@(u,e)play());
+if nargout>0
+    % return handle to the 'play' button
+    playbutton = ok;
+end
+
+% prepare timer
+t = timer('timerfcn',@(u,e)nextframe(),'ExecutionMode','fixedrate','period',1/fps);
 
 % play
-i = 1;
+i = 0;
 play()
 
     function play
-        while ishandle(ok) && get(ok,'value')
-            i = mod(i,n)+1;
-            displayframe
-            pause(1/fps)
-            if ~doloop && i==n, set(ok,'value',0), end
+        if get(ok,'value')
+            start(t)
+        else
+            stop(t)
         end
+    end
+
+    function nextframe
+        if ~ishandle(ok)
+            % figure has probably been erased, stop the movie display
+            stop(t)
+            return
+        end
+        i = mod(i,n)+1;
+        if ~doloop && i==n
+            set(ok,'value',0)
+            stop(t)
+        end
+        displayframe
     end
 
     function displayframe

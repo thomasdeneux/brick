@@ -22,4 +22,6 @@ for i=1:nargin
         end
     end
 end
-y = y/n;
+if n~=1
+    y = y/n; 
+end

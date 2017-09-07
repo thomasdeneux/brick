@@ -1,5 +1,5 @@
-function a = fn_readmovie(filename,frames)
-% function a = fn_readmovie(filename,frames)
+function a = fn_readmovie(filename,varargin)
+% function a = fn_readmovie(filename,frames[,'nodisplay'])
 %---
 % read an avi file and stores it into a 2D+time array 
 % (2D+time+channel if color movie)
@@ -15,13 +15,29 @@ end
 if ~exist(filename,'file')
     error('file ''%s'' does not exist',filename)
 end
-if nargin<2, frames={}; end
+frames = {};
+dodisplay = true;
+for k=1:length(varargin)
+    a = varargin{k};
+    if isnumeric(a)
+        frames = a;
+    elseif ischar(a)
+        switch a
+            case 'nodisplay'
+                dodisplay = false;
+            otherwise
+                error argument
+        end
+    else
+        error argument
+    end
+end
 
-disp 'reading'
+if dodisplay, disp 'reading', end
 try
     % recent Matlab version
     if ~isempty(frames), frames = {frames([1 end])}; end
-    a = read(VideoReader(filename),frames{:});
+    a = read(VideoReader(filename),frames{:},'native');
 catch
     if ~isempty(frames), frames = {frames}; end
     a = aviread(filename,frames{:});
@@ -37,5 +53,5 @@ catch
             error('problem')
     end
 end
-disp 'transposing frames'
+if dodisplay, disp 'transposing frames', end
 a = permute(a,[2 1 3 4]);

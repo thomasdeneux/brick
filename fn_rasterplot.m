@@ -52,7 +52,7 @@ if ~isvector(times)
     for i=1:ngroup-1
         hlsep(i) = line(ax(1:2),[1 1]*mean(y([i i+1])),'color','k');
     end
-    set(gca,'ytick',y)
+    set(gca,'ytick',1:ngroup)
 end
 
 % output

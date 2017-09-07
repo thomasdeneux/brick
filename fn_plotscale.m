@@ -93,7 +93,7 @@ switch posflag
         orig = ax([1 3])+10*fact;
     case 'center'
         orig = [mean(ax(1:2)) mean(ax(3:4))];
-    case {'top' 'topleft'}
+    case {'top' 'left' 'topleft'}
         orig = [ax(1)+10*fact(1) ax(4)-10*fact(2)-ysize];
     case {'bottom' 'bottomleft'}
         orig = ax([1 3])+10*fact;

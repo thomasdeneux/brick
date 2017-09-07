@@ -2,7 +2,12 @@ function c = fn_watch(hf,varargin)
 % function c = fn_watch([hf])
 
 % Thomas Deneux
-% Copyright 2012-2017
+% Copyright 2012-2012
+
+% disp 'fn_watch has a bug, skip it'
+% c = [];
+% return
+
 
 if nargin==0, hf = gcf; end
 
@@ -23,7 +28,11 @@ end
 curpointer = get(hf,'Pointer');
 if eval('true')
     t = maketimer(hf);
-    if ~strcmp(get(t,'Running'),'on'), start(t), end
+    if strcmp(get(t,'Running'),'on')
+        c = [];
+        return
+    end % timer already started
+    start(t)
 else
     startfcn(hf)
     t = [];
@@ -36,12 +45,9 @@ function t = maketimer(hf)
 % times
 t = getappdata(hf,'fn_watch_timer');
 if isempty(t)
-    t = timer('StartDelay',.3,'TimerFcn',@(u,e)startfcn(hf));
+    t = timer('StartDelay',.5,'TimerFcn',@(u,e)startfcn(hf));
     setappdata(hf,'fn_watch_timer',t)
-    if fn_matlabversion('newgraphics')
-        % will not work with Matlab version previous to R2014b and timer will not be deleted
-        addlistener(hf,'ObjectBeingDestroyed',@(u,e)delete(t));
-    end 
+    if fn_matlabversion('newgraphics'), addlistener(hf,'ObjectBeingDestroyed',@(u,e)delete(t)); end % % will not work with Matlab version previous to R2014b and timer will not be deleted
 end
 
 function startfcn(hf)

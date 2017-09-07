@@ -60,7 +60,9 @@ classdef graph < hgsetget
                         m = mean(vertices,1);
                         vertices = fn_subtract(vertices,m);
                         st = sqrt(mean(vertices.^2));
-                        G.vvalues = {fn_div(vertices,st) m st};
+                        zscores = fn_div(vertices,st); 
+                        zscores(:,st==0) = 0; % z-score is zero for flat signals
+                        G.vvalues = {zscores m st};
                 end
             end
             G.vweight = ones(1,n_v);
@@ -233,7 +235,11 @@ classdef graph < hgsetget
                         G.vvalues{3}(i) = st;
                         G.vvalues{3}(j) = 0;
                         % z-score
-                        valuei = valuei/st;
+                        if st>0
+                            valuei = valuei/st;
+                        else
+                            valuei = 0; % z-score is 0 for flat signals
+                        end
                         G.vvalues{1}(:,i) = valuei;
                         G.vvalues{1}(:,j) = 0;                        
                 end

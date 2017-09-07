@@ -1,8 +1,7 @@
 function ha = fn_subplot(varargin)
-% function ha = fn_subplot(hf,nrow,ncol,k[,spacing])
-% function ha = fn_subplot(abcd)
-% function ha = fn_subplot(hf,ngraph,k)
-% function ha = fn_subplot(abc)
+% function ha = fn_subplot([hf,]nrow,ncol,k[,spacing])
+% function ha = fn_subplot([hf,]ngraph,k) % hf must be an object figure handle here
+% function ha = fn_subplot(hnnk|hnk|nnk|nk)
 %---
 % if only 3 arguments, nrow and ncol are guessed from ngraphs
 
@@ -12,25 +11,33 @@ function ha = fn_subplot(varargin)
 % input
 if nargin==1
     abcd = str2num(num2str(varargin{1})'); %#ok<ST2NM>
-    switch length(abcd)
-        case 3
-            varargin = num2cell(abcd);
-        case 4
-            varargin = num2cell(abcd);
-        otherwise
-            error argument
+    if ismember(length(abcd),[2 3 4])
+        varargin = num2cell(abcd);
+    else
+        error argument
     end
 end
-spacing = 0;
-if length(varargin)>=4
-    [hf nrow ncol kk] = deal(varargin{1:4});
-    if nargin>=5, spacing = varargin{5}; end
+if mod(varargin{end},1)
+    spacing = varargin{end}; varargin(end) = [];
 else
-    [hf ngraph kk] = deal(varargin{:});
-    ncol = ceil(sqrt(ngraph));
-    nrow = ceil(ngraph/ncol);
+    spacing = 0;
 end
-if ~ishandle(hf), figure(hf), end
+if isobject(varargin{1}) || length(varargin)>3
+    hf = varargin{1}; varargin(1) = [];
+    if ~ishandle(hf), figure(hf), end
+else
+    hf = gcf;
+end
+switch length(varargin)
+    case 2
+        [ngraph kk] = deal(varargin{:});
+        ncol = ceil(sqrt(ngraph));
+        nrow = ceil(ngraph/ncol);
+    case 3
+        [nrow ncol kk] = deal(varargin{:});
+    otherwise
+        error arguments
+end
 
 % delete annoying axes
 info = getappdata(hf,'fn_subplot');

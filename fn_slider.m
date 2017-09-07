@@ -503,8 +503,10 @@ classdef fn_slider < hgsetget
             else
                 % warning: this sets the 'functional width'; if it is too
                 % small, the actual display width will be larger
+                val = U.value;
                 nval = 1/width; nstep = nval-1;
                 U.x(2) = nstep;
+                U.value = val; % this re-adjusts U.x(1)
             end
         end
         function step = get.stepsize(U)

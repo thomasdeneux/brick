@@ -103,7 +103,7 @@ else
         high = str2double(xprc{1}{2});
         if isempty(centerval)
             if isnan(high), high=100-low; elseif high<30, high=100-high; end
-            clip = [prctile(x(:),low) prctile(x(:),high)];
+            clip = [prctil(x(:),low) prctil(x(:),high)];
         else
             if ~isnan(high)
                 warning 'cannot set independently the percentile of low and high out-of-range when center value is fixed'

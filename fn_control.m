@@ -75,8 +75,9 @@ classdef fn_control < hgsetget
     %               that this starting value is optional, but they must
     %               appear in the string)
     % 'file|dir'    button for selecting file name / directory name
-    % 'label'       field name will be displayed (usually labels a new
+    % 'label [nlin]' field name will be displayed (usually labels a new
     %               section) but does not correspond to any data
+    %               if nlin is specified, control occupies nlin lines
     % 'struct' or full specification sub-structure
     %               button to edit the sub-structure
     % 'hide'        value is not displayed
@@ -150,7 +151,9 @@ classdef fn_control < hgsetget
             % Input
             X.hp = []; spec = struct; nicenames = struct; ncolumn = []; titl = 'Edit parameters';
             % (original structure)
-            if isvector(s) && ismember(length(s),[2 3])
+            if ~isstruct(s)
+                error 'first argument must be a structure'
+            elseif isvector(s) && ismember(length(s),[2 3])
                 spec = s(2);
                 if length(s)==3, nicenames = s(3); end
                 s = s(1);
@@ -410,6 +413,13 @@ classdef fn_control < hgsetget
                 switch xk.style
                     case {'label' 'exclude'}
                         xk.n_val = 0;
+                        args = regexp(opt,'[^ ]*','match');
+                        if length(args)>=2 % nlin is specified
+                            nlin = str2double(args{2});
+                            if nlin<=0 || mod(nlin,1), error('number of lines must be a positive integer'), end
+                            xk.n_line = nlin;
+                            xk.n_name = xk.n_name / (2*nlin-1);
+                        end
                     case 'checkbox'
                         % logical value - only check box
                         xk.n_val = 0;
@@ -831,7 +841,7 @@ classdef fn_control < hgsetget
                     xk.hname = uicontrol( ...
                         'parent',X.hp,'backgroundcolor',bgcol, ...
                         'string',xk.nicename, ...
-                        'position',[D+(icol-1)*Z H-ilin*Y A+D+B T]);
+                        'position',[D+(icol-1)*Z H-(ilin+xk.n_line-1)*Y A+D+B K+(xk.n_line-1)*Y]);
                     set(xk.hname,'units','normalized');
                     switch xk.style
                         case 'label'
@@ -859,7 +869,7 @@ classdef fn_control < hgsetget
                         set(xk.hname,'callback',@(hu,evnt)chgvalue(X,k,logical(get(hu,'value'))));
                     end
                     if strcmp(xk.style,'slider') && (~xk.check || xk.defaultcheck)
-                        set(xk.hname,'string',[xk.name ' (' num2str(xk.value,xk.format), ')'])
+                        set(xk.hname,'string',[xk.nicename ' (' num2str(xk.value,xk.format), ')'])
                     end
                     
                     % second column

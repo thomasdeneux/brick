@@ -53,7 +53,7 @@ if iscell(conds) && isnumeric(conds{1})
     ngroup = length(groups);
 else % TODO: code below seems not to handle all cases, and does not match code in fn_avgpergroup
     % input
-    if ~isvector(conds) || length(conds)~=s(dim)
+    if ~(isempty(conds) || isvector(conds)) || length(conds)~=s(dim)
         error '''conds'' must be either a vector cell array, or a vector  of length matching size of ''data'' in dimension ''dim'''
     end
     if isempty(subconds), subconds = unique(conds); end

@@ -1,6 +1,6 @@
 function [p hl] = fn_comparedistrib(x,y,method,varargin)
 % function [pval hl] = fn_comparedistrib(x,y[,test][,'tail','left|right|both']
-%       [,'showmean'][,'ylim',ylim])
+%       [,'showmean'][,'ylim',ylim][,'xlabels',xlabels][,'pdisplaymode','ns|p'])
 %---
 % Perform any of 'ranksum', 'signrank' or 'signtest' test and display the
 % data and p-value.
@@ -12,6 +12,8 @@ function [p hl] = fn_comparedistrib(x,y,method,varargin)
 %           'signrank'
 %           'signtest' (=default if y is scalar)
 %           'bootstrap' (test on the mean)
+%           p - providing a p-value results in skipping the test and
+%           displaying thin p-value
 
 % Thomas Deneux
 % Copyright 2015-2017
@@ -19,16 +21,23 @@ function [p hl] = fn_comparedistrib(x,y,method,varargin)
 % Input
 if nargin<2, y = 0; end
 if nargin<3, method = fn_switch(isscalar(y),'signtest','ranksum'); end
-i = 0; tail = 'both'; ylim = []; showmean = false;
+i = 0; tail = 'both'; ylim = []; showmean = false; xlabels = {};
+pdisplaymode = 'ns';
 while i<length(varargin)
     i = i+1;
     switch(varargin{i})
         case 'tail'
             i = i+1;
             tail = varargin{i};
+        case 'xlabels'
+            i = i+1;
+            xlabels = varargin{i};
         case 'ylim'
             i = i+1;
             ylim = varargin{i};
+        case 'pdisplaymode'
+            i = i+1;
+            pdisplaymode = varargin{i};
         case 'showmean'
             showmean = true;
         otherwise
@@ -37,19 +46,23 @@ while i<length(varargin)
 end
 
 % p-value
-switch method
-    case {'ranksum' 'signrank' 'signtest'}
-        p = feval(method,x,y,'tail',tail);
-    case 'bootstrap'
-        p = fn_bootstrap(x,y,'mean','tail',tail);
-    case 'bootstrapmedian'
-        p = fn_bootstrap(x,y,'median','tail',tail);
-    case 'bootstrapsign'
-        p = fn_bootstrap(x-y,[],'mean','tail',tail);
-    case 'bootstrapsignmedian'
-        p = fn_bootstrap(x-y,[],'median','tail',tail);
-    otherwise
-        error('unknown test ''%s''',method)
+if isnumeric(method)
+    p = method;
+else
+    switch method
+        case {'ranksum' 'signrank' 'signtest'}
+            p = feval(method,x,y,'tail',tail);
+        case 'bootstrap'
+            p = fn_bootstrap(x,y,'mean','tail',tail);
+        case 'bootstrapmedian'
+            p = fn_bootstrap(x,y,'median','tail',tail);
+        case 'bootstrapsign'
+            p = fn_bootstrap(x-y,[],'mean','tail',tail);
+        case 'bootstrapsignmedian'
+            p = fn_bootstrap(x-y,[],'median','tail',tail);
+        otherwise
+            error('unknown test ''%s''',method);
+    end
 end
 
 % display
@@ -81,7 +94,7 @@ if dualdisplay
     m = min(alldata); M = max(alldata);
     if isempty(ylim), ylim = m+[-.1 1.3]*(M-m); end
     set(gca,'xlim',xlim,'ylim',ylim)
-    fn_markpvalue(1.5,[],p,'ns')
+    fn_markpvalue(1.5,[],p,pdisplaymode)
 else
     xlim = [0 2];
     plot(ones(1,length(x)),x,'o','color',[1 1 1]*.6)
@@ -90,7 +103,10 @@ else
     m = min(x); M = max(x);
     if isempty(ylim), ylim = m+[-.1 1.3]*(M-m); end
     set(gca,'xlim',xlim,'ylim',ylim)
-    fn_markpvalue(1,[],p,'ns')
+    fn_markpvalue(1,[],p,pdisplaymode)
+end
+if ~isempty(xlabels)
+    set(gca,'xtick',1:length(xlabels),'xticklabel',xlabels,'xTickLabelRotation',30)
 end
 
 % output?

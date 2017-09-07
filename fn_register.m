@@ -4,6 +4,8 @@ function varargout = fn_register(varargin)
 %---
 % Be careful with the sign: xreg is obtained as
 % xreg = fn_translate(x,-shift);
+% If no reference is provided, uses the average of the first 10 movie
+% frames.
 %
 % See also fn_translate, fn_xregister
 
@@ -17,11 +19,12 @@ if ischar(x)
     if ~strcmp(x,'par'), error argument, end
     varargout = {defaultpar(varargin{2:end})};
 else
-    if isstruct(varargin{2})
-        par = defaultpar;
+    par = defaultpar;
+    if nargin<2
+        par.ref = mean(x(:,:,1:10),3);
+    elseif isstruct(varargin{2})
         if nargin>=2, par = fn_structmerge(par,varargin{2},'skip'); end
     else
-        par = defaultpar;
         par.ref = varargin{2};
     end
     nout = max(nargout,1);
