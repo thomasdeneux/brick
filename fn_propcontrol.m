@@ -34,6 +34,8 @@ classdef fn_propcontrol < hgsetget
 % - options options for the graphic object that will be created
 %           - If spec is 'menu', 'menuval' or 'menugroup', it is mandatory
 %           that options will contain the pair ('parent',parentmenu).
+%           - Options chain can start with handle of parent without the
+%           preceding 'parent' key.
 %           - Labels should be set with property 'string' for 'checkbox',
 %           'char', 'double', etc., and with property 'label' for
 %           'menu', etc. If not specified, the name of the observed
@@ -176,12 +178,11 @@ methods
         end
         
         % create control(s)
+        if mod(length(varargin),2), varargin = ['parent' varargin]; end
         switch M.style
             case 'menu'
-                if mod(length(varargin),2), varargin = ['parent' varargin]; end
                 M.hu = uimenu('label',M.prop,varargin{:});
             case 'menugroup'
-                if mod(length(varargin),2), varargin = ['parent' varargin]; end
                 switch menustyle
                     case 'group'
                         kparent = find(strcmpi(varargin(1:2:end),'parent'));

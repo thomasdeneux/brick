@@ -6,6 +6,7 @@ function varargout = fn_register(varargin)
 % xreg = fn_translate(x,-shift);
 % If no reference is provided, uses the average of the first 10 movie
 % frames.
+% x can be a color image or movie: color should then be the 4th dimension
 %
 % See also fn_translate, fn_xregister
 
@@ -21,11 +22,14 @@ if ischar(x)
 else
     par = defaultpar;
     if nargin<2
-        par.ref = mean(x(:,:,1:10),3);
+        par.ref = mean(x(:,:,1:10,:),3);
     elseif isstruct(varargin{2})
-        if nargin>=2, par = fn_structmerge(par,varargin{2},'skip'); end
+        if nargin>=2, par = fn_structmerge(par,varargin{2},'strict'); end
     else
         par.ref = varargin{2};
+    end
+    if size(par.ref,3)==3 && size(par.ref,4)==1
+        par.ref = permute(par.ref,[1 2 4 3]);
     end
     nout = max(nargout,1);
     varargout = cell(1,nout);
@@ -42,6 +46,7 @@ par.maxshift = .5;      % shift cannot exceed half of the image size [TODO!]
 par.ref = 10;           % reference frame: use average of first 10 frames as default
 % par.repeat = false;     % repeat the estimation with the average resampled movie as new reference frame
 par.dorotation = false;
+par.doscale = false;
 par.doxreg = false;     % first do a global optimization
 par.xlowpass = 0;       % spatial low-pass
 par.xhighpass = 0;      % spatial high-pass
@@ -71,23 +76,31 @@ function [shift e xreg] = register(x,par)
 
 % Size
 if any(isnan(x(:))), error 'cannot register images with NaN values', end
-[ni nj nt] = size(x);
-[par.ni par.nj par.nt] = size(x);
+[ni nj nt ncol] = size(x);
+if nt==3 && ncol==1 && size(par.ref,4)==3
+    x = reshape(x,[ni nj 1 3]);
+    nt = 1;
+    ncol = 3;
+end
+[par.ni par.nj par.nt] = deal(ni,nj,nt);
 
 % Reference frame
 if isscalar(par.ref)
     if par.ref==0
         ref = mean(x,3);
     else
-        ref = mean(x(:,:,1:min(par.ref,nt)),3);
+        ref = mean(x(:,:,1:min(par.ref,nt),:),3);
     end
 else
     ref = double(par.ref);
-    if any(size(ref)~=[ni nj])
+    if ~isequal(size(ref),size(x(:,:,1,:)))
         error('size mismatch between data (%i-%i) and reference frame (%i-%i)',ni,nj,size(ref,1),size(ref,2))
     end
 end
-ref = (ref-nmean(ref(:)))/nstd(ref(:)); % normalize image
+for i = 1:ncol
+    refi = ref(:,:,i);
+    ref(:,:,i) = (refi-nmean(refi(:)))/nstd(refi(:)); % normalize image
+end
 % filtering
 tau = [par.xlowpass par.xhighpass];
 if any(tau)
@@ -98,9 +111,9 @@ if any(tau)
 end
 docut = any(isnan(ref(:)));
 if docut
-    oki = ~all(any(isnan(ref),3),2);
-    okj = ~all(any(isnan(ref),3),1);
-    ref = ref(oki,okj,:);
+    oki = ~all(any(isnan(ref),4),2);
+    okj = ~all(any(isnan(ref),4),1);
+    ref = ref(oki,okj,:,:);
     if ~isempty(par.mask), par.mask = par.mask(oki,okj); end
 end
 
@@ -114,19 +127,24 @@ if isscalar(par.maxshift)
         par.maxshift = par.maxshift*[ni nj];
     end
 end
-if par.dorotation
-    par.maxshift(3) = 2*pi;
+if length(par.maxshift)==2
+    if par.dorotation
+        par.maxshift(end+1) = pi/4;
+    end
+    if par.doscale
+        par.maxshift(end+1) = 0.5; % in log2, i.e. scale changes by max sqrt(2)
+    end
 end
 par.maxshift = column(par.maxshift);
 
 % Display
 if fn_ismemberstr(par.display,{'iter' 'final'})
-    hf = figure(678);
-    set(hf,'numberTitle','off','name','fn_register')
-    clf(hf)
+    hf = fn_figure('fn_register');
     ha = axes('parent',hf);
     colormap(ha,gray(256))
-    par.im = imagesc(par.ref','parent',ha);
+    par.im = imagesc(permute(par.ref,[2 1 3]),'parent',ha,[-2 2]);
+    axis(ha,'image')
+    if nt>1, htitl = title('Registration'); end
 end
 
 % Register
@@ -134,16 +152,14 @@ opt = optimset('Algorithm','active-set','GradObj',fn_switch(par.dogradobj), ...
     'tolx',par.tolx,'tolfun',par.tolfun,'maxfunevals',1000, ...
     'display',fn_switch(par.display,'framenumber','none',par.display));
 Q = column(par.FACT);
-shift = zeros(2+par.dorotation,nt);
+shift = zeros(2+par.dorotation+par.doscale,nt);
 if nt>1 && ~strcmp(par.display,'none'), fn_progress('register frame',nt), end
-d = par.shift0(:);
-if par.dorotation && length(d)==2, d(3) = 0; end
 if nargout>=2, e = zeros(1,nt); end
 
 e0 = [];
     function [e de] = myfun(d)
         switch nargout
-            case 1
+            case {0 1}
                 e = energy(d.*Q,xk,ref,par)/e0;
             case 2
                 [e de] = energy(d.*Q,xk,ref,par);
@@ -153,12 +169,31 @@ e0 = [];
     end
 
 for k=1:nt
-    if nt>1 && ~strcmp(par.display,'none'), fn_progress(k), end
-    xk = double(x(:,:,k));
-    if docut, xk = xk(oki,okj,:); end
-    xk = (xk-mean(xk(:)))/std(xk(:)); % normalize image
+    if nt>1 && ~strcmp(par.display,'none')
+        fn_progress(k)
+        if fn_ismemberstr(par.display,{'iter' 'final'}), set(htitl,'string',sprintf('Registration %i/%i',k,nt)), end
+    end
+    xk = double(x(:,:,k,:));
+    if docut, xk = xk(oki,okj,:,:); end
+    for i = 1:ncol
+        xki = xk(:,:,i);
+        xk(:,:,i) = (xki-nmean(xki(:)))/nstd(xki(:)); % normalize image
+    end
     % reset current shift?
-    if ~par.useprev0, d = par.shift0(:); end
+    if k==1 || ~par.useprev0
+        if isvector(par.shift0)
+            d = par.shift0(:);
+        elseif size(par.shift0,2)==nt
+            d = par.shift0(:,k);
+        elseif size(par.shift0,1)==nt
+            d = par.shift0(k,:)';
+        else
+            error 'Start value is not of the appropriate size'
+        end
+        if (par.dorotation || par.doscale) && length(d)==2
+            d(3:2+par.dorotation+par.doscale) = 0; 
+        end
+    end
     % filtering
     if any(tau)
         xk = fn_filt(xk,tau,[1 2]);
@@ -173,8 +208,8 @@ for k=1:nt
             d = fn_xregister(xk,ref,xregminoverlap);
         end
         % fine sub-pixel registration
-        if par.dorotation
-            disp 'warning: registration with a rotation might not work properly yet!'
+        if par.dorotation || par.doscale
+            disp 'warning: registration with a rotation and/or rescale might not work properly yet!'
         end
         d = fmincon(@myfun,d./Q, ...
             [],[],[],[],-par.maxshift./Q,par.maxshift./Q,[],opt).*Q;
@@ -191,10 +226,13 @@ for k=1:nt
     %     end
     %     figure(9), plot(dtest,etest)
     
-    
+    % final display
     if strcmp(par.display,'final')
-        error 'not implemented'
+        par.display = 'iter';
+        myfun(d);
+        par.display = 'final';
     end
+    
     shift(:,k) = d;
     if nargout>=2, e(k) = energy(d,xk,ref,par); end
 end
@@ -211,7 +249,9 @@ if nargout<3, return, end
 if nt>1 && ~strcmp(par.display,'none'), fn_progress('resample frames'), end
 xreg = zeros(ni,nj,nt,class(x)); %#ok<*ZEROLIKE>
 for k=1:nt
-    xreg(:,:,k) = fn_translate(x(:,:,k),-shift(:,k),'full');
+    for i=1:ncol
+        xreg(:,:,k,i) = fn_translate(x(:,:,k,i),-shift(:,k),'full');
+    end
 end
 
 % Cut
@@ -219,7 +259,7 @@ if strcmp(par.output,'valid')
     okij = ~any(isnan(xreg),3);
     oki = okij(:,round(nj/2));
     okj = okij(round(ni/2),:);
-    xreg = xreg(oki,okj,:);
+    xreg = xreg(oki,okj,:,:);
 end
 
 end
@@ -231,31 +271,42 @@ DODEBUG = false;
 if DODEBUG, fprintf('%f ',d), fprintf('\n'), end
 
 doJ = (nargout==2);
-% if doJ
-%     if par.dorotation, error 'cannot compute gradient for rotation', end
-%     [xpred weight J dweight] = fn_translate(ref,d,'valid');
-% else
-if par.dorotation
+
+if size(x,4)==3
+    % color image
+    if doJ, error 'not implemented yet', end
+    e = zeros(1,3);
+    for i=1:3
+        e(i) = energy(d,x(:,:,i),ref(:,:,i),par);
+    end
+    e = sum(e);
+    return
+end
+
+if par.dorotation || par.doscale
+    if doJ, error 'gradient not implemented for rotation or rescaling', end
     [ni nj] = size(ref);
     center = [(1+ni)/2; (1+nj)/2];
-    theta = -d(3); % inverse rotation
-    M = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+    if par.dorotation, theta = -d(3); else theta = 0; end % inverse rotation
+    if par.doscale, scale = 2^d(3+par.dorotation); else scale = 1; end
+    M = scale*[cos(theta) -sin(theta); sin(theta) cos(theta)];
     [ii jj] = ndgrid(1:ni,1:nj);
     p = fn_add( ...
         M*[row(ii); row(jj)], ...   % inverse rotation with center (0,0)
         center-M*center ...         % translation to have a rotation with center the center of the image
         -column(d(1:2)) ...         % inverse translation
         );
-    xpred = interpn(ref,p(1,:),p(2,:));
-    xpred = reshape(xpred,ni,nj);
-    mask = ~isnan(xpred);
-%     rotation = [cos(theta) -sin(theta); sin(theta) cos(theta)]; % inverse rotation with center (0,0)
-%     translation = center-rotation*center ...    % translation to have a rotation with center the center of the image
-%         -column(d(1:2));                        % inverse translation
-%     M = [1 0 0; translation rotation];
-%     [xpred weight] = fn_affinity(ref,M,'linear');
-%     mask = logical(weight);
-    xpred = xpred(mask);
+    if isempty(par.mask)
+        xpred = interpn(ref,p(1,:),p(2,:),'spline',NaN);
+        xpred = reshape(xpred,ni,nj);
+        mask = ~isnan(xpred);
+        xpred = xpred(mask);
+    else
+        xpred = interpn(ref,p(1,par.mask),p(2,par.mask),'spline',NaN)';
+        maskinmask = ~isnan(xpred);
+        mask = par.mask; mask(par.mask) = maskinmask;
+        xpred = xpred(maskinmask);
+    end
     weight = mask / sum(mask(:));
 else
     [xpred weight] = fn_translate(ref,d,'valid');

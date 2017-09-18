@@ -1,5 +1,5 @@
 function fn_savevar(fname,varargin)
-% function fn_save(fname,var1,var2,var3...[,'-APPEND'])
+% function fn_savevar(fname,var1,var2,var3...[,'-APPEND'])
 %---
 % save variables in a MAT file
 % '-APPEND' flag will result in other variables already present in the file

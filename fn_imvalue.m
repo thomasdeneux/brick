@@ -173,10 +173,10 @@ set(hObject,'DefaultLineCreateFcn','')
 % s'il y a d�j� un callback ou un Tag dans cet axes provenant d'une autre application, 
 % ou si on est dans un display 3D, ne rien faire
 if ~strcmp(get(hObject,'Tag'),'fn_imvalue') % le plus probable ; plus rapide de d'abord tester ��
-    if ~isempty(get(hObject,'Tag')) || length(axis(hObject))==6 
+    if length(axis(hObject))==6 
         return
     end 
-    hc = hObject; %[get(hObject,'parent') ; hObject]'; % ; get(hObject,'children')]';
+    hc = [get(hObject,'parent') ; hObject]'; % ; get(hObject,'children')]';
     for h = hc
         if ~isempty(get(h,'ButtonDownFcn')) || ~isempty(get(h,'Tag'))
             return

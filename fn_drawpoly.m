@@ -10,7 +10,13 @@ function hl = fn_drawpoly(poly,varargin)
 
 if nargin==0, help fn_drawpoly, end
 
-if size(poly,1)~=2, error('poly should have two rows'), end
+if size(poly,1)~=2
+    if size(poly,2)==2
+        poly = poly';
+    else
+        error('poly should have two rows')
+    end
+end
 doclose = ~isempty(varargin) && strcmp(varargin{1},'close');
 if doclose, varargin(1) = []; end
 opt = fn_linespecs(varargin{:});

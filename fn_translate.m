@@ -5,8 +5,8 @@ function [y weight J dweight] = fn_translate(x,shift,varargin)
 %
 % Input:
 % - x           2D or 3D array
-% - shift       2-element vector or 2-by-N array (N being the number of
-%               frames) 
+% - shift       2, 3 or 4-element vector or 2/3/4-by-N array (N being the
+%               number of frames) 
 % - shapeflag   'full' [default] or 'valid', indicate whether to return y
 %               the same size as x, or only the subpart where data is
 %               defined
@@ -54,6 +54,9 @@ if size(x,3)>1
     y = zeros(ni,nj,nt,datatype);    
     for i=1:nt, y(:,:,i) = fn_translate(x(:,:,i),shift(:,i),'full',method,datatype); end
     if strcmp(shapeflag,'valid')
+        if size(shift,1)>2
+            error '''valid'' output shape can be achieved only for pure translation'
+        end
         % which indices are ok: for security, do not try to guess 'to which
         % side integer numbers are rounded'
         switch method
@@ -68,7 +71,13 @@ if size(x,3)>1
     end
     return
 end
-    
+
+% rotation and/or scaling?
+if length(shift)>2
+    if nargout>=2, error 'no weights available when performing rotation and/or scaling', end
+    y = matrixInterpolation(x,shift);
+    return
+end
 
 % Bi-cubic interpolation needs a grid of 4x4 points to define value in one
 % point, i.e. 2 values in each left/right/up/down direcion.
@@ -101,6 +110,7 @@ switch method
         iout = max(1,1-(deci(1)-1)):min(ni,ni-(deci(1)+2));
         jout = max(1,1-(deci(2)-1)):min(nj,nj-(deci(2)+2));
 end
+
 % corresponding weight
 if nargout>=2
     if ~strcmp(method,'cubic'), error 'not implemented yet', end
@@ -202,5 +212,24 @@ switch shapeflag
     otherwise
         error('unknown shape flag ''%s''',shapeflag)
 end
+
+%---
+function y = matrixInterpolation(x,shift)
+
+[ni nj] = size(x);
+center = [(1+ni)/2; (1+nj)/2];
+theta = -shift(3);
+if length(shift)>=4, scale = 2^shift(4); else scale = 1; end
+
+M = scale*[cos(theta) -sin(theta); sin(theta) cos(theta)];
+[ii jj] = ndgrid(1:ni,1:nj);
+p = fn_add( ...
+    M*[row(ii); row(jj)], ...   % inverse rotation with center (0,0)
+    center-M*center ...         % translation to have a rotation with center the center of the image
+    -column(shift(1:2)) ...         % inverse translation
+    );
+
+y = interpn(x,p(1,:),p(2,:),'spline',NaN);
+y = reshape(y,ni,nj);
 
 

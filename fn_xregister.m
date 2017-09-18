@@ -21,7 +21,11 @@ function d = fn_xregister(a,b,maxshift)
 if nargin==0, help fn_xregister, return, end
 if nargin<3, maxshift = 0.2; end
 
-c = fastxcorr(a,b,maxshift);
+[ni nj ncol] = size(a);
+c = 0;
+for i=1:ncol
+    c = c + fastxcorr(a,b,maxshift)/ncol;
+end
 
 %figure(2), imagesc(c',[0 1])
 
