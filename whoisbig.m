@@ -44,11 +44,15 @@ if isempty(minsize)
 end
 
 %% call 'whos'
-if isempty(var)
+incaller = isempty(var);
+if incaller
     % check caller workspace
     w = evalin('caller','whos');
 else
-    if isstruct(var)
+    if isobject(var) && ~isvalid(var)
+        disp 'Invalid or deleted object'
+        return
+    elseif isstruct(var) || isobject(var)
         % check fields of structure
         F = fieldnames(var);
         for i=1:length(F)
@@ -68,12 +72,29 @@ else
 end
 
 %% sort
-[bytes ord] = sort([w.bytes]);
+[~, ord] = sort([w.bytes]);
 w = w(ord);
 
 %% subselect
+
+% (check which variable's size exceed threshold)
+ok = ([w.bytes]>=minsize);
+
+% (add also object which might be container of large variables through handles)
 matlabclasses = {'logical' 'char' 'single' 'double' 'uint8' 'uint16' 'uint32' 'uint64' 'int8' 'int16' 'int32' 'int64' 'struct' 'cell'};
-ok = ([w.bytes]>=minsize) | ~ismember({w.class},matlabclasses);
+okclasses = [matlabclasses 'alias'];
+for k = find(ok & ~ismember({w.class},okclasses))
+    % add variables who are small but which, because they are handle
+    % object, could in fact contain large objects
+    if incaller
+        vark = evalin('caller',w(k).name);
+    elseif isstruct(var) || isobject(var)
+        vark = var.(w(k).name);
+    else
+        vark = var;
+    end
+    ok(k) = ~isgraphics(vark) && isvalid(vark);
+end
 if ~any(ok)
     fprintf('no variable is big (total: %iKB)\n',round(sum([w.bytes])/2^10))
     return

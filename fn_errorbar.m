@@ -1,8 +1,8 @@
 function hl = fn_errorbar(varargin)
-% function hl = fn_errorbar([x,]y,ey[,flag],line options)
-% function hl = fn_errorbar([x,]yy[,flag],line options)
-% function hl = fn_errorbar(x,ex,y,ey,'xerror',line options)
-% function hl = fn_errorbar(xx,yy,'xerror',line options)
+% function hl = fn_errorbar([x,]y,ey[,flag][,'colors',colors],line options)
+% function hl = fn_errorbar([x,]yy[,flag],...)
+% function hl = fn_errorbar(x,ex,y,ey,'xerror',...)
+% function hl = fn_errorbar(xx,yy,'xerror',...)
 %---
 % ym and ystd can be vectors or arrays
 % if e is not supplied, y and e are obtained as the mean and
@@ -10,7 +10,7 @@ function hl = fn_errorbar(varargin)
 % cell array, to handle cases where the number of repetitions are not the
 % same for different conditions)
 %
-% flag can be 'lines' [default], 'bar', 'thinbar', 'patch' or 'xerror'
+% flag can be 'lines' [default], 'bar', 'thinbar', 'patch', 'all', 'xerror'
 
 % Thomas Deneux
 % Copyright 2006-2017
@@ -19,19 +19,28 @@ if nargin==0, help fn_errorbar, return, end
 
 % Input
 % (separate data and options)
-flag = 'lines'; opt = {};
-narg = nargin;
-for i=1:narg
+flag = 'lines'; opt = {}; cols = [];
+nnumarg = 0;
+i = 0;
+while i<nargin
+    i = i+1;
     a = varargin{i};
-    if ischar(a) || (isscalar(a) && i>=2) % isscalar(a) corresponds to the case with flag 'bar', where the bar width is specified
-        narg = i-1;
-        if ischar(a) && fn_ismemberstr(a,{'lines' 'bar' 'thinbar' 'patch' 'xerror'})
-            flag = a;
-            opt = varargin(i+1:end);
-        else
-            opt = varargin(i:end);
+    if ischar(a)
+        switch a
+            case {'lines' 'bar' 'thinbar' 'patch' 'xerror' 'all'}
+                flag = a;
+            case 'colors'
+                i = i+1;
+                cols = varargin{i};
+            otherwise
+                opt = varargin(i:end);
+                break
         end
+    elseif (isscalar(a) && i>=2) % isscalar(a) corresponds to the case with flag 'bar', where the bar width is specified
+        opt = varargin(i:end);
         break
+    else
+        nnumarg = nnumarg+1;
     end
 end
 % (parent axes)
@@ -44,7 +53,7 @@ end
 if isempty(ha), ha = gca; end
 % (numeric arguments)
 x = []; y = []; e = []; ex = [];
-switch narg
+switch nnumarg
     case 1
         Y = varargin{1};
         [y e] = meanstd(Y);
@@ -60,7 +69,6 @@ switch narg
             [y e] = deal(varargin{1:2});
         else
             [x Y] = deal(varargin{1:2});
-            dim = ndims(Y);
             [y e] = meanstd(Y);
         end
     case 3
@@ -81,7 +89,8 @@ if isempty(x), x = (1:size(y,1))'; else x = x(:); end
 
 % Prepare for display
 [nt n] = size(y);
-cols = get(ha,'ColorOrder'); ncol = size(cols,1);
+if isempty(cols), cols = get(ha,'ColorOrder'); end
+ncol = size(cols,1);
 yb = y-e; yt = y+e;
 
 % Display
@@ -176,6 +185,15 @@ switch flag
             else
                 set(hl,opt{:})
             end
+        end
+    case 'all'
+        hl = plot(x,Y(:,:));
+        sY = size(Y);
+        hl = reshape(hl,n,sY(end));
+        for k=1:n
+            ck = cols(1+mod(k-1,ncol),:);
+            set(hl(k,:),'color',(1+ck)/2)
+            line(x,y(:,k),'color',ck,'linewidth',2)
         end
 end
 

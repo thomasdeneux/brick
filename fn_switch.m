@@ -101,7 +101,7 @@ elseif (isscalar(x) && islogical(x)) || (nargin==3)
     % "IF"
     karg = 2;
     while true
-        if ~isnan(x) && x
+        if ~isempty(x) && all(x(:)) && all(~isnan(x(:)))
             y = varargin{karg};
             return
         elseif nargin<=karg+1
