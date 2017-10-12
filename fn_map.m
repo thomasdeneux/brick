@@ -122,6 +122,7 @@ for i=1+dooutput:n
 end
 
 % Output: try not to return a cell
+if ~dooutput, return, end
 if doarraydirect, return, end % already an array
 switch outtype
     case 'array'

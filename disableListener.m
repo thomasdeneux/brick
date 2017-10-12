@@ -20,6 +20,7 @@ c = onCleanup(@()enable(hl));
 
 function disable(hl)
 
+if ~isvalid(hl), return, end
 if fn_matlabversion('newgraphics') || isa(hl,'event.listener')
     [hl.Enabled] = deal(false);
 else % property listener, previous to R2014b
@@ -28,6 +29,7 @@ end
 
 function enable(hl)
 
+if ~isvalid(hl), return, end
 if fn_matlabversion('newgraphics') || isa(hl,'event.listener')
     [hl.Enabled] = deal(true);
 else % property listener, previous to R2014b

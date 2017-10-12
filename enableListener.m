@@ -1,5 +1,5 @@
-function c = enableListener(hl,val)
-% function c = disableListener(hl)
+function enableListener(hl,val)
+% function enableListener(hl)
 %---
 % Enable/disable a listener (or list thereof). Use rather disableListener
 % function for momentarily disabling a listener.

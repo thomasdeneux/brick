@@ -1,5 +1,5 @@
-function hl = fn_pixelsizelistener(hobj,callback)
-% function hl = fn_pixelsizelistener(hobj,callback)
+function el = fn_pixelsizelistener(source,varargin)
+% function el = fn_pixelsizelistener(source,[target,],callback)
 %---
 % Add a listener that will execute whenever the pixel size of an object
 % is changed.
@@ -12,11 +12,22 @@ function hl = fn_pixelsizelistener(hobj,callback)
 % Thomas Deneux
 % Copyright 2015-2017
 
-if fn_matlabversion('newgraphics')
-    hl = addlistener(hobj,'SizeChanged',callback);
-else
-    ppw = pixelposwatcher(hobj);
-    hl = addlistener(ppw,'changesize',callback);
+% Input
+switch nargin
+    case 2
+        callback = varargin{1};
+        target = [];
+    case 3
+        [target callback] = deal(varargin{:});
 end
 
-if nargout==0, clear hl, end
+% Create listener
+if fn_matlabversion('newgraphics')
+    el = connectlistener(source,target,'SizeChanged',callback);
+else
+    ppw = pixelposwatcher(source);
+    el = connectlistener(ppw,target,'changesize',callback);
+end
+
+% Output?
+if nargout==0, clear el, end

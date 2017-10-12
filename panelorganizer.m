@@ -24,7 +24,7 @@ classdef panelorganizer < hgsetget
         nchildren
     end
     properties (Dependent)
-        extents
+        extents % extents are stored in pixel values, but can be set in relative values
     end
     
     % Constructor and split method
@@ -143,12 +143,6 @@ classdef panelorganizer < hgsetget
             O.children(idx).isset = false;
             O.children(idx).isorg = false;
             O.children(idx).dorelative = true;
-            xx = O.extents;
-            if isempty(xx)
-                xx = 1;
-            else
-                xx(idx) = mean(xx);
-            end
             % create child panel
             if strcmp(get(O.hobj,'type'),'figure')
                 bgcol = get(O.hobj,'color');
@@ -157,7 +151,18 @@ classdef panelorganizer < hgsetget
             end
             O.children(idx).hobj = uipanel('parent',O.hobj,'bordertype','none','backgroundcolor',bgcol);
             % update positions and borders
-            O.extents = xx;
+            xx = O.extents;
+            if isempty(xx)
+                O.extents = 1;
+            else
+                switch O.bordermode
+                    case 'bothsides'
+                        xx(idx) = mean(xx);
+                        O.extents = xx;
+                    case 'push'
+                        O.pushExtent(idx,mean(xx))
+                end
+            end
             setBorders(O)
         end
         function [hp idx] = addSubPanel(O,varargin)
@@ -183,7 +188,12 @@ classdef panelorganizer < hgsetget
             % remove child
             O.children(idx) = [];
             % update positions and borders
-            O.extents = O.extents; % will readjust extents in pixel units and update display
+            switch O.bordermode
+                case 'bothsides'
+                    O.extents = O.extents; % will readjust extents in pixel units and update display
+                case 'push'
+                    O.pushExtent(idx)
+            end
             setBorders(O)
             % output?
             if nargout==0, clear idx, end
@@ -247,33 +257,36 @@ classdef panelorganizer < hgsetget
         function pushExtent(O,idx,extent,figflag)
             % function pushExtent(O,idx,extent,'figleft|figright|...')
             %---
-            % here, extent must be in pixel value, even if panel is of
-            % 'relative extent'
-
-            % a horrible flickering occurs when one attempts to keep a
-            % panel at the same screen position, whil
-            
             % change figure size rather than adjust extent of 'relative
             % extent' panels
+            % here, extent must be in pixel value, even if panel is of
+            % 'relative extent'
+            % a horrible flickering occurs when one attempts to keep a
+            % panel at the same screen position, while changing the figure
+            % size
+            
+            if nargin>=3, O.children(idx).extent = extent; end
+            if nargin<4, figflag = ''; end
             if ~strcmp(get(O.hobj,'type'),'figure'), error 'object container is not a figure', end
-            dx = extent-O.children(idx).extent;
+            X = sum(O.extents);
             fpos0 = get(O.hobj,'pos'); fpos = fpos0;
             switch [O.splitmode figflag]
                 case 'Hfigleft'
-                    fpos([1 3]) = [fpos0(1)-dx fpos0(3)+dx];
-                case 'Hfigright'
-                    fpos(3) = fpos0(3)+dx;
+                    dx = X - fpos0(3);
+                    fpos([1 3]) = [fpos0(1)-dx X];
+                case {'Hfigright' 'H'}
+                    fpos(3) = X;
                 case 'Vfigtop'
-                    fpos(4) = fpos0(4)+dx;
-                case 'Vfigbottom'
-                    fpos([2 4]) = [fpos0(2)-dx fpos0(4)+dx];
+                    fpos(4) = X;
+                case {'Vfigbottom' 'V'}
+                    dx = X - fpos0(4);
+                    fpos([2 4]) = [fpos0(2)-dx X];
             end
             enableListener(O.szlistener,false)
             set(O.hobj,'pos',fpos)
             enableListener(O.szlistener,true)
             
             % update object
-            O.children(idx).extent = extent;
             switch O.splitmode
                 case 'H'
                     updatePositions(O,idx:O.nchildren)

@@ -1,5 +1,5 @@
 function dp = fn_moveobject(hobj,varargin)
-% function dp = fn_moveobject(hobj[,'latch'][,'point',i])
+% function dp = fn_moveobject(hobj[,'latch'][,'point',i][,'pointer',pointer])
 % function dp = fn_moveobject(hobj,vector)
 %---
 % moves objects while mouse button is pressed
@@ -11,6 +11,7 @@ function dp = fn_moveobject(hobj,varargin)
 % - 'point',i   move only the ith point(s) of line objects
 % - 'twice'     wait for button press+release, or release+pressagain
 % - 'x','y'     move in x or y only
+% - 'pointer',pointer   image to use for the mouse during motion
 % 
 % See also fn_buttonmotion, fn_pan
 
@@ -43,7 +44,7 @@ end
 par = fn_get(hobj,'parent');
 if ~isscalar(unique([par{:}])), error('objects must have the same parent'), end
 % (options)
-latchflag = false; twiceflag = false; pointidx = 0; movedir = 'xy';
+latchflag = false; twiceflag = false; pointidx = 0; movedir = 'xy'; pointer = [];
 i = 1; 
 while i<=length(varargin)
     switch varargin{i}
@@ -53,6 +54,8 @@ while i<=length(varargin)
             pointidx = varargin{i+1}; i=i+1;
         case 'twice'
             twiceflag = true;
+        case 'pointer'
+            pointer = varargin{i+1}; i=i+1;
         case {'x' 'y'}
             movedir = varargin{i};
         otherwise
@@ -83,9 +86,9 @@ while ~strcmp(get(hf,'type'),'figure'), hf = get(hf,'parent'); end
 % Moving object while button is pressed
 p0 = getpoint(ref);
 pos0 = getpos(hobj,ref);
-fn_buttonmotion({@movesub,hobj,ref,p0,pos0,pointidx,movedir},hf)
+fn_buttonmotion({@movesub,hobj,ref,p0,pos0,pointidx,movedir},hf,'pointer',pointer)
 if twiceflag
-    fn_buttonmotion({@movesub,hobj,ref,p0,pos0,pointidx,movedir},hf)
+    fn_buttonmotion({@movesub,hobj,ref,p0,pos0,pointidx,movedir},hf,'pointer',pointer)
 end
 
 % Restore properties

@@ -7,7 +7,21 @@ function fn_deletefcn(hu,deletefcn)
 % Thomas Deneux
 % Copyright 2015-2017
 
-if ishandle(hu)
+% Multiple objects
+if iscell(hu) || ~isscalar(hu)
+    if ~iscell(hu), hu = num2cell(hu); end
+    for i=1:numel(hu)
+        fn_deletefcn(hu{i},deletefcn)
+    end
+    return
+end
+
+% Listen to object deletion
+if isobject(hu)
+    
+    addlistener(hu,'ObjectBeingDestroyed',deletefcn);
+    
+elseif ishandle(hu) % graphic object in old Matalb versions
     
     if isappdata(hu,'fn_deletefcn')
         funset = getappdata(hu,'fn_deletefcn');
@@ -28,10 +42,6 @@ if ishandle(hu)
     funset = [{deletefcn} funset];
     setappdata(hu,'fn_deletefcn',funset)
 
-elseif isobject(hu)
-    
-    addlistener(hu,'ObjectBeingDestroyed',deletefcn);
-    
 else
     
     error 'hu must be a handle object'

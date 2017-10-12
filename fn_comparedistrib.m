@@ -46,7 +46,9 @@ while i<length(varargin)
 end
 
 % p-value
-if isnumeric(method)
+if all(isnan(x)) || all(isnan(y))
+    p = NaN;
+elseif isnumeric(method)
     p = method;
 else
     switch method
@@ -91,8 +93,14 @@ if dualdisplay
             yl = mean([nmedian(x) nmedian(y)])+[-.5 .5]*nmedian(y-x);
             hl{2}(2) = line(1:2,yl,'color','k','linewidth',2);
     end
-    m = min(alldata); M = max(alldata);
-    if isempty(ylim), ylim = m+[-.1 1.3]*(M-m); end
+    if isempty(ylim)
+        if all(isnan(alldata))
+            ylim = [0 1];
+        else
+            m = min(alldata); M = max(alldata);
+            ylim = m+[-.1 1.3]*(M-m);
+        end
+    end
     set(gca,'xlim',xlim,'ylim',ylim)
     fn_markpvalue(1.5,[],p,pdisplaymode)
 else
@@ -100,8 +108,14 @@ else
     plot(ones(1,length(x)),x,'o','color',[1 1 1]*.6)
     line([.5 1.5],mean(x)*[1 1],'color','k','linewidth',2)
     uistack(line(xlim,[y y],'color','k','linestyle','--'),'bottom')
-    m = min(x); M = max(x);
-    if isempty(ylim), ylim = m+[-.1 1.3]*(M-m); end
+    if isempty(ylim)
+        if all(isnan(x))
+            ylim = [0 1];
+        else
+            m = min(x); M = max(x);
+            ylim = m+[-.1 1.3]*(M-m);
+        end
+    end
     set(gca,'xlim',xlim,'ylim',ylim)
     fn_markpvalue(1,[],p,pdisplaymode)
 end

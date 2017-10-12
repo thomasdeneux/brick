@@ -21,6 +21,12 @@ if nargin==0, help fn_controlpositions, return, end
 posrel = row(posrel); if length(posrel)==2, posrel(3:4)=0; end
 pospix = row(pospix); if length(pospix)==2, pospix(3:4)=0; end
 
+% delete previous listeners
+try %#ok<TRYNC>
+    hl = getappdata(hu,'fn_controlpositions');
+    if ~isempty(hl), deleteposlisteners(hl), end
+end
+
 % pointer to listeners
 hl = fn_pointer('ppos',[],'axlim',[],'axratio',[]);
 
@@ -43,11 +49,14 @@ else
     error 'first object must be either child or sibbling of second object'
 end
 
+% attach listeners to the object
+try setappdata(hu,'fn_controlpositions',hl), end %#ok<TRYNC>
+
 % delete control upon parent deletion
 fn_deletefcn(hp,@(u,e)delete(hu(ishandle(hu) || (isobject(hu) && isvalid(hu)))))
 
 % delete listeners upon control deletion
-fn_deletefcn(hu,@(u,e)deletelisteners(hl))
+fn_deletefcn(hu,@(u,e)deleteposlisteners(hl))
 
 %---
 function axlistener(hp,hl,updatefcn)
@@ -56,11 +65,9 @@ feval(updatefcn)
 enableListener(hl.axlim,strcmp(get(hp,'DataAspectRatioMode'),'manual'));
     
 %---
-function deletelisteners(hl)
+function deleteposlisteners(hl)
 
-delete(hl.ppos(ishandle(hl.ppos)))
-delete(hl.axlim(ishandle(hl.axlim)))
-delete(hl.axratio(ishandle(hl.axratio)))
+deleteValid(hl.ppos,hl.axlim,hl.axratio)
 
 
 %---
@@ -68,7 +75,7 @@ function updatepositions(hu,hp,posrel,pospix,hl)
 
 if ~ishandle(hu) && ~(isobject(hu) && isvalid(hu) && isprop(hu,'units') && isprop(hu,'position'))
     % object not valid anymore: delete listeners and return
-    deletelisteners(hl)
+    deleteposlisteners(hl)
     return
 end
 if hp==get(hu,'parent')

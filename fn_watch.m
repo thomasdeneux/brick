@@ -47,7 +47,7 @@ t = getappdata(hf,'fn_watch_timer');
 if isempty(t)
     t = timer('StartDelay',.5,'TimerFcn',@(u,e)startfcn(hf));
     setappdata(hf,'fn_watch_timer',t)
-    if fn_matlabversion('newgraphics'), addlistener(hf,'ObjectBeingDestroyed',@(u,e)delete(t)); end % % will not work with Matlab version previous to R2014b and timer will not be deleted
+    fn_deletefcn(hf,@(u,e)delete(t));
 end
 
 function startfcn(hf)

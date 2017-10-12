@@ -18,7 +18,6 @@ classdef pixelposwatcher < handle
         isfig
         istext
         parent
-        hlistparentsize
     end
     properties (Dependent, SetAccess='private')
         pixelsize
@@ -46,21 +45,15 @@ classdef pixelposwatcher < handle
             if ~PP.isfig && isempty(PP.parent) && ~PP.newgraphics
                 hp = get(PP.hobj,'parent');
                 PP.parent = pixelposwatcher(hp);
-                PP.hlistparentsize = addlistener(PP.parent,'changepos',@(u,e)updatepos(PP));
+                connectlistener(PP.parent,PP,'changepos',@(u,e)updatepos(PP));
             end
             PP.pixelpos = zeros(1,4);
             updatepos(PP)
             if PP.newgraphics
-                addlistener(hobj,'LocationChanged',@(hf,e)updatepos(PP));
+                connectlistener(hobj,PP,'LocationChanged',@(hf,e)updatepos(PP));
             else
-                addlistener(hobj,'Position','PostSet',@(hf,e)updatepos(PP));
+                connectlistener(hobj,PP,'Position','PostSet',@(hf,e)updatepos(PP));
             end
-        end
-        function delete(PP)
-            % PP should be deleted only when it object hobj is deleted; at
-            % this moment, the listeners to hobj are also deleted, but not
-            % the listener to parent 
-            delete(PP.hlistparentsize)
         end
     end
     

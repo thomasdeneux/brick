@@ -1,5 +1,5 @@
-function hl = fn_pixelposlistener(hobj,callback)
-% function hl = fn_pixelposlistener(hobj,callback)
+function el = fn_pixelposlistener(source,varargin)
+% function el = fn_pixelposlistener(source,[target,],callback)
 %---
 % Add a listener that will execute whenever the pixel position of an object
 % is changed. 
@@ -12,11 +12,22 @@ function hl = fn_pixelposlistener(hobj,callback)
 % Thomas Deneux
 % Copyright 2015-2017
 
-if fn_matlabversion('newgraphics')
-    hl = [addlistener(hobj,'LocationChanged',callback) addlistener(hobj,'SizeChanged',callback)];
-else
-    ppw = pixelposwatcher(hobj);
-    hl = addlistener(ppw,'changepos',callback);
+% Input
+switch nargin
+    case 2
+        callback = varargin{1};
+        target = [];
+    case 3
+        [target callback] = deal(varargin{:});
 end
 
-if nargout==0, clear hl, end
+% Create listener
+if fn_matlabversion('newgraphics')
+    el = [connectlistener(source,target,'LocationChanged',callback) connectlistener(source,target,'SizeChanged',callback)];
+else
+    ppw = pixelposwatcher(source);
+    el = connectlistener(ppw,target,'changepos',callback);
+end
+
+% Output?
+if nargout==0, clear el, end

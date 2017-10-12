@@ -43,7 +43,7 @@ classdef fn_propcontrol < hgsetget
 %           For better readability, options can be nested inside a cell
 %           array.
 %
-% See also: fn_menugroup, fn_control
+% See also: fn_menugroup, fn_control, fn_setpropertyandmark
 
 % Thomas Deneux
 % Copyright 2015-2017
@@ -176,6 +176,9 @@ methods
             otherwise
                 error('unknown specification ''%s''',spec)
         end
+        if strcmp(M.type,'logical') && ischar(get(M.obj,M.prop))
+            M.type = 'on/off';
+        end
         
         % create control(s)
         if mod(length(varargin),2), varargin = ['parent' varargin]; end
@@ -241,11 +244,7 @@ methods
         M.proplistener = addlistener(obj,prop,'PostSet',@(u,e)updatevalue(M));
         
         % delete everything upon object deletion or control deletion
-        if ishandle(obj)
-            fn_deletefcn(obj,@(u,e)delete(M))
-        else
-            addlistener(obj,'ObjectBeingDestroyed',@(u,e)delete(M));
-        end
+        fn_deletefcn(obj,@(u,e)delete(M))
         set(M.hu,'deletefcn',@(u,e)delete(M))
     end
     function delete(M)
@@ -258,13 +257,14 @@ end
 methods
     function updatevalue(M)
         curval = get(M.obj(1),M.prop);
+        if strcmp(M.type,'on/off'), curval = fn_switch(curval,'logical'); end
         if M.docolor
             % try to convert color to nice string representation
             [colornum colorname] = fn_colorbyname(curval);
             if ~isempty(colornum), curval = colornum; end
         end
         switch M.style
-            % type logical
+            % type logical or on/off
             case 'menu'
                 set(M.hu,'checked',fn_switch(curval))
             case {'checkbox' 'radiobutton'}
@@ -321,11 +321,19 @@ methods
     end
     function setvalue(M,i)
         switch M.style
-            % type logical
+            % type logical or on/off
             case 'menu'
-                set(M.obj,M.prop,~fn_switch(get(M.hu,'checked')));
+                if strcmp(M.type,'on/off')
+                    set(M.obj,M.prop,fn_switch(get(M.hu,'checked'),'toggle'));
+                else
+                    set(M.obj,M.prop,~fn_switch(get(M.hu,'checked'),'logical'));
+                end
             case {'checkbox' 'radiobutton'}
-                set(M.obj,M.prop,logical(get(M.hu,'value')));
+                if strcmp(M.type,'on/off')
+                    set(M.obj,M.prop,fn_switch(get(M.hu,'checked'),'on/off'));
+                else
+                    set(M.obj,M.prop,logical(get(M.hu,'value')));
+                end
             % edit
             case 'edit'
                 if strcmp(M.type,'char')

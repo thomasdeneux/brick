@@ -76,7 +76,7 @@ classdef windowcallbackmanager < hgsetget
                 W.objects(kobj).doscroll = doscroll && fn_switch(get(hobj,'visible'));
                 % listeners
                 fn_pixelposlistener(hobj,@(h,e)updatepos(W,'chgpos',hobj))
-                addlistener(hobj,'Visible','PostSet',@(h,e)setactive(W,hobj,fn_switch(get(hobj,'visible'))));
+                connectlistener(hobj,W,'Visible','PostSet',@(h,e)setactive(W,hobj,fn_switch(get(hobj,'visible'))));
                 if W.objects(kobj).doscroll, updatepos(W,'addnew',hobj), end
             end
             W.objects(kobj).callback = callback;
