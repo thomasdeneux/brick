@@ -10,6 +10,8 @@ function [out ncol] = fn_colorset(varargin)
 %
 % available set names are 'matlab', 'newmatlab', 'plot12', 
 % 'prismN' with N=4,5,6,9 or 15
+% 
+% See also fn_colorbyname
 
 % Thomas Deneux
 % Copyright 2008-2017

@@ -1,9 +1,10 @@
 function fn_markpvalue(x,y,p,varargin)
 % function fn_markpvalue(x,y,p[,'ns|p'][,'vertical'][,text options...])
 %---
-% Mark p-value if significant with star(s) at location x,y.
+% Mark p-value if significant with star(s) at location x,y. 
 % If x and y are 2-elements vectors, draws a line segment (x,y(1)) and mark
-% star(s) at (mean(x),y(2)).
+% star(s) at (mean(x),y(2)). If y is a 3-element vector, adds also small
+% vertical limits.
 
 % Thomas Deneux
 % Copyright 2015-2017
@@ -34,8 +35,10 @@ while ~isempty(topt) && ischar(topt{1})
     topt(1) = [];
 end
 
-% build 'star' string
-if strcmp(displaymode,'pvalue')
+% build string to display
+if ischar(p)
+    stars = p;
+elseif strcmp(displaymode,'pvalue')
     stars = num2str(p,'p=%.3g');
 else
     doNS = strcmp(displaymode,'ns');
@@ -61,7 +64,13 @@ if isempty(y), ylim = get(ha,'ylim'); y = ylim(1)*.1+ylim(2)*.9; end
 xs = mean(x); ys = y(end);
 h = text(xs,double(ys),stars,'horizontalalignment','center','verticalalignment','middle',popt{:});
 if length(x)==2
-    h(2) = line(x,y(1)*[1 1],'color','k',popt{:});
+    if length(y)==2
+        h(2) = line(x,y(1)*[1 1],'color','k',popt{:});
+    elseif length(y)==3
+        h(2) = line(x([1 1 2 2]),y([1 2 2 1]),'color','k',popt{:});
+    else
+        error 'incompatible lengths for x and y'
+    end
 end
 fn_set(h,topt{:})
 	

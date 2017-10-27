@@ -287,7 +287,6 @@ color tools
 
     fn_colorset, fn_colorbyname - Different sets of colors, conversion between color numerical value and name
     fn_showcolormap   - Display a color map in a given axes or in a separate figure
-    hsl2rgb           - Convert from Hue/Saturation/Luminance coordinates to RGB 
 
 movie displays
 

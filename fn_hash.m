@@ -44,7 +44,6 @@ for i=1:length(varargin)
     end
 end
 
-if isempty(inp), inp = class(inp); end
 inp = flatten(inp);
 h = hash(inp,meth);
 
@@ -69,6 +68,7 @@ end
 function inp = flatten(inp)
 % transform any Matlab variable to a row vector of uint8
 
+if isempty(inp), inp = {class(inp) size(inp)}; end
 inp = row(inp);
 if ischar(inp) || islogical(inp)
     inp=uint8(inp);

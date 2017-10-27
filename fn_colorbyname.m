@@ -10,6 +10,8 @@ function [colornum colorname] = fn_colorbyname(colorval,flag)
 %  [num name] = fn_colorbyname('r')        returns [1 0 0] and 'red'
 %  [num name] = fn_colorbyname([0 0 0])    returns [0 0 0] and 'black'
 %  [num name] = fn_colorbyname([.1 .3 .4]) returns [.1 .3 .4] and ''
+%
+% See also fn_colorset
 
 % Thomas Deneux
 % Copyright 2015-2017

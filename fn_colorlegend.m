@@ -1,15 +1,40 @@
-function hleg = fn_colorlegend(hl,names,location,varargin)
-% function hleg = fn_colorlegend(handles,names[,'NorthWest|...'][,text options...])
+function hleg = fn_colorlegend(varargin)
+% function [hleg =] fn_colorlegend([handles,]names[,'NorthWest|...'][,'frame'][,text options...])
 %---
 % Display discreet color legend for set of lines
 
+% Input
 if nargin==0
     figure(1), clf
     hl = plot(rand(100,5));
     names = {'a first line' 'a second one' 'number 3' '4' 'and five'};
-end
-if nargin<3
-    location = 'NorthEast';
+else
+    i=0;
+    textopt = {}; hl = []; location = 'NorthWest'; doframe = false;
+    while i<nargin
+        i = i+1;
+        a = varargin{i};
+        if iscell(a)
+            names = a;
+        elseif ischar(a)
+            switch lower(a)
+                case {'northwest' 'northeast' 'southwest' 'southeast'}
+                    location = a;
+                case 'frame'
+                    doframe = true;
+                otherwise
+                    textopt = varargin(i:end);
+                    break
+            end
+        elseif all(ishandle(a))
+            hl = a;
+        else
+            error argument
+        end
+    end
+    if isempty(hl)
+        hl = flipud(findobj(gca,'type','line'));
+    end
 end
 
 % Parent axes
@@ -24,7 +49,8 @@ hp = get(ha,'parent');
 hf = fn_parentfigure(ha);
 
 % Legend axes
-hleg = axes('parent',hp,'pos',[.4 .4 .2 .2],'units','pixel');
+hleg = axes('parent',hp,'pos',[.4 .4 .2 .2],'units','pixel','handlevisibility','off');
+set(hleg,'visible',fn_switch(doframe))
 [w h] = fn_pixelsize(hleg);
 set(hleg,'xlim',[0 w],'ylim',[-h 0]) % use pixel coordinate systems to ease everything
 set(hleg,'xtick',[],'ytick',[],'box','on') % some esthetics
@@ -33,7 +59,7 @@ set(hleg,'xtick',[],'ytick',[],'box','on') % some esthetics
 ht = zeros(1,n); extents = zeros(n,4);
 for i=1:n
     ht(i) = text(0,0,names{i},'parent',hleg, ...
-        'color',get(hl(i),'color'));
+        'color',get(hl(i),'color'),textopt{:});
     extents(i,:) = get(ht(i),'Extent');
 end
 
@@ -74,9 +100,15 @@ set([hleg ht],'buttondownFcn',@(u,e)moveLegend(hleg,ha,W,H))
 
 % Menu for deleting and hiding/showing frame
 m = uicontextmenu('parent',hf);
-fn_propcontrol(hleg,'Visible','menu',{m,'label','Show legend''s frame'})
+fn_propcontrol(hleg,'Visible','menu',{m,'label','Show legend''s frame'});
 uimenu(m,'label','Delete legend','callback',@(u,e)delete(hleg))
 set([hleg ht],'UIContextMenu',m)
+
+% Delete legend upon deletion of the lines
+fn_deletefcn(ht,@(u,e)deleteValid(hleg))
+
+% Output
+if nargout==0, clear hleg, end
 
 %---
 function moveLegend(hleg,ha,W,H)

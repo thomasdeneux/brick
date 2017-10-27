@@ -42,6 +42,7 @@ end
 
 % Position of top-left corner
 pos = get(hf,'pos');
+if isequal(pos(3:4),[w h]), return, end % already the good dimension
 topleft = [pos(1) pos(2)+pos(4)];
 topleft = [min(topleft(1),W-w) min(topleft(2),H-70)];
 
