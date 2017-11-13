@@ -5,6 +5,8 @@ function mask = fn_poly2mask(xpoly,ypoly,m,n)
 % Do the same as Matlab poly2mask without needing the Image Toolbox
 % Except use different convention!! I.e. x = first coordinate, y = second
 % coordinate.
+%
+% See also fn_mask2poly
 
 % Thomas Deneux
 % Copyright 2015-2017
