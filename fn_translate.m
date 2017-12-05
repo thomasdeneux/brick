@@ -26,7 +26,7 @@ function [y weight J dweight] = fn_translate(x,shift,varargin)
 %           defined also have a NaN value)
 % - dweight derivative of weight with respect to shift
 %
-% See also fn_register
+% See also fn_register, fn_alignimage
 
 % Thomas Deneux
 % Copyright 2009-2017

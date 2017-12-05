@@ -8,7 +8,7 @@ function varargout = fn_register(varargin)
 % frames.
 % x can be a color image or movie: color should then be the 4th dimension
 %
-% See also fn_translate, fn_xregister
+% See also fn_translate, fn_xregister, fn_alignimage
 
 % Thomas Deneux
 % Copyright 2011-2017

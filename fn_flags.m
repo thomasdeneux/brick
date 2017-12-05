@@ -1,8 +1,8 @@
 function varargout = fn_flags(varargin)
-% function [b1 ... bn] = fn_flags({val1,...,valn},{flag1,...,flagp})
-% function [b1 ... bn] = fn_flags({val1,...,valn},flag1,...,flagp)
-% function [b1 ... bn] = fn_flags(val1,...,valn,{flag1,...,flagp})
-% function [b1 ... bn] = fn_flags(val1,...,valn,flag)
+% function [b1 ... bn] = fn_flags({val1,...,valn},{arg1,...,argp})
+% function [b1 ... bn] = fn_flags({val1,...,valn},arg1,...,argp)
+% function [b1 ... bn] = fn_flags(val1,...,valn,{arg1,...,argp})
+% function [b1 ... bn] = fn_flags(val1,...,valn,arg)
 % function x = fn_flags(...)
 %---
 % returns booleans (or vector thereof) mentioning which values appeared in
