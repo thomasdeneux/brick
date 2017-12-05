@@ -22,7 +22,7 @@ posrel = row(posrel); if length(posrel)==2, posrel(3:4)=0; end
 pospix = row(pospix); if length(pospix)==2, pospix(3:4)=0; end
 
 % delete previous listeners
-try %#ok<TRYNC>
+if isgraphics(hu)
     hl = getappdata(hu,'fn_controlpositions');
     if ~isempty(hl), deleteposlisteners(hl), end
 end
@@ -50,7 +50,9 @@ else
 end
 
 % attach listeners to the object
-try setappdata(hu,'fn_controlpositions',hl), end %#ok<TRYNC>
+if isgraphics(hu)
+    setappdata(hu,'fn_controlpositions',hl)
+end
 
 % delete control upon parent deletion
 fn_deletefcn(hp,@(u,e)delete(hu(ishandle(hu) || (isobject(hu) && isvalid(hu)))))
