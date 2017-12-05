@@ -1,5 +1,5 @@
 function y = fn_roiavg(x,ind)
-% function y = fn_roiavg(x,mask|ind)
+% function y = fn_roiavg(x,mask|ind|':')
 %---
 % Compute average signal from a region of interest.
 %
@@ -17,4 +17,9 @@ function y = fn_roiavg(x,ind)
 
 s = size(x); if length(s)<3, s(3)=1; end
 x = reshape(x,[s(1)*s(2) s(3:end)]);
-y = reshape(mean(x(ind,:),1),s(3:end));
+
+if strcmp(ind,':')
+    y = reshape(mean(x,1),s(3:end));
+else
+    y = reshape(mean(x(ind,:),1),s(3:end));
+end

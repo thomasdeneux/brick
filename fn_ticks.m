@@ -3,7 +3,7 @@ function fn_ticks(varargin)
 %---
 % Shortcut for
 % set(gca,'xtick',1:length(xticklabel),'xticklabel',xticklabel, ...
-%     'xtick',1:length(xticklabel),'xticklabel',xticklabel)
+%     'ytick',1:length(yticklabel),'yticklabel',yticklabel)
 
 % Thomas Deneux
 % Copyright 2015-2017

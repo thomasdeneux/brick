@@ -50,7 +50,7 @@ end
 ha = zeros(1,length(kk));
 for ik=1:length(kk)
     k = kk(ik);
-    if info.axes(k) && ishandle(info.axes(k))
+    if info.axes(k) && info.ncol==ncol && info.nrow==nrow && ishandle(info.axes(k))
         ha(ik) = info.axes(k);
     else
         icol = 1+mod(k-1,ncol);

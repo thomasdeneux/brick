@@ -8,4 +8,7 @@ function fn_nicegraph(ha)
 
 if nargin==0, ha = gca; end
 
-set(ha,'tickdir','out','ticklength',[.03 1],'box','off')
+ha = findobj(ha,'type','axes');
+for hak = row(ha)
+    set(hak,'tickdir','out','ticklength',[.03 1],'box','off')
+end

@@ -15,9 +15,9 @@ if isnumeric(name)
         hf = figure(name);
     end
 else
-    hf = findall(0,'type','figure','tag',name);
+    hf = findall(0,'type','figure','name',name);
     if isempty(hf)
-        hf = figure('name',name,'tag',name,'integerhandle','off','numbertitle','off');
+        hf = figure('name',name,'integerhandle','off','numbertitle','off');
     end
 end
 [doerase dofocus] = deal(true);

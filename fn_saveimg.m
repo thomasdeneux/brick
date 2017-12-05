@@ -1,5 +1,5 @@
 function fn_saveimg(a,fname,varargin)
-% function fn_saveimg(a,fname,[clip[,zoom[,cmap]]][,'delaytime',dt])
+% function fn_saveimg(a,fname|'auto',[clip[,zoom[,cmap]]][,'delaytime',dt])
 %---
 % a should be y-x-t 
 % clip can be a 2-values vector, or 'fit' [default], or '?SD', or 'none'
