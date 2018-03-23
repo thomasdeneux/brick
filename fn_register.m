@@ -75,7 +75,12 @@ end
 function [shift e xreg] = register(x,par)
 
 % Size
-if any(isnan(x(:))), error 'cannot register images with NaN values', end
+if any(isnan(x(:)))
+    name = fullfile(tempdir,['NaNs problem ' datestr(now,'dd-mmm-yyyy HH-MM-SS') '.mat']);
+    disp(['detected NaN values in image, is it corrupted?, saving it in ' name])
+    save(name,'x')
+    error 'cannot register images with NaN values'
+end
 [ni nj nt ncol] = size(x);
 if nt==3 && ncol==1 && size(par.ref,4)==3
     x = reshape(x,[ni nj 1 3]);
