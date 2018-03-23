@@ -86,10 +86,10 @@ if dualdisplay
             hl{2}(1) = line(1:2,[nmedian(x) nmedian(y)],'color','k','linestyle','none','marker','*');
             hl{2}(2) = line(1:2,[nmedian(x) nmedian(y)],'color','k','linewidth',2);
         otherwise
-            % show individual medians, but also a slope indicating the
+            % show individual means (not medians), but also a slope indicating the
             % median difference (which is different from the difference
             % of the medians!)
-            hl{2}(1) = line(1:2,[nmedian(x) nmedian(y)],'color','k','marker','*','linestyle','none');
+            hl{2}(1) = line(1:2,[nmean(x) nmean(y)],'color','k','marker','*','linestyle','none');
             yl = mean([nmedian(x) nmedian(y)])+[-.5 .5]*nmedian(y-x);
             hl{2}(2) = line(1:2,yl,'color','k','linewidth',2);
     end

@@ -87,9 +87,9 @@ end
 % Reference frame
 if isscalar(par.ref)
     if par.ref==0
-        ref = mean(x,3);
+        ref = double(mean(x,3));
     else
-        ref = mean(x(:,:,1:min(par.ref,nt),:),3);
+        ref = double(mean(x(:,:,1:min(par.ref,nt),:),3));
     end
 else
     ref = double(par.ref);

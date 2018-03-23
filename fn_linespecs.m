@@ -57,7 +57,7 @@ if mod(nargin,2)==1
         % if Marker property has been set but not LineStyle property
         options = [options {'LineStyle','none'}];
     end
-    lineoptions = [options varargin{2:end}];
+    lineoptions = [options varargin(2:end)];
 else
     lineoptions = varargin;
 
