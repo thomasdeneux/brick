@@ -140,6 +140,7 @@ if truecolors
     ncol = 256;
 else
     ncol = size(map,1);
+    a = fn_float(a);
     a = (a-clip(1)) * ((ncol-1)/(clip(2)-clip(1)));
     a = min(max(a+1,1),ncol);
 end
