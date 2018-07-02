@@ -49,12 +49,16 @@ end
 %-----------
 function init(axisimage,xonly)
 
-set(0,'DefaultImageCreateFcn',{@imv_initAxesChildren})
-set(0,'DefaultLineCreateFcn',{@imv_initAxesChildren})
-
 infobase.axisimage = axisimage;
 infobase.xonly = xonly;
+if isequal(infobase, getappdata(0,'fn_imvalue'))
+    % already initialized
+    return
+end
 setappdata(0,'fn_imvalue',infobase)
+
+set(0,'DefaultImageCreateFcn',{@imv_initAxesChildren})
+set(0,'DefaultLineCreateFcn',{@imv_initAxesChildren})
 
 for ha = findobj('type','axes')'
     initAxes(ha,'')
