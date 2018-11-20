@@ -5,7 +5,6 @@ function varargout = dichotomy(fun,varargin)
 % Thomas Deneux
 % Copyright 2015-2017
 
-if nargout==0, help dichotomy, return, end
 
 % Input
 doout = (nargout>=2);

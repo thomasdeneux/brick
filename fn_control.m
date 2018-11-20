@@ -603,7 +603,7 @@ classdef fn_control < hgsetget
                         xk.n_val = 6;
                     case 'stepper'
                         % read options
-                        defans = {'stepper' '1' '-Inf' 'Inf' '1' '%.2g'};
+                        defans = {'stepper' '1' '-Inf' 'Inf' '1' ''};
                         answer = regexp(opt,'([^ ]*)','tokens');
                         answer = [answer{:}];
                         missing = (length(answer)+1:length(defans));

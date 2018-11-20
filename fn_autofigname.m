@@ -28,4 +28,4 @@ figname = get(hf,'name');
 if fn_matlabversion('newgraphics'), hfnum=get(hf,'Number'); else hfnum=hf; end
 if isempty(figname), figname = ['Figure' num2str(hfnum)]; end
 fname = fullfile(savedir, ... 
-    [regexprep(figname,'[ |:/\\\*\+]','_')  datestr(now,'_yymmdd_HHMMSS')]);
+    [regexprep(figname,'[ |:/\\\*\+<>]','_')  datestr(now,'_yymmdd_HHMMSS')]);

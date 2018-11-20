@@ -14,12 +14,23 @@ function [p hl] = fn_comparedistrib(x,y,method,varargin)
 %           'bootstrap' (test on the mean)
 %           p - providing a p-value results in skipping the test and
 %           displaying thin p-value
+%
+% See also fn_markpvalue
 
 % Thomas Deneux
 % Copyright 2015-2017
 
 % Input
-if nargin<2, y = 0; end
+if nargin<2
+    if isvector(x)
+        y = 0;
+    else
+        if size(x,2)~=2
+            error 'single matrix input must have two columns'
+        end
+        [x y] = deal(x(:,1),x(:,2));
+    end
+end
 if nargin<3, method = fn_switch(isscalar(y),'signtest','ranksum'); end
 i = 0; tail = 'both'; ylim = []; showmean = false; xlabels = {};
 pdisplaymode = 'ns';

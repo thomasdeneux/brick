@@ -33,7 +33,8 @@ while k<length(varargin)
     end
 end
 
-% image(s) size and number color/bw
+% image(s) size and number color/bw + make frames the last dimension
+% (either 3rd or 4th depending on whether there are colors or not)
 [ni nj nt nt2] = size(a);
 if nt2==3
     a = permute(a,[1 2 4 3]);
@@ -75,6 +76,7 @@ if ncol==3
         error 'true color multi-frame gif are not supported'
         imwrite(a,fname,ext,'delaytime',delaytime)
     elseif fn_ismemberstr(ext,{'tif' 'tiff'})
+        disp('case nt>1 and ncol==3 has problems with tiff images')
         fn_progress('saving image',nt)
         for i=1:nt
             fn_progress(i)
@@ -108,7 +110,11 @@ if isequal(clip,'auto')
             clip = 'none';
         otherwise
             % what would be the most intuitive choice here? i am not sure
-            clip = 'fit';
+            if ismember(ext,{'tif' 'tiff'})
+                clip = 'none';
+            else
+                clip = 'fit';
+            end
     end
 end
 if ~isequal(clip,'none')
@@ -131,7 +137,7 @@ if zoom~=1
     end
 end
 
-% saving
+% special: gif
 if nt>1 && strcmp(ext,'gif')
     a = permute(a,[2 1 4 3]);
     % better convert to uint8 now, otherwise shit happens
@@ -157,6 +163,82 @@ if nt>1 && strcmp(ext,'gif')
     end
     return
 end
+
+% special: tiff
+if ismember(ext,{'tif' 'tiff'})
+    if ncol~=1, error 'programming: case ncol==3 should be handled above', end
+    fn_progress('saving image',nt)
+    for i=1:nt
+        fn_progress(i)
+        if i==1, writemode = 'overwrite'; else writemode = 'append'; end
+        try
+            imwrite(a(:,:,i),fname,'WriteMode',writemode)
+        catch
+            pause(.5)
+            imwrite(a(:,:,i),fname,'WriteMode',writemode)
+        end
+    end
+    %     do_big = numel(a)>2.5e6; % more than ten 500x500 images
+    %     if do_big
+    %         t = Tiff(fname,'w');
+    %     else
+    %         t = Tiff(fname,'w8');
+    %     end
+    %     switch ncol
+    %         case 1
+    %             t.setTag('Photometric',Tiff.Photometric.MinIsBlack);
+    %         case 3
+    %             t.setTag('Photometric',Tiff.Photometric.RGB);
+    %     end
+    %     switch class(a)
+    %         case 'logical'
+    %             t.setTag('SampleFormat',Tiff.SampleFormat.UInt)
+    %             t.setTag('BitsPerSample',1);
+    %         case 'uint8'
+    %             t.setTag('SampleFormat',Tiff.SampleFormat.UInt)
+    %             t.setTag('BitsPerSample',8);
+    %         case 'uint16'
+    %             t.setTag('SampleFormat',Tiff.SampleFormat.UInt)
+    %             t.setTag('BitsPerSample',16);
+    %         case 'uint32'
+    %             t.setTag('SampleFormat',Tiff.SampleFormat.UInt)
+    %             t.setTag('BitsPerSample',32);
+    %         case 'int8'
+    %             t.setTag('SampleFormat',Tiff.SampleFormat.Int)
+    %             t.setTag('BitsPerSample',8);
+    %         case 'int16'
+    %             t.setTag('SampleFormat',Tiff.SampleFormat.Int)
+    %             t.setTag('BitsPerSample',16);
+    %         case 'int32'
+    %             t.setTag('SampleFormat',Tiff.SampleFormat.Int)
+    %             t.setTag('BitsPerSample',32);
+    %         case 'single'
+    %             t.setTag('SampleFormat',Tiff.SampleFormat.IEEEFP)
+    %             t.setTag('BitsPerSample',32);
+    %         case 'double'
+    %             t.setTag('SampleFormat',Tiff.SampleFormat.IEEEFP)
+    %             t.setTag('BitsPerSample',64);
+    %         otherwise
+    %             error('number type ''%s'' not handled for tiff saving',class(a))
+    %     end
+    %     t.setTag('Compression',Tiff.Compression.None);
+    %     t.setTag('ImageLength',nj*zoom); % not sure whether needed
+    %     t.setTag('ImageWidth',ni*zoom);
+    %     % note that ncol==3 and nt>1 together cause an error, but this case is
+    %     % handled above
+    %     t.setTag('SamplesPerPixel',ncol*nt);
+    %     a = permute(a,[2 1 4 3]);
+    %     if zoom~=1
+    %         if ~zf, error 'interpolated zooming not implemented for gif saving', end
+    %         a = a(jj,ii,:,:);
+    %     end
+    %     t.setTag('PlanarConfiguration',Tiff.PlanarConfiguration.Chunky) % not sure what this does
+    %     t.setTag('Software','MATLAB')
+    %     t.write(a)
+    return
+end
+
+% saving
 if nt>1
     fn_progress('saving image',nt)
 end

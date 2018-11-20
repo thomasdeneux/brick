@@ -36,6 +36,7 @@ displaytable(P,true)
 
 % Wait for ok press
 waitfor(P.grob.ok)
+pause(.01) % give time for the figure to close
 indices = P.indices(P.valid==1,:);
 
 function initdata(P,lists)
@@ -205,15 +206,15 @@ function changevalid(P)
 
 % Change P.columns
 if isempty(P.cursel), return, end
-i = P.cursel(:,2)-1;
-if any(diff(i)), return, end
-i = i(1); % which list
-j = P.cursel(:,1); % which rows
-k = P.indices(j,i);
-k = k(k~=0); % which items in the list
-if isempty(k), return, end % blank cell(s) only
-icol = find(ismember(P.columns{i}(:,1),k)); % which items in the column
-P.columns{i}(icol,2) = ~P.columns{i}(icol(1),2);
+ii = row(unique(P.cursel(:,2)-1)); % which list(s)
+j = unique(P.cursel(:,1)); % which rows
+for i = ii
+    k = P.indices(j,i);
+    k = k(k~=0); % which items in the list
+    if isempty(k), continue, end % selection contained only blank cell(s)
+    icol = find(ismember(P.columns{i}(:,1),k)); % which items in the column
+    P.columns{i}(icol,2) = ~P.columns{i}(icol(1),2);
+end
 
 % Update table and display
 columns2table(P)

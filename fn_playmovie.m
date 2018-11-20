@@ -55,7 +55,7 @@ if nargout>0
 end
 
 % prepare timer
-t = timer('timerfcn',@(u,e)nextframe(),'ExecutionMode','fixedrate','period',1/fps);
+t = timer('timerfcn',@(u,e)nextframe(),'ExecutionMode','fixedrate','period',round(1e3/fps)*1e-3);
 
 % play
 i = 0;

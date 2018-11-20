@@ -42,7 +42,7 @@ end
 %if nd==1, error('why do you need to convert per-coordinates indices to global indices for a vector!!??'), end
 % (which case are we treating?)
 x = varargin{1};
-if length(varargin)>2
+if length(varargin)>=2
     if strcmp(convtype,'g2i'), error argument, else convtype = 'i2g'; end
     if ~isvector(x), error 'first of several arguments should be a vector', end
     ijk = zeros(length(varargin),length(x));

@@ -1,5 +1,9 @@
 function c = fn_watch(hf,varargin)
 % function c = fn_watch([hf])
+%---
+% Replace mouse pointer of the current (or specified) figure by a sandglass
+% until returned object c will be killed (typically when leaving the
+% function where it lies). 
 
 % Thomas Deneux
 % Copyright 2012-2012

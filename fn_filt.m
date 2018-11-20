@@ -224,7 +224,7 @@ xtype = class(x);
 
 % Remove NaNs
 badidx = isnan(x);
-x(badidx) = mean(x(~badidx));
+x(badidx) = full(mean(x(~badidx)));
 
 % Detrend
 if dodetrend
@@ -318,7 +318,7 @@ switch filtertype
         dogaussian = strcmp(filtertype,'gaussian');
         
         % Get data in Fourier space
-        x = double(x); % must work with double-precision numbers
+        x = full(double(x)); % must work with non-sparse double-precision numbers
         if isscalar(dim)
             xf = fft(x,[],dim);
             if domask, maskf = fft(mask,[],dim); end

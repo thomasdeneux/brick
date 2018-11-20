@@ -58,7 +58,6 @@ switch flag
         end
         x = fn_div(x,sqrt(m2));
     case 'norm2'
-        x = fn_subtract(x,m);
         m2 = x.^2;
         for k=1:nd
             m2 = sum(m2,dim(k));

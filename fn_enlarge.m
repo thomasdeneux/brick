@@ -94,6 +94,6 @@ else
         c = cell(1,ndim);
         for k=1:ndim, c{k} = 1:newsize0(k); end
         s = substruct('()',c);
-        data = subsasgn(data,s,data0);
+        data = subsasgn(data,s,full(data0));
     end
 end

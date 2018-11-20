@@ -14,7 +14,7 @@ if ~(isnumeric(x) || islogical(x))
     error 'input must be integer'
 end
 switch class(x)
-    case {'single' 'double'}
+    case {'single' 'double' 'ndSparse'}
     case {'int64' 'uint64'}
         x = double(x);
     otherwise
