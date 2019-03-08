@@ -1,5 +1,5 @@
 function a = fn_readmovie(filename,varargin)
-% function a = fn_readmovie(filename,frames[,'nodisplay'])
+% function a = fn_readmovie(filename,frames[,'nodisplay'][,'nopermute'])
 %---
 % read an avi file and stores it into a 2D+time array 
 % (2D+time+channel if color movie)
@@ -16,7 +16,7 @@ if ~exist(filename,'file')
     error('file ''%s'' does not exist',filename)
 end
 frames = {};
-dodisplay = true;
+dodisplay = true; dopermute = true;
 for k=1:length(varargin)
     a = varargin{k};
     if isnumeric(a)
@@ -25,6 +25,8 @@ for k=1:length(varargin)
         switch a
             case 'nodisplay'
                 dodisplay = false;
+            case 'nopermute'
+                dopermute = false;
             otherwise
                 error argument
         end
@@ -53,5 +55,7 @@ catch
             error('problem')
     end
 end
-if dodisplay, disp 'transposing frames', end
-a = permute(a,[2 1 3 4]);
+if dopermute
+    if dodisplay, disp 'transposing frames', end
+    a = permute(a,[2 1 3 4]);
+end

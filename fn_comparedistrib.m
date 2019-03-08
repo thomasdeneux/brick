@@ -1,4 +1,4 @@
-function [p hl] = fn_comparedistrib(x,y,method,varargin)
+function [p hl] = fn_comparedistrib(x,y,varargin)
 % function [pval hl] = fn_comparedistrib(x,y[,test][,'tail','left|right|both']
 %       [,'showmean'][,'ylim',ylim][,'xlabels',xlabels][,'pdisplaymode','ns|p'])
 %---
@@ -31,8 +31,7 @@ if nargin<2
         [x y] = deal(x(:,1),x(:,2));
     end
 end
-if nargin<3, method = fn_switch(isscalar(y),'signtest','ranksum'); end
-i = 0; tail = 'both'; ylim = []; showmean = false; xlabels = {};
+i = 0; tail = 'both'; ylim = []; showmean = false; xlabels = {}; method = [];
 pdisplaymode = 'ns';
 while i<length(varargin)
     i = i+1;
@@ -51,9 +50,16 @@ while i<length(varargin)
             pdisplaymode = varargin{i};
         case 'showmean'
             showmean = true;
+        case {'signtest' 'ranksum'}
+            method = varargin{i};
+        case {'p' 'ns'}
+            pdisplaymode = varargin{i};
         otherwise
             error('unknown flag ''%s''',varargin{i})
     end
+end
+if isempty(method)
+    method = fn_switch(isscalar(y),'signtest','ranksum'); 
 end
 
 % p-value

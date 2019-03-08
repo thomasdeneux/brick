@@ -76,7 +76,7 @@ type = []; filtertype = 'gaussian';
 domirror = false; domask = false; domaskout = false;
 dozero = false; dodetrend = false; 
 docomplex = false; 
-dim = 1;
+dim = [];
 if ischar(tau)
     if ~fn_ismemberstr(tau,{'detrend','detrendz'}) error 'argument', end
     dodetrend = true;
@@ -149,6 +149,15 @@ while k<length(varargin)
         end
     else
         dim = a;
+    end
+end
+% (dimension: first non-singleton one)
+if isempty(dim)
+    dim = find(size(x)~=1,1,'first');
+    if isempty(dim)
+        dim = 1;
+    elseif dim>1
+        disp(['dimension for filtering was not specified: using dimension ' num2str(dim)])
     end
 end
 % (tau: time constants)

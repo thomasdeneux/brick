@@ -116,18 +116,19 @@ classdef fn_movie < hgsetget
             set(M.hf,'tag','fn_movie') % prevent access to fn_imvalue
             figure(M.hf), clf
             set(795,'numbertitle','off','name','MOVIE', ...
-                'position',[340 340 580 400], ...
                 'menubar','none') 
-            M.hp = uipanel('parent',M.hf,'position',[.02 .015 .36 .96], ...
-                'defaultuicontrolfontsize',8);
-            set(M.hp,'units','pixel') % size will not cM.hange if figure is resized
+            M.hp = uipanel('parent',M.hf,'defaultuicontrolfontsize',8);
             M.hu = fn_slider('parent',M.hf,'mode','area+point', ...
-                'units','normalized','position',[.42 .015 .56 .05], ...
+                'units','normalized', ...
                 'min',1,'max',M.nt,'value',[1 M.nt],'point',1,'inc',1/(M.nt-1), ...
                 'callback',@(u,evnt)slidercallback(M));
             M.htext = uicontrol('parent',M.hf,'style','text','fontsize',8, ...
-                'units','normalized','position',[.42 .065 .1 .03]);
-            M.ha = axes('parent',M.hf,'position',[.42 .096 .56 .884]);
+                'units','normalized','horizontalalignment','left');
+            M.ha = axes('parent',M.hf);
+            fn_controlpositions(M.hp,M.hf,[0 0 0 1],[5 5 230 -10])            
+            fn_controlpositions(M.hu,M.hf,[0 0 1 0],[240 5 -245 50])            
+            fn_controlpositions(M.htext,M.hf,[0 0 0 0],[240 55 100 15])            
+            fn_controlpositions(M.ha,M.hf,[0 0 1 1],[240 72 -245 -75])            
             
             % menus
             uimenu(M.hf,'label','save','callback',@(u,evnt)savemovie(M))

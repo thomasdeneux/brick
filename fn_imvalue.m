@@ -210,7 +210,9 @@ else
     info1 = getappdata(hlist(1),'fn_imvalue');
     if isimg
         if ~isfield(info1,'ImPoint')
-            warning('there is a bug here, should be fixed') %#ok<WNTAG>
+            if fn_dodebug
+                warning('there is a bug here, should be fixed') %#ok<WNTAG>
+            end
             newpoint = [];
         else
             newpoint = info1.ImPoint;

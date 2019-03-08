@@ -92,6 +92,7 @@ if ~doz
             hly(k)=line(ax([1 2]),[1 1]*y(k),lineopt{:},'parent',ha);
         end
     end
+    axis(ax) % under some conditions, it can happen that drawing the lines changed the range! re-establish it
 else
     % 3D
     [nx ny nz] = deal(length(x),length(y),length(z));
