@@ -50,7 +50,7 @@ while i<length(varargin)
             pdisplaymode = varargin{i};
         case 'showmean'
             showmean = true;
-        case {'signtest' 'ranksum'}
+        case {'signtest' 'ranksum' 'signrank'}
             method = varargin{i};
         case {'p' 'ns'}
             pdisplaymode = varargin{i};
@@ -90,8 +90,12 @@ if dualdisplay
     xlim = [0 3];
     alldata = [row(x) row(y)];
     if strcmp(method,'ranksum')
-        xx = [ones(1,length(x)) 2*ones(1,length(y))];
-        hl{1} = plot(xx,alldata,'o','color',[1 1 1]*.6); % no connecting lines
+        % no connecting lines
+        a = plot(ones(1,length(x)),x,'o','color',[1 1 1]*.6);
+        hold on
+        b = plot(2*ones(1,length(y)),y,'o','color',[1 1 1]*.6);
+        hold off
+        hl{1} = [a b];
     else
         hl{1} = plot(1:2,[row(x); row(y)],'color',[1 1 1]*.6,'marker','o'); % connecting lines
     end
