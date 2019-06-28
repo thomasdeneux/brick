@@ -1,6 +1,7 @@
 classdef fn_movie < hgsetget
     % function fn_movie(data,option1,value1,...)
     % function fn_movie(data,optstruct)
+    % function fn_movie({videoreader, nt},...)
     %---
     % available options are
     % - temporal manipulations:
@@ -47,6 +48,9 @@ classdef fn_movie < hgsetget
         hp
         im
     end
+    properties (Dependent, SetAccess='private')
+        isvideo
+    end
     
     % Constructor
     methods
@@ -57,11 +61,28 @@ classdef fn_movie < hgsetget
                 load(fullfile(fileparts(which('fn_movie')),'data','fn_movie_demo'))
             end
             
-            M.Y = Y;
-            [M.nx M.ny M.nt] = size(M.Y);
+            if iscell(Y)
+                [video M.nt] = deal(Y{:});
+                M.Y = video;
+                M.nx = video.Width;
+                M.ny = video.Height;
+            else
+                M.Y = Y;
+                [M.nx M.ny M.nt] = size(M.Y);
+            end
             
             % basic characteristics of the data
-            avgfr = mean(M.Y,3);
+            if M.isvideo
+                n = min(100, M.nt);
+                avgfr = 0;
+                fn_progress('average frame', n)
+                for i=round(linspace(1,M.nt,n))
+                    fn_progress(i)
+                    avgfr = avgfr + M.readframes(i)/n;
+                end
+            else
+                avgfr = mean(M.Y,3);
+            end
             overlay = repmat((avgfr'-min(avgfr(:)))/(max(avgfr(:))-min(avgfr(:))),[1 1 3]);
             minmax = [min(avgfr(:)) max(avgfr(:))];
 
@@ -149,6 +170,9 @@ classdef fn_movie < hgsetget
             % play movie
             playmovie(M)
         end
+        function b = get.isvideo(M)
+            b = isa(M.Y,'VideoReader');
+        end
     end
     
     % Routines
@@ -171,6 +195,19 @@ classdef fn_movie < hgsetget
             end
         end
             
+        % basic frame read
+        function x = readframes(M,idx)
+            if M.isvideo
+                x = M.Y.read([idx(1) idx(end)]);
+                % make color movie grayscale
+                if size(x,3) == 3
+                    x = squeeze(mean(x,3));
+                end
+            else
+                x = M.Y(:,:,idx(1):idx(end));
+            end
+        end
+        
         % get a movie frame + process it
         function getframe(M)
             M.k = round(M.k); % who knows...
@@ -178,15 +215,16 @@ classdef fn_movie < hgsetget
             loop = round(M.hu.value);
             if ~isempty(M.opt.tbin) && M.opt.tbin>1
                 M.k = loop(1)+mod(M.k-loop(1),loop(2)-loop(1)+1-(M.opt.tbin-1));
-                M.fr = mean(M.Y(:,:,M.k:M.k+M.opt.tbin-1),3);
+                idx = [M.k M.k+M.opt.tbin-1];
+                M.fr = mean(M.readframes(idx),3);
             else
                 M.k = loop(1)+mod(M.k-loop(1),loop(2)-loop(1)+1);
-                M.fr = M.Y(:,:,M.k);
+                M.fr = M.readframes(M.k);
             end
             M.fr = double(M.fr);
             if ~isempty(M.opt.tspec)
-                idx = max(1,M.k-M.opt.tspec):min(M.nt,M.k+M.opt.tspec);
-                block = M.Y(:,:,idx);
+                idx = [max(1,M.k-M.opt.tspec) min(M.nt,M.k+M.opt.tspec)];
+                block = M.readframes(idx);
                 M.fr = M.fr ./ mean(block,3) - 1;
             elseif M.opt.tnorm
                 M.fr = M.fr./M.pars.avgfr - 1;
@@ -220,9 +258,10 @@ classdef fn_movie < hgsetget
             if ~isempty(M.opt.overlay)
                 %M.frame = M.opt.overlay*M.frame + (1-M.opt.overlay)*M.pars.overlay;
                 if ~isempty(M.opt.tbin) && M.opt.tbin>1
-                    y = mean(M.Y(:,:,M.k+(0:M.opt.tbin-1)),3);
+                    idx = [M.k M.k+M.opt.tbin-1];
+                    y = mean(M.readframes(idx));
                 else
-                    y = double(M.Y(:,:,M.k));
+                    y = M.readframes(M.k);
                 end
                 y = (y'-min(M.pars.avgfr(:))) / (max(M.pars.avgfr(:))-min(M.pars.avgfr(:)));
                 y = repmat(max(0,min(1,y)),[1 1 3]);

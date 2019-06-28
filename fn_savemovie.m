@@ -8,7 +8,7 @@ function M = fn_savemovie(a,varargin)
 %           values should be in [0 1] 
 % - fname   file name (movie is saved in file only if specified) [default =
 %           30]
-% - clip    a 2-values vector, or 'fit', or '?SD'
+% - clip    a 2-values vector, or clip flag (see fn_clip)
 % - fps     frames per second
 % - zoom    zooming value, according to which the movie is either
 %           interpolated (zoom>0) or binned (0<zoom<1) or enlarged with
@@ -71,8 +71,9 @@ while i<=length(varargin)
                     fps = varargin{i}; i=i+1;
                 case 'zoom'
                     zoom = varargin{i}; i=i+1;
-                case 'map'
+                case {'map' 'cmap' 'colormap'}
                     map = varargin{i}; i=i+1;
+                    if ischar(map), map = feval(map,256); end
                 case 'hf'
                     hf  = varargin{i}; i=i+1;
                 case 'compression'
@@ -120,16 +121,7 @@ end
 disp('rescale'), drawnow
 if ~truecolors
     if ischar(clip)
-        if strcmp(clip,'fit')
-            clip = [min(a(:)) max(a(:))];
-        elseif findstr(clip,'SD')
-            nsd = sscanf(clip,'%iSD');
-            m = mean(a(:));
-            sd = std(a(:));
-            clip = [m-nsd*sd m+nsd*sd];
-        else
-            error('clipping flag ''%s'' is not recognized',clip)
-        end
+        clip = fn_clip(a(:),clip,'getrange');
     else
         if length(clip(:))~=2
             error('clipping value is not correct')
