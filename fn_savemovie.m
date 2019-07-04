@@ -7,7 +7,7 @@ function fn_savemovie(a,varargin)
 %           (be aware that this differs from Matlab y-x convention, use
 %           'nopermute' option for using Matlab convention)
 % - fname   file name (movie is saved in file only if specified), can have
-%           .avi or .mp4 extension [if no extension, will be saved as .avi]
+%           .avi or .mp4 extension [if no extension, will be saved as .mp4]
 % - clip    a 2-values vector, or clip flag (see fn_clip) [by default, no
 %           clipping for true color movies or movies with uint8 or uint16
 %           values, otherwise default = 'fit']
@@ -174,7 +174,7 @@ end
 % check compression
 ext = lower(fn_fileparts(fname,'ext'));
 if isempty(ext) || ~ismember(ext,{'.avi' '.mp4'})
-    ext = '.avi'; 
+    ext = '.mp4'; 
 end
 switch ext
     case '.avi'
