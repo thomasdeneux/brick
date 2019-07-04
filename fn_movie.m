@@ -342,7 +342,7 @@ classdef fn_movie < hgsetget
 
         % save movie
         function savemovie(M)
-            fname = fn_savefile('*.avi','Select avi file to save movie');
+            fname = fn_savefile('*.avi,*.mp4','Select avi or mp4 file to save movie');
             if ~fname, return, end
             pixelsize = fn_input('pixelsize',1,1,10);
             if isempty(pixelsize), return, end
@@ -363,7 +363,7 @@ classdef fn_movie < hgsetget
                 nx2 = M.nx/M.opt.xbin;
                 ny2 = M.ny/M.opt.xbin;
             end
-            mov = struct('cdata',cell(1,nt2),'colormap',cell(1,nt2));
+            mov = zeros(ny2,nx2,3,nt2,'as',M.frame);
             for i=1:nt2
                 M.k = loop(1)+step*(i-1);
                 getframe(M)
@@ -375,10 +375,10 @@ classdef fn_movie < hgsetget
                 else
                     tmp = M.frame;
                 end
-                mov(i).cdata = uint8(tmp*256);
+                mov(:,:,:,i) = tmp;
             end
-            disp('save avi')
-            movie2avi(mov,fname,'fps',M.pars.fps); %,'compression','i420');
+            disp('save movie')
+            fn_savemovie(mov,fname,'fps',M.pars.fps);
             set(M.hf,'pointer','arrow')
         end
     end
