@@ -156,7 +156,7 @@ classdef panelorganizer < hgsetget
                 O.extents = 1;
             else
                 switch O.bordermode
-                    case 'bothsides'
+                    case 'twosides'
                         xx(idx) = mean(xx);
                         O.extents = xx;
                     case 'push'
@@ -189,7 +189,7 @@ classdef panelorganizer < hgsetget
             O.children(idx) = [];
             % update positions and borders
             switch O.bordermode
-                case 'bothsides'
+                case 'twosides'
                     O.extents = O.extents; % will readjust extents in pixel units and update display
                 case 'push'
                     O.pushExtent(idx)
