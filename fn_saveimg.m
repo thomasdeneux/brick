@@ -1,5 +1,6 @@
 function fn_saveimg(a,fname,varargin)
-% function fn_saveimg(a,fname|'auto',[clip[,zoom[,cmap]]][,'delaytime',dt])
+% function fn_saveimg(a,fname|'auto',[clip[,zoom[,cmap]]][,'delaytime',dt]
+%                     [,'alpha',alpha])
 %---
 % a should be y-x-t 
 % clip can be a 2-values vector, or 'fit' [default], or '?SD', or 'none'
@@ -11,43 +12,58 @@ if nargin<1, help fn_saveimg, return, end
 if nargin<2 || isempty(fname), fname=fn_savefile; end
 if isequal(fname,0), return, end
 
-clip = 'auto'; zoom = 1; cmap = []; delaytime = .1;
+clip = 'auto'; zoom = 1; cmap = []; delaytime = .1; alpha = [];
 k=0;
 while k<length(varargin)
     k = k+1;
     x = varargin{k};
-    if ischar(x) && strcmp(x,'delaytime')
-        k = k+1;
-        delaytime = varargin{k};
-    else
-        switch k
-            case 1
-                clip = x;
-            case 2
-                zoom = x;
-            case 3
-                cmap = x;
-            otherwise
-                argument error
+    if ischar(x) 
+        switch x
+            case 'delaytime'
+                k = k+1;
+                delaytime = varargin{k};
+                continue
+            case 'alpha'
+                k = k+1;
+                alpha = varargin{k};
+                continue
         end
+    end
+    switch k
+        case 1
+            clip = x;
+        case 2
+            zoom = x;
+        case 3
+            cmap = x;
+        otherwise
+            argument error
     end
 end
 
 % image(s) size and number color/bw + make frames the last dimension
 % (either 3rd or 4th depending on whether there are colors or not)
 [ni nj nt nt2] = size(a);
-if nt2==3
+if ismember(nt2, [3 4])
     a = permute(a,[1 2 4 3]);
-    ncol = 3;
-elseif nt==3
+    ncol = nt2;
+elseif ismember(nt, [3 4])
+    ncol = nt;
     nt = nt2;
-    ncol = 3;
 elseif nt==1 && nt2>1
     a = permute(a,[1 2 4 3]);
     nt = nt2;
     ncol = 1;
 else
     ncol = 1;
+end
+if ncol == 4
+    if ~isempty(alpha)
+        error 'transparency defined twice!'
+    end
+    alpha = a(:,:,4,:);
+    a(:,:,4,:) = [];
+    ncol = 3;
 end
 
 % file name
@@ -70,7 +86,16 @@ if ncol==3
         error('no zoom allowed for color images')
     end
     a = permute(a,[2 1 3 4]); % (x,y) convention -> Matlab (y,x) convention
-    if nt==1
+    alpha = permute(alpha,[2 1 3 4]);
+    if ~isempty(alpha)
+        if nt>1
+            error 'saving multiple images with transparency not handled yet'
+        end
+        if ~strcmp(ext,'png')
+            error('transparency not handled for image type %s', ext)
+        end
+        imwrite(a,fname,'png','Alpha',alpha)
+    elseif nt==1
         imwrite(a,fname,ext);
     elseif strcmp(ext,'gif')
         error 'true color multi-frame gif are not supported'
@@ -98,8 +123,6 @@ if ncol==3
     end
     return
 end
-
-% otherwise
 
 % clipping
 if isequal(clip,'auto')

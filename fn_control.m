@@ -91,10 +91,11 @@ classdef fn_control < hgsetget
     %               in this case callback fun will be called with action
     %               string as an argument (instead of structure s)
     %
-    % Specification can be followed with a sequence '< name', indicating
-    % that the control of interest should be enabled only if a preceding
-    % control with name 'name' has value true (logical control) or
-    % non-empty value (other controls).
+    % Specification can be followed with a sequence '< name', indicating a
+    % dependency, i.e. that the control of interest should be enabled only
+    % if a preceding control with name 'name' has value true (logical
+    % control) or non-empty value (other controls). Use ~name if value need
+    % to be false instead.
     % 
     % One might want to display small sentences rather than simple names
     % when prompting user. For this, the following syntaxes are allowed:
@@ -250,7 +251,7 @@ classdef fn_control < hgsetget
                 'check',{},'log',{},'min',{},'max',{},'step',{},'shift',{},'format',{}, ...
                 'mode',{},'values',{} ...
                 );
-            X.dependencies = false(nf);
+            X.dependencies = zeros(nf);
             
             %-
             % SET PARAMETERS  
@@ -405,12 +406,16 @@ classdef fn_control < hgsetget
                     
                     % dependencie
                     if ~isempty(dep)
-                        name = fn_regexptokens(dep,'< *([^ ]*)');
+                        name = fn_regexptokens(dep,'< *([^ ]*)');                       
+                        dep_neg = (name(1)=='~');
+                        if dep_neg
+                            name(1) = [];
+                        end
                         kdep = find(strcmp(name,X.names(1:k-1)));
                         if isempty(kdep)
                             error 'error in establishing dependency'
                         end
-                        X.dependencies(kdep,k) = true;
+                        X.dependencies(kdep,k) = (-1)^dep_neg;
                     end
                 end
                 
@@ -1337,13 +1342,14 @@ classdef fn_control < hgsetget
             end
             xkdep = X.controls(kdep);
             if strcmp(xkdep.type,'logical')
-                enable = xkdep.value;
+                dep_value = xkdep.value;
             else
-                enable = ~isempty(xkdep.value);
+                dep_value = ~isempty(xkdep.value);
             end
             for k = row(kk)
                 xk = X.controls(k);
                 % Enable name
+                enable = xor(dep_value, X.dependencies(kdep,k)==-1);
                 set(xk.hname,'enable',fn_switch(enable))
                 % Enable control
                 switch xk.style

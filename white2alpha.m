@@ -6,8 +6,9 @@
 
      properties (SetAccess='private')
          controls
+         filename
          input
-         luminance
+         lumspecial
          saturation
          checker
          truecolor
@@ -20,11 +21,22 @@
              
              X = X@interface(917,'WHITE2ALPHA');
              
+             % Graphic objects
+             X.grob = struct;
+             X.grob.controls = uipanel;
+             X.grob.input = axes;
+             X.grob.masks = axes;
+             X.grob.truecolor = axes;
+             X.grob.alpha = axes;
+             X.grob.result = axes;
+             X.interface_end()
+             
              % Input
              if nargin<1
                  X.input = fn_getfile('Select image');
              end
              if ischar(a)
+                 X.filename = a;
                  X.input = fn_readimg(a);
              end
              switch class(a)
@@ -40,10 +52,12 @@
              % Some precomputations
              [nx ny nc] = size(X.input);
              if nc == 3
-                 [~, X.saturation, X.luminance] = rgb2hsv(X.input);
+                 [~, X.saturation, X.lumspecial] = rgb2hsv(X.input);
+                 % replace luminance by darkest channel!
+                 X.lumspecial = min(X.input,[],3);
              elseif nc == 1
                  X.saturation = 0;
-                 X.luminance = X.input;
+                 X.lumspecial = X.input;
              else
                  error 'input image must have 1 or 3 color channels'
              end
@@ -52,16 +66,6 @@
              ystripes = mod(floor((0:ny-1)/step),2);
              X.checker = bsxfun(@xor,xstripes,ystripes);
              X.checker = .4 + .2*X.checker;
-             
-             % Graphic objects
-             X.grob = struct;
-             X.grob.controls = uipanel;
-             X.grob.input = axes;
-             X.grob.masks = axes;
-             X.grob.truecolor = axes;
-             X.grob.alpha = axes;
-             X.grob.result = axes;
-             X.interface_end()
              
              % Show images
              colormap(X.hf,gray(256))
@@ -90,10 +94,12 @@
              % Controls
              s = struct(...
                  'outside__max__luminance',  {.99    'slider .8 1 .01 %.2f'}, ...
-                 'flat__colors',             {false  'logical'}, ...
-                 'border__typical__width',   {5      'slider 1 100'}, ...
-                 'border__max__luminance',   {.5     'slider 0 1 .01 %.2f'}, ...
-                 'border__max__saturation',  {.5     'slider 0 1 .01 %.2f'}, ...
+                 'flat__colors',             {true   'logical'}, ...
+                 'border__typical__width',   {5      'slider 1 20 1 < flat__colors'}, ...
+                 'flat__color__tolerance',   {.01    'slider 0 .1 .005 %.2f < flat__colors'}, ...
+                 'border__max__luminance',   {.5     'slider 0 1 .005 %.2f < ~flat__colors'}, ...
+                 'border__max__saturation',  {.5     'slider 0 1 .005 %.2f < ~flat__colors'}, ...
+                 'true__color__smoothing',   {0      'slider 0 1'}, ...
                  'SAVE',                {[]     {'push' 'save'}});
              X.controls = fn_control(s,@(s)X.action(s),X.grob.controls);
              X.performconversion()
@@ -117,18 +123,20 @@
              [nx ny nc] = size(X.input);
              
              % Inside and outside masks
-             outside = (X.luminance > X.controls.outside__max__luminance);
+             outside = (X.lumspecial > X.controls.outside__max__luminance);
              if X.controls.flat__colors
-                 spread = 2 * X.controls.border__typical__width;
-                 local_min_luminance = imerode(X.luminance,true(spread));
-                 inside = (X.luminance < local_min_luminance * 1.01);
+                 darkness = 1 - X.lumspecial;
+                 spread = round(X.controls.border__typical__width);
+                 local_max_darkness = imdilate(darkness,true(spread));
+                 inside = (darkness > local_max_darkness * (1-X.controls.flat__color__tolerance));
+                 inside = inside & ~outside;
              else
-                 inside = (X.luminance < X.controls.border__max__luminance);
+                 inside = (X.lumspecial < X.controls.border__max__luminance);
                  if nc == 3
                      inside = inside | (X.saturation > X.controls.border__max__saturation);
                  end
              end
-             border = ~(inside(:) | outside(:));
+             border = ~(inside | outside);
              a = fn_imvect(X.input,'vector');
              a(outside(:),1:2) = 1;
              a(outside(:),3) = 0;
@@ -143,7 +151,7 @@
              
              % True color of semitransparent pixels obtained by smoothing
              % of inside
-             sigma = 5;
+             sigma = 2 * X.controls.border__typical__width;
              negative_inside = fn_mult(1 - X.input, inside);
              negative_inside_smooth = fn_filt(negative_inside,sigma,'l',[1 2]);         
              inside_mask_smooth = fn_filt(inside,sigma,'l',[1 2]);         
@@ -152,20 +160,50 @@
              inside_spread = fn_imvect(inside_spread,'vector');
              X.truecolor = fn_imvect(X.input,'vector');
              X.truecolor(outside, :) = 1;
-             X.truecolor(border, :) = inside_spread(border, :);
+             truecolor_border = inside_spread(border, :);
              
-             % Transparency of border pixels
+             % Transparency of border pixels obtained as the ratio of input
+             % image darkness as compared to true color darkness
+             input_border = fn_imvect(X.input,border,'vector');
+             darkness = 1 - mean(input_border,2);
+             truecolor_border_darkness = 1 - mean(truecolor_border,2);
+             alpha_border = fn_clip(darkness ./ truecolor_border_darkness, [0 1]);
              X.alpha = double(inside);
-             X.alpha(border) = (1 - X.luminance(border)) ./ (1 - mean(X.truecolor(border,:),2));
-             X.alpha = fn_clip(X.alpha,[0 1]);
+             X.alpha(border) = alpha_border;
+             set(X.im.alpha,'cdata',permute(X.alpha,[2 1 3]))
+
+             % True color can be improved where alpha is large enough so we
+             % can trust the pixel color
+             %  we have:    input = alpha * truecolor + (1-alpha)
+             %  hence:      truecolor = 1 - (1 - input)/alpha
+             truecolor_border2 = fn_clip(1 - fn_div(1-input_border,alpha_border), [0 1]);
+             truecolor_border2(alpha_border==0, :) = 1;
+             smooth = X.controls.true__color__smoothing;
+             if ~ismember(smooth, [0 1])
+                 smooth = alpha_border .^ atanh(1-smooth);
+             end
+             X.truecolor(border, :) = fn_mult(smooth,truecolor_border) + fn_mult(1-smooth,truecolor_border2);
+             
+             % Display truecolor and alpha
              X.truecolor = fn_imvect(X.truecolor,[nx ny],'image');
              set(X.im.truecolor,'cdata',permute(X.truecolor,[2 1 3]))
-             X.alpha = fn_imvect(X.alpha,[nx ny],'image');
-             set(X.im.alpha,'cdata',permute(X.alpha,[2 1 3]))
              
              % Display result on top of a checkerboard
              b = fn_add(fn_mult(X.truecolor,X.alpha), X.checker.*(1-X.alpha));
              set(X.im.result,'cdata',permute(b,[2 1 3]))
+         end
+         function save(X)
+             % file name
+             if isempty(X.filename)
+                 fsave = '*.png';
+             else
+                 fsave = [fn_fileparts(X.filename,'base') ' - transparency.png'];
+             end
+             fsave = fn_savefile(fsave,'Save image with transparency as');
+             
+             % save image
+             a = cat(3,X.truecolor,X.alpha);
+             fn_saveimg(a,fsave)
          end
      end
 
