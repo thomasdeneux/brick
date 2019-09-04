@@ -34,6 +34,7 @@ else
     end
     if isempty(hl)
         hl = flipud(findobj(gca,'type','line'));
+        hl = hl(1:length(names));
     end
 end
 

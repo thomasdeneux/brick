@@ -153,10 +153,12 @@ setappdata(hf,'fn_buttonmotion_moved',true)
 setappdata(hf,'fn_buttonmotion_busy',false)
 
 % stop (queued)
-debugstr = getappdata(hf,'fn_buttonmotion_queuestop');
-if ~isempty(debugstr)
-    disp_if_debug(['exec  queued ' debugstr])
-    terminate(hf)
+try
+    debugstr = getappdata(hf,'fn_buttonmotion_queuestop');
+    if ~isempty(debugstr)
+        disp_if_debug(['exec  queued ' debugstr])
+        terminate(hf)
+    end
 end
 
 %---

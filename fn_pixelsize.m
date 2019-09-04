@@ -7,13 +7,14 @@ function [out1 out2] = fn_pixelsize(hobj,varargin)
 %
 % In R2014b and later, wraps function getpixelposition
 %
-% See also fn_pixelpos, fn_pixelposlistener, fn_pixelsizelistener
+% See also fn_pixelpos, fn_pixelposlistener, fn_pixelsizelistener,
+% fn_objectsize
 
 % Thomas Deneux
-% Copyright 2011-2017
+% Copyright 2011-2019
 
 % strict?
-strict = fn_flags({'recursive' 'strict'},varargin);
+strict = fn_flags({'strict'},varargin);
 
 if strict
     pos = fn_pixelpos(hobj,'strict');

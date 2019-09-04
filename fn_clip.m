@@ -18,7 +18,9 @@ function [x clip] = fn_clip(x,varargin)
 % - outflag     output format
 %               [a b]       define minimum and maximum value [default, with
 %                           a=0 and b=1]
-%               n           integer values between 1 and n
+%               n           integer values between 1 and n (output will be
+%                           of class uint8 if n<=256, uint16 if n<=65536,
+%                           etc.
 %               'uint8', 'uint16', ..   integer values between 0 and max
 %               nx3 array   returns a (n+1)-dimensional array using this
 %                           colormap 
@@ -119,7 +121,7 @@ end
 if diff(clip)==0, clip = clip+[-1 1]; end
 
 % output mode
-doclip = true; nbit = [];
+doclip = true;
 if strcmp(outflag,'getrange')
     x = clip;
     return
@@ -127,8 +129,7 @@ elseif strcmp(outflag,'scaleonly')
     doclip = false;
 elseif ischar(outflag) && any(strfind(outflag,'uint'))
     docolor = false;
-    nbit = sscanf(outflag,'uint%i');
-    n = 2^nbit;
+    n = intmax(outflag);
 elseif ischar(outflag)
     docolor = true;
     fname = outflag;
@@ -170,10 +171,10 @@ x = min(upperbound,max(0,x));
 
 % scaling
 if n
-    if isempty(nbit)
-        x = floor(n*x)+1; % values between 1 and n
+    if isinteger(n)
+        x = cast(floor(double(n)*x),'like',n); % values between 0 and n-1
     else
-        x = cast(n*x,outflag); % values between 0 and 2^nbit-1
+        x = floor(n*x)+1; % values between 1 and n
     end
 elseif a==0 && b==1
     % nothing to do

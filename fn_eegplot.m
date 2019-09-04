@@ -62,7 +62,7 @@ if ischar(ystep)
     if isempty(tokens{1}), fact=1; else fact=str2double(tokens{1}); end
     switch lower(tokens{2})
         case 'std'
-            ystep = fact*mean(mean(std(data)));
+            ystep = fact*nmean(nmean(nstd(data)));
         case 'fit'
             ystep = fact*max(max(data(:))-min(data(:)));
     end
