@@ -10,6 +10,10 @@ classdef fn_slider < hgsetget
     %
     % Use setInteger(U,n[,0]) to set all properties so that possible values
     % will be integers from 1 to n (add ,0 for 0 to n-1 instead).
+    % 
+    % The callback function can check whether the slider is being moved
+    % (for example to do only a partial update that will result in smoother
+    % behavior) by checking the 'sliderscrolling' property.
     %
     % See also fn_sliderenhance, fn_sensor, fn_control
     

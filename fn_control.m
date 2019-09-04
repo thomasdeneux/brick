@@ -51,6 +51,8 @@ classdef fn_control < hgsetget
     % 'slider min max [step] [format]'
     %               slider, specify min, max, step (optional) and format of the
     %               string representation (optional)
+    %               check whether slider is being moved with the
+    %               'sliderscrolling' property
     % 'logslider min max [step] [format]'
     %               logarithmic scale slider (min and max should be the log of
     %               the effective min and max)
@@ -126,9 +128,13 @@ classdef fn_control < hgsetget
         fignew
         changedfields
     end
+    properties (Access='private')
+        last_active
+    end
     
     properties (Dependent)
         s
+        sliderscrolling
     end
     
     events
@@ -1022,6 +1028,15 @@ classdef fn_control < hgsetget
             for k=1:sum(okval), if iscell(c{2,k}), c{2,k} = {c{2,k}}; end, end %#ok<CCAT1>
             s = struct(c{:});
         end
+        function b = get.sliderscrolling(X)
+            k = X.last_active;
+            if isempty(k)
+                b = false;
+                return
+            end
+            xk = X.controls(k);
+            b = strcmp(xk.style,'slider') && xk.hval.sliderscrolling;
+        end
         function set.immediateupdate(X,value)
             set(X.himupd,'value',value) %#ok<*MCSUP>
             X.immediateupdate = value;
@@ -1100,6 +1115,7 @@ classdef fn_control < hgsetget
         end
         function chgvalue(X,k,bval)
             % callback function executed when control k has been changed
+            X.last_active = k;
             xk = X.controls(k);
             
             % get the value if we checked the box / check the box if we

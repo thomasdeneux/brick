@@ -1,5 +1,6 @@
 function x = fn_imvect(x,mask,varargin)
 % function x = fn_imvect(x,mask[,outputtype][,outsidevalue])
+% function x = fn_imvect(x[,'vector'])
 % function k = fn_imvect(ij,mask[,outsidevalue])
 % function ij = fn_imvect(k,mask[,outsidevalue])
 %---
@@ -31,7 +32,7 @@ if nargin==0, help fn_imvect, return, end
 
 % input
 if isvector(x), x = x(:); end
-if nargin<2, mask = [size(x,1),size(x,2)]; end
+if nargin<2 || strcmp(mask,'vector'), mask = [size(x,1),size(x,2)]; end
 if ~iscell(mask), mask = {mask}; end
 [nx ny np] = deal(zeros(1,length(mask)));
 for i=1:length(mask)
