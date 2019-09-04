@@ -10,7 +10,7 @@ function y = fn_roiavg(x,ind)
 % Output:
 % - y       (N-2)D array - average of x for the pixels inside the ROI
 %
-% See also fn_maskavg
+% See also fn_maskselect
 
 % Thomas Deneux
 % Copyright 2015-2017

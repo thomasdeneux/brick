@@ -13,13 +13,13 @@ function mask = fn_maskselect(a,mouseflag,dorepeat,cm)
 % - mask        logical array the same size of image indicating interior of
 %               the mask
 %
-% See also fn_maskavg, fn_imvect
+% See also fn_roiavg, fn_imvect
 
 % Thomas Deneux
 % Copyright 2011-2017
 
 % Input
-[nx ny] = size(a);
+[nx ny nc] = size(a);
 if nargin<2, mouseflag = 'poly'; end
 if nargin<3, dorepeat = false; end
 if nargin<4, cm = []; end

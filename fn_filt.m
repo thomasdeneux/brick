@@ -1,5 +1,6 @@
 function y = fn_filt(x,tau,varargin)
-% function y = fn_filt(x,tau[,'l|h|b|n'][,dim][,filtertype][,'mirror']['mask'[,mask]][,'zero'][,'detrend']['complex|phase'])
+% function y = fn_filt(x,tau[,'l|h|b|n'][,dim][,filtertype][,'mirror']
+%       ['mask'[,mask]][,'zero'][,'pad',value][,'detrend']['complex|phase'])
 % function y = fn_filt(x,tau[,options][,dim])
 % function y = fn_filt(x,'detrend|detrendz'[,dim])
 %---
@@ -38,6 +39,8 @@ function y = fn_filt(x,tau,varargin)
 %           use 'maskin' flag to mask the input that is outside the mask, 
 %           but not the output (e.g. for a low pass filter, the holes will
 %           be filled-in)
+% - 'pad', value 
+%           pad image with given value
 % - 'zero'  will preserve the constant even in the case of high-pass and
 %           band-pass
 % - 'detrend'           
@@ -73,7 +76,7 @@ if nargin==0, help fn_filt, return, end
 % Input
 % (analyze arguments)
 type = []; filtertype = 'gaussian';
-domirror = false; domask = false; domaskout = false;
+domirror = false; pad = []; domask = false; domaskout = false;
 dozero = false; dodetrend = false; 
 docomplex = false; 
 dim = [];
@@ -92,6 +95,9 @@ while k<length(varargin)
         switch a
             case 'mirror'
                 domirror = true;
+            case 'pad'
+                pad = varargin{k+1};
+                k = k+1;
             case {'mask' 'maskin'}
                 domask = true;
                 domaskout = ~strcmp(a,'maskin');
@@ -223,6 +229,12 @@ end
 if domask && domirror
     error('''mask'' and ''mirror'' options are not compatible')
 end
+if domask && ~isempty(pad)
+    error('''mask'' and ''pad'' options are not compatible')
+end
+if domirror && ~isempty(pad)
+    error('''mirror'' and ''pad'' options are not compatible')
+end
 if domask && docomplex
     error('''mask'' and ''complex'' options not implemented together yet')
 end
@@ -294,13 +306,17 @@ if domask
     end
     x = fn_mult(x,mask);
 else
-    dopad = false;
+    dopad = domirror || ~isempty(pad);
 end
 
 % Padding / Mirroring
-if domirror || dopad
+if dopad
     maxtau = max(tau); % pad with twice the period
     subs0 = repmat({':'},1,ndims(x));
+    if domask
+        % padding value
+        pad = 0;
+    end
     for k=1:length(dim)
         nk = s(dim(k));
         npad(k) = ceil(min(nk,2*maxtau)); %#ok<AGROW>
@@ -308,13 +324,17 @@ if domirror || dopad
             subs = subs0;
             subs{dim(k)} = [npad(k):-1:1 1:nk nk:-1:nk-npad(k)+1];
             x = fn_subsref(x,subs{:});
-        elseif domask
-            s1 = size(x); s1(dim(k)) = npad(k);
-            x = cat(dim(k),zeros(s1),x,zeros(s1));
-            s1 = size(mask); s1(dim(k)) = npad(k);
-            mask = cat(dim(k),zeros(s1),mask,zeros(s1));
         else
-            error programming
+            if isempty(pad)
+                error programming
+            end
+            s1 = size(x); s1(dim(k)) = npad(k);
+            padding = ones(s1)*pad;
+            x = cat(dim(k),padding,x,padding);
+            if domask
+                s1 = size(mask); s1(dim(k)) = npad(k);
+                mask = cat(dim(k),zeros(s1),mask,zeros(s1));
+            end
         end
     end
 end
