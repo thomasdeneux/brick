@@ -15,8 +15,12 @@ function c = disableListener(hl)
 if nargout==0
     error 'function disableListener should be used with an output argument (onCleanup object), use enableListener(hl,false) to simply disable a listener'
 end
-disable(hl)
-c = onCleanup(@()enable(hl));
+if isempty(hl)
+    c = [];
+else
+    disable(hl)
+    c = onCleanup(@()enable(hl));
+end
 
 function disable(hl)
 
