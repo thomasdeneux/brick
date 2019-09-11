@@ -920,10 +920,7 @@ classdef fn_control < hgsetget
                                 'value',xk.startval,'callback', ...
                                 @(hu,evnt)chgvalue(X,k));
                             if xk.step
-                                % note that 'inc' and 'width are relative values (betw.
-                                % 0 and 1, not betw. min and max)
-                                inc = xk.step/(xk.max-xk.min);
-                                set(xk.hval,'inc',inc,'width',inc)
+                                set(xk.hval,'step',xk.step)
                             end
                         case 'stepper'
                             xk.hval = fn_stepper('parent',X.hp, ...
