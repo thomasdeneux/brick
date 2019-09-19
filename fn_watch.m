@@ -1,4 +1,6 @@
 function c = fn_watch(hf,varargin)
+%FN_WATCH Change the pointer to a watch during long computations
+%---
 % function c = fn_watch([hf])
 %---
 % Replace mouse pointer of the current (or specified) figure by a sandglass

@@ -1,4 +1,6 @@
 function hl = fn_arrow(xdata,ydata,varargin)
+%FN_ARROW Draw an arrow
+%---
 % function [hl =] fn_arrow(xdata,ydata[,tiplength[,tipangle[,thickness]]][,'simple|double'][,'line|patch'][,parname1,value1,...])
 %---
 % Draw an arrow

@@ -1,4 +1,6 @@
 function mask = fn_poly2mask(xpoly,ypoly,m,n)
+%FN_POLY2MASK Get the mask of a polygon interior
+%---
 % function mask = fn_poly2mask(xpoly,ypoly,m,n)
 % function mask = fn_poly2mask(poly,sizes)
 %---

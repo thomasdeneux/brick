@@ -1,4 +1,6 @@
 function hx = fn_scale(barsize,label,col)
+%FN_SCALE Scale bar for image display
+%---
 % function hx = fn_scale(barsize,label[,color])
 %---
 % Remove ticks from image display and draw a scale bar with the size and

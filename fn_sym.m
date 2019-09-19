@@ -1,4 +1,6 @@
 function varargout = fn_sym(varargin)
+%FN_SYM Convert a symmetric matrix to a vector and vice-versa
+%---
 % function s = fn_sym(a[,uplo])
 % function a = fn_sym(s[,uplo])
 % function idx = fn_sym(ij[,uplo])

@@ -1,4 +1,6 @@
 classdef alias
+    %ALIAS     Create command shortcuts 
+    %---
     % function shortcut = alias(cmd[,str])
     % function disp(shortcut)
     % function alias.save

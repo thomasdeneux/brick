@@ -1,4 +1,6 @@
 function hu = fn_filecontrol(varargin)
+%FN_FILECONTROL Select a file
+%---
 % function hu = fn_filecontrol([hu,]'property1',value1,...)
 %---
 % Set the properties of a regular uicontrol with style 'edit' so that

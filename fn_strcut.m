@@ -1,4 +1,6 @@
 function y = fn_strcut(x,c,doempty)
+%FN_STRCUT Cut string into pieces according to specified separator
+%---
 % function y = fn_strcut(x[,c[,doempty]])
 %---
 % Cut string x based on delimiter character c (default is [9 10 32], i.e.

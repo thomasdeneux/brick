@@ -1,4 +1,6 @@
 function p = fn_bootstrap(a,b,varargin)
+%FN_BOOTSTRAP Compare the mean or median of two ensembles using bootstrap method 
+%---
 % function p = fn_bootstrap(a,b[,mode][,'tail','left|right|both'][,'nperm',npermmax])
 %---
 % Bootstrap test of the equality between the mean (or median) of two

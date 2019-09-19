@@ -1,4 +1,6 @@
 function hl = fn_errorbar(varargin)
+%FN_ERRORBAR Display nice error bars 
+%---
 % function hl = fn_errorbar([x,]y,ey[,flag][,'colors',colors],line options)
 % function hl = fn_errorbar([x,]yy[,flag],...)
 % function hl = fn_errorbar(x,ex,y,ey,'xerror',...)

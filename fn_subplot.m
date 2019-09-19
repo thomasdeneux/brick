@@ -1,4 +1,6 @@
 function ha = fn_subplot(varargin)
+%FN_SUBPLOT Subplots cover the figure without leaving any space
+%---
 % function ha = fn_subplot([hf,]nrow,ncol,k[,spacing])
 % function ha = fn_subplot([hf,]ngraph,k) % hf must be an object figure handle here
 % function ha = fn_subplot(hnnk|hnk|nnk|nk)

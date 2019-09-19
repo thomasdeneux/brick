@@ -1,4 +1,6 @@
 classdef fn_slider < hgsetget
+    %FN_SLIDER     Special control that improves the functionality of Matlab slider
+    %---
     % function fn_slider([hp,][properties])
     %---
     % Slider

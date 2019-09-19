@@ -1,4 +1,6 @@
 function varargout = dichotomy(fun,varargin)
+%DICHOTOMY Uses dichotomy method for one-dimensional optimization
+%---
 % function [x out1 out2 ...] = dichotomy(fun,lb,ub,tolx,xstart)
 % function [x out1 out2 ...] = dichotomy(fun,lb2ub,tolx)
 

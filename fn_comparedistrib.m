@@ -1,4 +1,6 @@
 function [p hl] = fn_comparedistrib(x,y,varargin)
+%FN_COMPAREDISTRIB Perform a nonparametric test and display data points and results
+%---
 % function [pval hl] = fn_comparedistrib(x,y[,test][,'tail','left|right|both']
 %       [,'showmean'][,'ylim',ylim][,'xlabels',xlabels][,'pdisplaymode','ns|p'])
 %---

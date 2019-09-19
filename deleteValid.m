@@ -1,4 +1,6 @@
 function deleteValid(varargin)
+%DELETEVALID Delete valid objects among the list of objects obj (particularly useful for Matlab graphic handles) 
+%---
 % function deleteValid(obj1,obj2,...)
 %---
 % Delete valid objects among the list of objects obj.

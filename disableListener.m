@@ -1,4 +1,6 @@
 function c = disableListener(hl)
+%DISABLELISTENER Momentarily disable a listener (returns an onCleanup oject that reenable it when being garbage collected)
+%---
 % function c = disableListener(hl)
 %---
 % Disable listener(s) and return an onCleanup object that will re-enable it

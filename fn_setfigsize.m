@@ -1,4 +1,6 @@
 function fn_setfigsize(hf,w,h)
+%FN_SETFIGSIZE Change the size of a figure, while keeping it within screen 
+%---
 % function fn_setfigsize(hf,w,h)
 % function fn_setfigsize(hf,'default')
 % function fn_setfigsize(hf)

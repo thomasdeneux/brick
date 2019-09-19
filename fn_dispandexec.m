@@ -1,4 +1,6 @@
 function fn_dispandexec(varargin)
+%FN_DISPANDEXEC Display commands in Matlab and executes them 
+%---
 % function fn_dispandexec(cmd1,cmd2,...)
 % function fn_dispandexec(fun,arg1,arg2,...)
 %--

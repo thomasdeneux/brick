@@ -1,4 +1,6 @@
 classdef interface < hgsetget
+    %INTERFACE     Parent class to create cool graphic interfaces
+    %---
     % Interface class provides utilities for designing a graphic interface,
     % such as allowing the user to resize the graphical elements, loading
     % and auto-saving program options, etc..

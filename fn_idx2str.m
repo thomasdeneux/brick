@@ -1,4 +1,6 @@
 function str = fn_idx2str(val)
+%FN_IDX2STR Convert indices to a compact string representation, e.g. '1:2 5:8' for [1 2 5 6 7 8] 
+%---
 % function str = fn_idx2str(val)
 %---
 % Converts a vector of indices into a string in a 'smart' way.

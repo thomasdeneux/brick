@@ -1,4 +1,6 @@
 function [y weight] = fn_affinity(x,M,varargin)
+%FN_AFFINITY   Perform affine transformation on an image
+%---
 % function [y weight] = fn_affinity(x,M[,'linear|cubic'][,datatype])
 %---
 % Perform affine transformation on an image.

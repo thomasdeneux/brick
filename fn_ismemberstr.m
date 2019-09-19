@@ -1,4 +1,6 @@
 function c = fn_ismemberstr(a,b,doerrorflag)
+%FN_ISMEMBERSTR Check whether string is part of a set of strings (faster than Matlab ismember)
+%---
 % function c = fn_ismemberstr(a,b[,'doerror'])
 %---
 % Same as ismember(a,b), but faster!!, for cell arrays of strings only.

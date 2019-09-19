@@ -1,4 +1,6 @@
 function fn_markpvalue(x,y,p,varargin)
+%FN_MARKPVALUE Draw stars to mark significancy of results
+%---
 % function fn_markpvalue(x,y,p[,'ns|p'][,'vertical'][,text options...])
 %---
 % Mark p-value if significant with star(s) at location x,y. 

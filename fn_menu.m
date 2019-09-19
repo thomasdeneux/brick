@@ -1,4 +1,6 @@
 function varargout = fn_menu(varargin)
+%FN_MENU Utility to create a basic GUI made of a line of buttons
+%---
 % function m = fn_menu([fig,]'h'|'v',title,width,height,'FramePropertyName',FramePropertyValue,...)
 % function u = fn_menu(m,'UIControlPropertyName',UIControlPropertyValue,...)
 % function [m u] = fn_menu([menu options],'add',[first control options],'add',[second control options],...)

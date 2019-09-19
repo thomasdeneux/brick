@@ -1,4 +1,6 @@
 function h = fn_hash(inp,varargin)
+%FN_HASH Unique hash number for an array/cell/structure (Copyright M Kleder)
+%---
 % function h = fn_hash(input[,meth][,'char|hexa|HEXA|num'][,n])
 %---
 % This function relies on function hash.m downloaded on Matlab File

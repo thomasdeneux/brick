@@ -1,4 +1,6 @@
 function [y freqs yticklog yticklabel] = fn_spectrogram(x,dt,varargin)
+%FN_SPECTROGRAM Compute spectrogram
+%---
 % function [y freqs yticklog yticklabel] = fn_spectrogram(x,dt[,freqscaling][,freqs])
 % function fn_spectrogram(['display',]y,dt|tt,freqs,yticklog,yticklabel[,freqscaling][,clip])
 %---

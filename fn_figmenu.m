@@ -1,4 +1,6 @@
 function fn_figmenu(hf,varargin)
+%FN_FIGMENU Type 'fn_figmenu' to get a useful new menu in every figure 
+%---
 % function fn_figmenu
 % function fn_figmenu(hf)
 %---

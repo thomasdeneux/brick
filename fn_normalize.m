@@ -1,4 +1,6 @@
 function x = fn_normalize(x,dim,flag)
+%FN_NORMALIZE Normalize data based on averages in some specific dimension
+%---
 % function x = fn_normalize(x,dim,flag)
 %---
 % Input:

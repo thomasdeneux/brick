@@ -1,4 +1,6 @@
 function str = fn_strcat(c,varargin)
+%FN_STRCAT Concatenate strings and numbers into a single string, with optional separator sequence 
+%---
 % function str = fn_strcat(c)
 % function str = fn_strcat(c,sep)
 % function str = fn_strcat(c,left,sep,right)

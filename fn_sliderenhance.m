@@ -1,4 +1,6 @@
 function fn_sliderenhance(hu,varargin)
+%FN_SLIDERENHANCE Allow a slider uicontrol to evaluate its callback during scrolling
+%---
 % function fn_sliderenhance(sliderhandle)
 %---
 % allows a slider uicontrol to evaluate its callback during scrolling

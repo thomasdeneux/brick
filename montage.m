@@ -1,4 +1,6 @@
 classdef montage < interface
+    %MONTAGE           Manual alignment of a large set of images
+    %---
     % function M = montage([fname]
     % function M = montage(images[,names or struct])
     % GUI program for manual alignment of a large set of images

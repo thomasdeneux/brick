@@ -1,4 +1,6 @@
 function y = fn_roiavg(x,ind)
+%FN_ROIAVG Compute average signal from a region of interest
+%---
 % function y = fn_roiavg(x,mask|ind|':')
 %---
 % Compute average signal from a region of interest.

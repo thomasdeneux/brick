@@ -1,4 +1,6 @@
 function answer = fn_dialog_questandmem(question,identifier)
+%FN_DIALOG_QUESTANDMEM Confirmation question with an option for not asking again 
+%---
 % function answer = fn_dialog_questandmem(question[,identifier])
 %---
 % This imitates Windows style confirmation window, with a choice between

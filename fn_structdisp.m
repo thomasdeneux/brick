@@ -1,4 +1,6 @@
 function fn_structdisp(Xname)
+%FN_STRUCTDISP Recursive display of a structure content
+%---
 % function fn_structdisp Xname
 % function fn_structdisp(X)
 %---

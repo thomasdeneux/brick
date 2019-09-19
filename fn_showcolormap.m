@@ -1,4 +1,6 @@
 function ha = fn_showcolormap(varargin)
+%FN_SHOWCOLORMAP Display a color map in a given axes or in a separate figure
+%---
 % function [ha =] fn_showcolormap([cmap][,clip][,ha|'autopos'])
 %---
 % opens a new figure and display in it the colormap at the given clipping

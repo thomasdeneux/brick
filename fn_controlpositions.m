@@ -1,4 +1,6 @@
 function fn_controlpositions(hu,hp,posrel,pospix)
+%FN_CONTROLPOSITIONS Set an object position using a combination of absolute and relative (to any other object) coordinates 
+%---
 % function fn_controlpositions(hu,hp,posrel,pospix)
 %---
 % set the position of controls relatively to an axes, and set the

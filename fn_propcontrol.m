@@ -1,4 +1,6 @@
 classdef fn_propcontrol < hgsetget
+%FN_PROPCONTROL Create controls automatically linked to an object property
+%---
 % function fn_propcontrol(obj,prop,spec,graphic object options...)
 % function fn_propcontrol(obj,prop,spec,{graphic object options...})
 % function hu = fn_propcontrol.createcontrol(...)

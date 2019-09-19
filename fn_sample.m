@@ -1,4 +1,6 @@
 function idx = fn_sample(p,nsample)
+%FN_SAMPLE Draw samples from distribution
+%---
 % function idx = fn_sample(p,nsample|size)
 %---
 % Draw samples, i.e. indices from 1 to length(p), from distribution p

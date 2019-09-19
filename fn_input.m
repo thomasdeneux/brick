@@ -1,4 +1,6 @@
 function x = fn_input(varargin)
+%FN_INPUT Prompt user for a single value. Function based on fn_structedit 
+%---
 % function x = fn_input([name][,defaultval][,min,max])
 % function x = fn_input([name][,defaultval][,spec])
 %---

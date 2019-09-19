@@ -1,4 +1,6 @@
 function hostname = fn_hostname()
+%FN_HOSTNAME Return an identifiant specific to the computer in use
+%---
 % function hostname = fn_hostname()
 %---
 % returns an identifiant specific to the computer in use

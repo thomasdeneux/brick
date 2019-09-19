@@ -1,4 +1,6 @@
 function [x clip] = fn_clip(x,varargin)
+%FN_CLIP Rescale data, restrict the range, color
+%---
 % function [x clip] = fn_clip(x[,clipflag][,outflag][,nanvalue])
 %---
 % Rescale and restrict to a specific range ("clip") the data in an array.

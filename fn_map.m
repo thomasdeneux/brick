@@ -1,4 +1,6 @@
 function B = fn_map(fun,A,varargin)
+%FN_MAP Apply a given function to the elements, columns or rows of an array (more versatile than Matlab arrayfun)
+%---
 % function B = fn_map(fun,A[,'columns|rows'][,'array|cell|arraydirect'][,errorval])
 % function B = fn_map(A,fun,...)
 %---

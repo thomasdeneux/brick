@@ -1,4 +1,6 @@
 function fn_review(x,varargin)
+%FN_REVIEW Navigate with arrow keys inside a set of data
+%---
 % function fn_review(x[,command][,'in',hf])
 %---
 % opens a new figure and displays one of the datas xk (change k by pressing

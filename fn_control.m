@@ -1,4 +1,6 @@
 classdef fn_control < hgsetget
+    %FN_CONTROL    Arrangement of control that reflect the state of a set of parameters 
+    %---
     % function X = fn_control(s[,fun][,spec][,hparent] ...
     %   [,'okbutton|nobutton'][,'ncol',n][,'title',titl])
     % function fn_control('demo')

@@ -1,4 +1,6 @@
 function fn_histocol(x,xrange,cidx,varargin)
+%FN_HISTOCOL Display an histogram of values with colors
+%---
 % function fn_histocol(x,xbinwidth|xbinedges,cidx[,cmap][,'indiv'][,ha])
 % function fn_histocol(x,xbinwidth|xbinedges,pvalues[,'indiv'][,ha])
 %---

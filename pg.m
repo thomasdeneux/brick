@@ -1,4 +1,6 @@
 function pg(varargin)
+%PG Type 'for i=1:100, pg i, svd(rand(1000)); end' and check a very simple progress indicator 
+%---
 % function pg([prompt,]i[,max])
 % function pg([prompt,]'i'[,'max'])
 %---

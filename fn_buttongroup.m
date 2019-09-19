@@ -1,4 +1,6 @@
 classdef fn_buttongroup < hgsetget
+    %FN_BUTTONGROUP    Set of radio buttons or toggle buttons
+    %---
     % function G = fn_buttongroup(style,str,callback,'prop1',value1,...)
     %---
     % Input:

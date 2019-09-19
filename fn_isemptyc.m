@@ -1,4 +1,6 @@
 function b = fn_isemptyc(varargin)
+%FN_ISEMPTYC Which elements of a cell array are empty
+%---
 % function b = fn_isemptyc(c)
 % function b = fn_isemptyc(x1,x2,x3,...)
 %---

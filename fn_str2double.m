@@ -1,4 +1,6 @@
 function y = fn_str2double(x,donan)
+%FN_STR2DOUBLE Convert to numeric if not already numeric
+%---
 % function y = fn_str2double(x[,donan=true])
 %---
 % scan character array x to read a double... only if is really a character

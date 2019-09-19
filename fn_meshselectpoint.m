@@ -1,4 +1,6 @@
 function [i, p, tr] = fn_meshselectpoint(mesh,p)
+%FN_MESHSELECTPOINT Display a mesh and let user select a point with mouse
+%---
 % function [i p tr] = fn_meshselectpoint(mesh[,p])
 %---
 % Input:

@@ -1,4 +1,6 @@
 function y = fn_coerce(x,m,M)
+%FN_COERCE Restrict data to a specific range
+%---
 % function y = fn_coerce(x,m,M)
 % function y = fn_coerce(x,[m M])
 %---
