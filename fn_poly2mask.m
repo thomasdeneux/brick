@@ -3,10 +3,12 @@ function mask = fn_poly2mask(xpoly,ypoly,m,n)
 %---
 % function mask = fn_poly2mask(xpoly,ypoly,m,n)
 % function mask = fn_poly2mask(poly,sizes)
+% function movie = fn_poly2mask('demo')
 %---
 % Do the same as Matlab poly2mask without needing the Image Toolbox
 % Except use different convention!! I.e. x = first coordinate, y = second
 % coordinate.
+% Type fn_poly2mask('demo') to see an animation of how the algorithm works.
 %
 % See also fn_mask2poly
 
@@ -14,9 +16,19 @@ function mask = fn_poly2mask(xpoly,ypoly,m,n)
 % Copyright 2015-2017
 
 % input
+domovie = false;
 switch nargin
     case 0
         help fn_poly2mask
+    case 1
+        if ~strcmp(xpoly,'demo'), error argument, end
+        m = 120;
+        n = 90;
+%         xpoly = [36 20 13 24 53 75 90 111 117 89 54 43 29 23 41 59 72 99 107 91 66 45];
+%         ypoly = [73 63 36 18 19 46 68 68 27 9 26 49 58 36 26 41 58 62 40 22 32 68];
+        xpoly = [35  14  12  37  82 107  96  75  44  32  57  83  80  60];
+        ypoly = n-[78  60  30  13   9  30  69  82  70  48  28  35  64  83];
+        domovie = true;
     case 4
         % the default input formatting, nothing to do
     case 2
@@ -38,22 +50,30 @@ switch nargin
 end
 
 % need to test only a sub-rectangle
-imin = max(1,round(min(xpoly)));
-imax = min(m,round(max(xpoly)));
-jmin = max(1,round(min(ypoly)));
-jmax = min(n,round(max(ypoly)));
+if domovie
+    [imin imax jmin jmax] = deal(1,m,1,n);
+else
+    imin = max(1,round(min(xpoly)));
+    imax = min(m,round(max(xpoly)));
+    jmin = max(1,round(min(ypoly)));
+    jmax = min(n,round(max(ypoly)));
+end
 
 % apply function taken from Matplotlib
 try
-    submask = point_in_path_impl(xpoly-(imin-1),ypoly-(jmin-1),imax-imin+1,jmax-jmin+1);
+    submask = point_in_path_impl(xpoly-(imin-1),ypoly-(jmin-1),imax-imin+1,jmax-jmin+1,domovie);
 catch
     if fn_dodebug
         disp 'please check what happened here!'
         keyboard
     end
 end
-mask = false(m,n);
-mask(imin:imax,jmin:jmax) = submask;
+if domovie
+    mask = submask;
+else
+    mask = false(m,n);
+    mask(imin:imax,jmin:jmax) = submask;
+end
 
 % % show it
 % figure(fn_figure('test'))
@@ -64,7 +84,7 @@ mask(imin:imax,jmin:jmax) = submask;
 if nargout==0, clear mask, end
 
 % function from Matplotlib (https://github.com/matplotlib/matplotlib/blob/196f3446a3d5178c58144cee796fa8e8aa8d2917/src/_path.h, line 77+)
-function mask = point_in_path_impl(xpoly,ypoly,ni,nj)
+function mask = point_in_path_impl(xpoly,ypoly,ni,nj,domovie)
 
 % pixel coordinates
 ii = (1:ni)';
@@ -76,6 +96,21 @@ nsegment = length(xpoly);
 
 % output
 mask = false(ni,nj);
+
+% demo movie
+if domovie
+    msize = [2*ni 2*nj];
+    hf = fn_figure('fn_poly2mask demo',msize);
+    ha = axes('parent',hf,'pos',[0 0 1 1]);
+    colormap(ha,[1 1 1; .5 .5 1])
+    im = image(mask','parent',ha);
+    line(xpoly([1:end 1]),ypoly([1:end 1]),'parent',ha,'color','k')
+    seg = line([1],[1],'parent',ha,'color','k','linewidth',2);
+    set(ha,'visible','off')
+    movie = zeros([msize 3 nsegment+2], 'uint8');
+    M = getframe(ha);
+    movie(:,:,:,1) = permute(M.cdata, [2 1 3]);
+end
 
 % first vertex
 [sx sy] = deal(xpoly(1),ypoly(1));
@@ -95,7 +130,20 @@ for isegment = 1:nsegment
     maskcheck(doinvert) = ~maskcheck(doinvert);
     mask(icheck,:) = maskcheck;
     
-    %     % display
-    %     figure(1), imagesc(mask'), axis image, pause
+    % display
+    if domovie
+        set(im,'cdata',mask')
+        set(seg,'xdata',[x0 x1],'ydata',[y0 y1])
+        M = getframe(ha);
+        movie(:,:,:,isegment+1) = permute(M.cdata,[2 1 3]);
+        pause(.5)
+    end
 end
 
+% output movie
+if domovie
+    delete(seg)
+    M = getframe(ha);
+    movie(:,:,:,isegment+2) = permute(M.cdata,[2 1 3]);
+    mask = movie;
+end
