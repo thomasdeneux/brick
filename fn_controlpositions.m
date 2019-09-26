@@ -1,6 +1,6 @@
 function fn_controlpositions(hu,hp,posrel,pospix)
 % function fn_controlpositions(hu,hp,posrel,pospix)
-%---
+% ---
 % set the position of controls relatively to an axes, and set the
 % appropriate listeners to automatically update those positions in case of
 % change of figure position, etc...
