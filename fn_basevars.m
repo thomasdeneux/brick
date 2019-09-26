@@ -1,4 +1,6 @@
 function fn_basevars(varargin)
+%FN_BASEVARS Load base workspace variables in caller workspace and vice-versa 
+%---
 % function fn_basevars(['get|send',]name1,name2)
 %---
 % load base workspace in caller workspace or vice-versa (if 'send' flag)

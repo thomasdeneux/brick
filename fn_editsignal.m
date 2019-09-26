@@ -1,4 +1,6 @@
 function x = fn_editsignal(x)
+%FN_EDITSIGNAL Manually edit your signals data points!
+%---
 % function x = fn_editsignal(x)
 % function x = fn_editsignal(hl)
 

@@ -1,4 +1,6 @@
 function n = fn_itemlengths(c)
+%FN_ITEMLENGTHS Return lengths of all elements inside a cell array
+%---
 % function n = fn_itemlengths(c)
 %---
 % returns an array of same size as cell array c, containing the length of

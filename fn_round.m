@@ -1,4 +1,6 @@
 function x = fn_round(x,y,mode)
+%FN_ROUND Round x to the closest multiple of y
+%---
 % function x = fn_round(x[,y[,'floor|ceil'])
 %---
 % eliminate floating point error

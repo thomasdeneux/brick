@@ -1,4 +1,6 @@
 function hl = fn_circle(x,y,r,varargin)
+%FN_CIRCLE Draw a circle
+%---
 % function hl = fn_circle(x,y,r[,'yadjust'][,patch options])
 %---
 % display circle(s) as patch objects

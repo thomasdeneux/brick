@@ -1,4 +1,6 @@
 function s = fn_structinit(varargin)
+%FN_STRUCTINIT Initialize a structure with no field, or with same fields as a model
+%---
 % function s = fn_structinit([model,][siz])
 % function s = fn_structinit([model,][s1,s2,...])
 %---

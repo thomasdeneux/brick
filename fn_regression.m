@@ -1,4 +1,6 @@
 function [hl cor pvalue] = fn_regression(x,y,varargin)
+%FN_REGRESSION Perform linear regression and display data points and result
+%---
 % function [hl cor pvalue] = fn_regression(x,y[,ha][,options...])
 %---
 % Performs linear regression between variables x and y, computes

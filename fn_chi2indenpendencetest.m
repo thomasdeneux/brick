@@ -1,4 +1,6 @@
 function p = fn_chi2indenpendencetest(table)
+%FN_CHI2INDENPENDENCETEST Chi2 independence test
+%---
 % function p = fn_chi2indenpendencetest(table)
 %---
 % Input:

@@ -1,4 +1,6 @@
 function [pos cmd] = fn_framedesign(grob,pos,resetflag)
+%FN_FRAMEDESIGN Utility to let user reposition graphic objects inside a figure 
+%---
 % function [pos cmd] = fn_framedesign([grob[,pos|cmd[,resetflag]]])
 %---
 % utility for positioning frames in a figure

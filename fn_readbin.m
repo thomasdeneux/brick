@@ -1,4 +1,6 @@
 function x = fn_readbin(fname,precision,headerlength)
+%FN_READBIN Read binary file containing some header followed by numerical data
+%---
 % function x = fn_readbin(fname,precision,headerlength)
 %---
 % read binary file

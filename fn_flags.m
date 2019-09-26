@@ -1,4 +1,6 @@
 function varargout = fn_flags(varargin)
+%FN_FLAGS Detect flags in the arguments of a function 
+%---
 % function [b1 ... bn] = fn_flags({val1,...,valn},{arg1,...,argp})
 % function [b1 ... bn] = fn_flags({val1,...,valn},arg1,...,argp)
 % function [b1 ... bn] = fn_flags(val1,...,valn,{arg1,...,argp})

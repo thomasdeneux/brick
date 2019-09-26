@@ -1,4 +1,6 @@
 function hu=fn_okbutton(varargin)
+%FN_OKBUTTON Small 'ok' button waits to be pressed
+%---
 % function fn_okbutton(varargin)
 % function fn_okbutton('wait',varargin)
 % function fn_okbutton('closefigure',varargin)

@@ -1,4 +1,6 @@
 function y = fn_interleave(dim,varargin)
+%FN_INTERLEAVE Interleave data 
+%---
 % function y = fn_interleave(dim,x1,x2,...[,'push'])
 %---
 % Similar syntax to Matlab function CAT, but interleaves the data.

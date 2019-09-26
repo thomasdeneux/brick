@@ -1,4 +1,6 @@
 function varargout = fn_coordinates(varargin)
+%FN_COORDINATES Conversion of screen/figure/axes, normalized/pixel coordinates
+%---
 % function [orig scale] = fn_coordinates([handle,]refchangetag)
 % function x2 = fn_coordinates([handle,]refchangetag,x1,'position')
 % function v2 = fn_coordinates([handle,]refchangetag,v1,'vector')

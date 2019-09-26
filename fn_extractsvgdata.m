@@ -1,4 +1,6 @@
 classdef fn_extractsvgdata < handle
+    %FN_EXTRACTSVGDATA Extract data from SVG file! (PDFs can be converted to SVG with InkScape free software)
+    %---
     % function fn_extractsvgdata(fname)
     %---
     % Display SVG data and provide tools to extract curve data.

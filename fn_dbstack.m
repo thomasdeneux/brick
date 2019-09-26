@@ -1,4 +1,6 @@
 function str = fn_dbstack
+%FN_DBSTACK Display current function name, with indent according to stack length 
+%---
 % function fn_dbstack
 %---
 % displays current function name, with indent according to stack length

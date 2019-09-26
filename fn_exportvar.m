@@ -1,4 +1,6 @@
 function fn_exportvar(x)
+%FN_EXPORTVAR Export data to a Matlab variable in base workspace
+%---
 % function fn_exportvar(x)
 %---
 % Export data to a Matlab variable in base workspace

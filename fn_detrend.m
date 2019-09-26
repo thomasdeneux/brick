@@ -1,4 +1,6 @@
 function x = fn_detrend(x,frames,varargin)
+%FN_DETREND Remove a linear trend estimated only from specific indices 
+%---
 % function y = fn_detrend(x,frames[,dim][,'subtract|normalize|keepmean'])
 %---
 % Correct signals for a trend that is estimated only from the specified

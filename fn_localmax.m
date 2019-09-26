@@ -1,4 +1,6 @@
 function i = fn_localmax(x)
+%FN_LOCALMAX Find local maxima in a vector 
+%---
 % function i = fn_localmax(x)
 %---
 % find local maxima in vector x (cannot be extremities)

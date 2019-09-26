@@ -1,4 +1,6 @@
 function out = fn_savefig(varargin)
+%FN_SAVEFIG Save figure with a number of options
+%---
 % function fn_savig([hobj][,fname][,options...])
 % function im = fn_savig([hobj][,options...])
 %---

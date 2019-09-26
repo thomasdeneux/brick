@@ -1,4 +1,6 @@
 function out = fn_lines(varargin)
+%FN_LINES Draw a series of vertical and/or horizontal lines
+%---
 % function hl = fn_lines([xcoordinates,ycoordinates[,zcoordinates]][,ha][,'close'][,'bottom'][,'compact'][,line options])
 % function hl = fn_lines('x|y'[,xorycoordinates][,ha][,'close'][,'bottom'][,'compact'][,line options])
 %---

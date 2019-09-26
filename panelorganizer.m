@@ -1,4 +1,6 @@
 classdef panelorganizer < hgsetget
+    %PANELORGANIZER    Divide a figure into resizeable panels
+    %---
     % function O = panelorganizer(hparent,'V|H',n[,dorelative[,xx]])
     % function hp = setSubPanel(O,idx,uipanel options...)
     % function O1 = setSubOrg(O,idx,'V|H',n[,dorelative[,xx]])

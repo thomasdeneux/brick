@@ -1,4 +1,6 @@
 function fn_imvalue(varargin)
+%FN_IMVALUE Automatic link graphs and images for point selection and zooming (try 'fn_imvalue demo')
+%---
 % fn_imvalue [image] [xy|xonly]
 % fn_imvalue clean
 % fn_imvalue end

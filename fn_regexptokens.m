@@ -1,4 +1,6 @@
 function varargout = fn_regexptokens(a,expr)
+%FN_REGEXPTOKENS Get the tokens of a regexp as a simple cell array
+%---
 % function tokens = fn_regexptokens(a,expr)
 % function [tok1 ... tokn] = fn_regexptokens(a,expr)
 %---

@@ -1,8 +1,8 @@
 function [data1 npergroup] = fn_arrangepergroup(data,conds,dim,varargin)
+%FN_ARRANGEPERGROUP    Re-arrange data according to specified grouping
+%---
 % function [data1 npergroup] = fn_arrangepergroup(data,conds,dim[,'all'][,subconds])
 %---
-% average individual groups separately in a dataset that splits into
-% several groups
 % 
 % Input:
 % - data        ND array 

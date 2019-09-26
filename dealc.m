@@ -1,4 +1,6 @@
 function varargout = dealc(x)
+%DEALC Assign elements of an array to multiple outputs
+%---
 % function [y1 y2 ...] = dealc(x)
 %---
 % shortcut for [y1 y2 ...] = deal(x1,x2,...)

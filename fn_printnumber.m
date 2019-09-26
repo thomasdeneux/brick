@@ -1,4 +1,6 @@
 function im = fn_printnumber(im,elems,varargin)
+%FN_PRINTNUMBER Add small numbers and text to images or movies
+%---
 % function im = fn_printnumber(im,num|str|scale,options...)
 %---
 % Print a number or a text as pixels inside an image or movie

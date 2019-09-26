@@ -139,6 +139,8 @@
 % - GUI programs
 %   fn_alignimage     - Manual alignment of 2 images
 %   montage           - Manual alignment of a large set of images
+% - image edition programs
+%   white2alpha       - Convert image white background to transparency
 %
 % DATA DISPLAY
 % - shortcuts
@@ -157,8 +159,9 @@
 % - time courses displays
 %   fn_stairs         - Display stairs in an intuitive way
 %   fn_errorbar       - Display nice error bars 
-%   fn_regression     - Display of data points together with linear regression
-%   fn_spikedisplay, fn_rasterplot - Raster plot display (display of punctual events as small bars)
+%   fn_regression     - Perform linear regression and display data points and result
+%   fn_spikedisplay   - Display events as small bars
+%   fn_rasterplot     - Display multiple sets of events as small bars
 % - time courses tools
 %   fn_axis           - Set axis range for a better visual aspect than 'axis tight' 
 %   fn_nicegraph      - Improve aspect of graph display
@@ -184,7 +187,7 @@
 %   fn_eegplot, fn_gridplot - Display multiple time courses dispatched vertically or arranged as a grid
 %   fn_framedisplay   - Display images arranged as a grid
 % - interactive displays
-%   fn_imvalue        - Automatic link graphs and images for point selection and zooming
+%   fn_imvalue        - Automatic link graphs and images for point selection and zooming (try 'fn_imvalue demo')
 %   fn_review         - Navigate with arrow keys inside a set of data
 %   fn_4Dview         - Navigation inside 3D, 4D or 5D imaging data
 %
@@ -205,7 +208,7 @@
 %   fn_setfigsize     - Change the size of a figure, while keeping it within screen 
 %   fn_framedesign    - Utility to let user reposition graphic objects inside a figure 
 % - mouse actions
-%   fn_buttonmotion        - Execute a task while mouse pointer is movedaround 
+%   fn_buttonmotion   - Execute a task while mouse pointer is moved (try 'fn_buttonmotion demo')
 %   fn_moveobject, fn_pan  - Move a graphic object or navigate in graph with mouse
 %   fn_mouse, interactivePolygon - Manual selection of a variety of shapes
 %   fn_scrollwheelregister - Define scrollwheel actions specific to which object the mouse is hovering over 
@@ -233,6 +236,8 @@
 %   interface         - Parent class to create cool graphic interfaces
 %   fn_propcontrol    - Create controls automatically linked to an object property
 %   deleteValid       - Delete valid objects among the list of objects obj (particularly useful for Matlab graphic handles) 
+%   connectlistener   - Create a listener that will auto-delete when a target object will be deleted
+%   enableListener    - Enable/disable a listener
 %   disableListener   - Momentarily disable a listener (returns an onCleanup oject that reenable it when being garbage collected)
 %
 % MISCELLANEOUS
@@ -248,13 +253,16 @@
 %   fn_pointer        - A structure that can be modified when being passed to functions 
 %   pointer           - Implement a pointer to any Matlab object
 % - graphics
-%   fn_figmenu        - An automatic custom menu for figures: save figure, distance tool, ... 
+%   fn_figmenu        - Type 'fn_figmenu' to get a useful new menu in every figure 
 % - figure edition
 %   fn_extractsvgdata - Extract data from SVG file! (PDFs can be converted to SVG with InkScape free software)
 %   fn_getcolorindices- Extract from image displays by checking the color bar
 %   fn_color2bw       - GUI to let user choose the best conversion to convert color image to grayscale
 %   fn_editsignal     - Manually edit your signals data points!
-% 
+% - debugging
+%   click             - Mimick the effect of clicking an object or hitting a key inside a given figure
+%   compare           - Display a message about how two variables differ
+%
 % HIGHLIGHTS
 %   fn_imvalue        - Type 'fn_imvalue demo' to see how the fn_imvalue functions connects different displays for zooming, etc. 
 %   fn_buttonmotion   - Type 'fn_buttonmotion demo' then click and drag in the figure

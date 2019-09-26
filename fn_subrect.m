@@ -1,4 +1,6 @@
 function [isel jsel] = fn_subrect(a)
+%FN_SUBRECT Manual selection of a rectangular mask inside an image
+%---
 % function indselect = fn_subrect(a)
 % function [isel jsel] = fn_subrect(a)
 %---

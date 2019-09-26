@@ -1,4 +1,6 @@
 function y = fn_triggeravg(x,dim,indices,varargin)
+%FN_TRIGGERAVG Local average of data around specific indices in a given dimension
+%---
 % function y = fn_triggeravg(x,dim,indices[,nframes][,'noavg'],['all'])
 %---
 % average according to triggers

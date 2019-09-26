@@ -1,4 +1,6 @@
 classdef fn_stepper < hgsetget
+    %FN_STEPPER    Edit a numeric value, includes increment/decrement buttons
+    %---
     % function fn_stepper([n,][properties])
     % See also fn_slider, fn_control
     

@@ -1,4 +1,6 @@
 function axout = fn_axis(varargin)
+%FN_AXIS Set axis range for a better visual aspect than 'axis tight' 
+%---
 % function ax = fn_axis([ha,]['tight|image|tightimage'][,sidefactor][,'y0|noy0'])
 %---
 % set a nice range to axes

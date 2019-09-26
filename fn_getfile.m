@@ -1,4 +1,6 @@
 function [filename filterindex] = fn_getfile(varargin)
+%FN_GETFILE Select file and remember the containing folder of the last selected file 
+%---
 % function [filename filterindex] = fn_getfile(['READ|SAVE',][filter[,title]])
 % function filename = fn_getfile('DIR',title)
 % function rep = fn_getfile('REP')

@@ -1,4 +1,6 @@
 function b = fn_color2bw(a)
+%FN_COLOR2BW GUI to let user choose the best conversion to convert color image to grayscale
+%---
 % function b = fn_color2bw(a)
 
 % Thomas Deneux

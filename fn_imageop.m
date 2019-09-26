@@ -1,4 +1,6 @@
 function x = fn_imageop(x,par)
+%FN_IMAGEOP Apply a series of transformations to an image 
+%---
 % function a = fn_imageop(a[,par])
 % function par = fn_imageop('par')
 %---

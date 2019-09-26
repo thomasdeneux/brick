@@ -1,4 +1,6 @@
 function [hl y] = fn_spikedisplay(times,varargin)
+%FN_SPIKEDISPLAY Display events as small bars
+%---
 % function hl = fn_spikedisplay(times[,ypos][,spikeheight [spikewidth]][,'numbers'],plot options...)
 % function hl = fn_spikedisplay(times,[ymin; ymax][,spikewidth][,'numbers'],plot options...)
 %---

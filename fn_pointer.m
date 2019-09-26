@@ -1,4 +1,6 @@
 classdef fn_pointer < dynamicprops & hgsetget
+    %FN_POINTER    A structure that can be modified when being passed to functions 
+    %---
     % function p = fn_pointer('fieldname1',value1,'fieldname2',value2, ...)
     %---
     % An fn_pointer object acts exactly as a structure, except that it is
@@ -6,6 +8,8 @@ classdef fn_pointer < dynamicprops & hgsetget
     % modify the same data).
     % fn_pointer is actually a small wrapper for Matlab 'dynamicprops'
     % class
+    %
+    % See also pointer
     
     % Thomas Deneux
     % Copyright 2015-2017

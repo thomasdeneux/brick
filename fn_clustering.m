@@ -1,4 +1,6 @@
 function c = fn_clustering(x,nclust)
+%FN_CLUSTERING Performs correlation-based clustering of data x
+%---
 % function c = fn_clustering(x,ncluster)
 %---
 % performs correlation-based clustering of data x

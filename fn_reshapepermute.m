@@ -1,4 +1,6 @@
 function y = fn_reshapepermute(x,varargin)
+%FN_RESHAPEPERMUTE Full capability for dimensions and shape manipulation
+%---
 % function y = fn_reshapepermute(x,dimshift)
 % function y = fn_reshapepermute(x,resh,dimshift)
 % function y = fn_reshapepermute(x,resh,perm[,resh2])

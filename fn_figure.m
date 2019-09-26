@@ -1,4 +1,6 @@
 function hf = fn_figure(name,varargin)
+%FN_FIGURE Raise figures by name rather than by number (shortcut: ff)
+%---
 % function hf = fn_figure(name[,w,h][,'noerase'][,'nofocus'][,options...])
 %---
 % returns a figure handle associated with a unique name: create the figure

@@ -1,4 +1,6 @@
 classdef fn_movie < hgsetget
+    %FN_MOVIE          Show a movie, large number of options
+    %---
     % function fn_movie(data,option1,value1,...)
     % function fn_movie(data,optstruct)
     % function fn_movie({videoreader, nt},...)
@@ -26,8 +28,8 @@ classdef fn_movie < hgsetget
     % 
     % See also fn_playmovie
 
-% Thomas Deneux
-% Copyright 2008-2017
+    % Thomas Deneux
+    % Copyright 2008-2017
 
     properties
         opt
@@ -141,7 +143,7 @@ classdef fn_movie < hgsetget
             M.hp = uipanel('parent',M.hf,'defaultuicontrolfontsize',8);
             M.hu = fn_slider('parent',M.hf,'mode','area+point', ...
                 'units','normalized', ...
-                'min',1,'max',M.nt,'value',[1 M.nt],'point',1,'inc',1/(M.nt-1), ...
+                'min',1,'max',M.nt,'value',[1 M.nt],'point',1,'step',1, ...
                 'callback',@(u,evnt)slidercallback(M));
             M.htext = uicontrol('parent',M.hf,'style','text','fontsize',8, ...
                 'units','normalized','horizontalalignment','left');

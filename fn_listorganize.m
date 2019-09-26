@@ -1,4 +1,6 @@
 function [s anychg] = fn_listorganize(s,namefield,addfun)
+%FN_LISTORGANIZE Edit a list of strings or of structured data
+%---
 % function [list anychg] = fn_listorganize(list)
 % function [struct anychg] = fn_listorganize(struct,namefield,addfun)
 %---

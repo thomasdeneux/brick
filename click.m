@@ -1,4 +1,6 @@
 function click(hobj,value)
+%CLICK Mimick the effect of clicking an object or hitting a key inside a given figure
+%---
 % function click(pushbutton|togglebutton)
 % function click(edit|radiobutton|listbox|etc.,value)
 % function click(figure|axis|etc.,newCurrentPoint|keyPressed)

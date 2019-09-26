@@ -1,4 +1,6 @@
 function fn_imdistline
+%FN_IMDISTLINE Show the distance between two points (enhanced version of Matlab imdistline)
+%---
 % function fn_imdistline
 %---
 % enhanced version of Malab IMDISTLINE

@@ -1,4 +1,6 @@
 function repout = fn_cd(flag,varargin)
+%FN_CD User definition of shortcut to fast access directories
+%---
 % function rep = fn_cd(flag,relpath)
 % function fn_cd('edit')
 % function [list = ] fn_cd('list')

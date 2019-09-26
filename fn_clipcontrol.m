@@ -1,4 +1,6 @@
 function hu = fn_clipcontrol(ha)
+%FN_CLIPCONTROL A wrapper of fn_sensor that controls the clipping range applied to an image 
+%---
 % function hu = fn_clipcontrol(ha)
 %---
 % This is a wrapper for fn_sensor that controls clipping of axes ha (ha can

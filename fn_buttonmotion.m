@@ -1,4 +1,6 @@
 function varargout = fn_buttonmotion(fun,varargin)
+%FN_BUTTONMOTION Execute a task while mouse pointer is moved (try 'fn_buttonmotion demo')
+%---
 % function varargout = fn_buttonmotion(fun[,hf][,'doup'][,'pointer',pointer])
 % function [moved ...] = fn_buttonmotion(...,'moved?')
 % function fn_buttonmotion('demo')

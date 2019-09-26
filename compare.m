@@ -1,4 +1,6 @@
 function compare(x,y)
+%COMPARE Display a message about how two variables differ
+%---
 % function compare(x,y)
 %---
 % Display a message about how do x and y differ (e.g. tell any size

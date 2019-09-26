@@ -1,4 +1,6 @@
 function phi = fn_meanangle(angles)
+%FN_MEANANGLE Average of angles (result in [-pi pi])
+%---
 % function phi = fn_meanangle(angles)
 
 % Thomas Deneux

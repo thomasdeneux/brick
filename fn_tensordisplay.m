@@ -1,4 +1,6 @@
 function h = fn_tensordisplay(varargin)
+%FN_TENSORDISPLAY Display of a field of 2x2 symmetric matrices using ellipses
+%---
 % function h = fn_tensordisplay([X,Y,]Txx,Txy,Tyy[,'sigma',sigma][,'sub',sub][,color][,patch options...]])
 % function h = fn_tensordisplay([X,Y,]e[,'sigma',sigma][,'sub',sub][,color][,patch options...]])
 % sigma1=temporal sigma, sigma2=spatial sigma

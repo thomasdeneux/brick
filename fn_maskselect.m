@@ -1,4 +1,6 @@
 function mask = fn_maskselect(a,mouseflag,dorepeat,cm)
+%FN_MASKSELECT Manual selection of a mask inside an image
+%---
 % function mask = fn_maskselect(image[,mouseflag[,dorepeat[,colormap]]])
 %---
 % ROI selection within an image. Returns an array of logicals. 
@@ -13,13 +15,13 @@ function mask = fn_maskselect(a,mouseflag,dorepeat,cm)
 % - mask        logical array the same size of image indicating interior of
 %               the mask
 %
-% See also fn_maskavg, fn_imvect
+% See also fn_roiavg, fn_imvect
 
 % Thomas Deneux
 % Copyright 2011-2017
 
 % Input
-[nx ny] = size(a);
+[nx ny nc] = size(a);
 if nargin<2, mouseflag = 'poly'; end
 if nargin<3, dorepeat = false; end
 if nargin<4, cm = []; end

@@ -1,8 +1,11 @@
 classdef pointer < handle
-    % implements a pointer to any Matlab object; it has three methods
-    % p = pointer(x)
+    %POINTER   Implement a pointer to any Matlab object
+    %---
+    % function p = pointer(x)
     % setvalue(p,x)
     % x = getvalue(p)
+    % 
+    % See also fn_pointer
     
     % Thomas Deneux
     % Copyright 2007-2017
