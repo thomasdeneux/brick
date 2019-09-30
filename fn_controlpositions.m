@@ -10,7 +10,7 @@ function fn_controlpositions(hu,hp,posrel,pospix)
 % Input
 % - hu      control handle
 % - hp      axes or figure handle
-% - posrel  position relative to axes/figure ([0 0] = bottom-left corner,
+% - posrel  2 or 4 elements vector - position relative to axes/figure ([0 0] = bottom-left corner,
 %           [1 1] = up-right corner)
 % - pospix  position in pixels to add to 'posrel' and size of control
 
