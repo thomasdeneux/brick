@@ -4,13 +4,13 @@ function varargout = fn_userconfig(flag,varargin)
 % function name = fn_userconfig('configfolder|codefolder'[,filename])
 %---
 % Save or load variables in/from the file 
-% [prefdir '/interface_options/' flag '.mat']
+% [prefdir '/../brickuser/userconfig/' flag '.mat']
 
 % Thomas Deneux
 % Copyright 2015-2017
 
 % Folder
-[configfolder codefolder] = userfolders();
+[configfolder, codefolder] = userfolders();
 if fn_ismemberstr(flag,{'configfolder' 'codefolder'})
     folder = fn_switch(flag,'configfolder',configfolder,'codefolder',codefolder);
     if nargin>=2
@@ -37,7 +37,7 @@ switch mode
             if iscell(varargin{k}), varargin{k}={varargin{k}}; end
         end
         tmp = [varnames; varargin];
-        s = struct(tmp{:}); %#ok<NASGU>
+        s = struct(tmp{:}); 
         save(fname,'-STRUCT','s')
     case 'load'
         if ~exist(fname,'file')
@@ -50,7 +50,7 @@ switch mode
 end
 
 %---
-function [configfolder codefolder] = userfolders
+function [configfolder, codefolder] = userfolders
 
 basefolder = fullfile(prefdir,'..','brickuser');
 configfolder = fullfile(basefolder,'userconfig');
