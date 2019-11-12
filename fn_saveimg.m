@@ -122,6 +122,17 @@ if ncol==3
         end
     end
     return
+elseif ~isempty(alpha)
+    if zoom~=1
+        error('no zoom allowed for images with transparency')
+    elseif nt>1
+        error 'saving multiple images with transparency not handled yet'
+    elseif ~strcmp(ext,'png')
+        error('transparency not handled for image type %s', ext)
+    end
+    a = a'; % (x,y) convention -> Matlab (y,x) convention
+    alpha = alpha';
+    imwrite(a,fname,'png','Alpha',alpha)
 end
 
 % clipping
