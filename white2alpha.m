@@ -202,7 +202,9 @@
              fsave = fn_savefile(fsave,'Save image with transparency as');
              
              % save image
-             a = cat(3,X.truecolor,X.alpha);
+             color = X.truecolor;
+             if size(color,3) == 1, color = repmat(color,[1 1 3]); end
+             a = cat(3,color,X.alpha);
              fn_saveimg(a,fsave)
          end
      end
