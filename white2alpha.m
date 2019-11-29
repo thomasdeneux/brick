@@ -33,11 +33,11 @@
              
              % Input
              if nargin<1
-                 X.input = fn_getfile('Select image');
+                 a = fn_getfile('*','Select image');
              end
              if ischar(a)
                  X.filename = a;
-                 X.input = fn_readimg(a);
+                 a = fn_readimg(a);
              end
              switch class(a)
                  case 'double'

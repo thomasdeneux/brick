@@ -1357,7 +1357,7 @@ classdef fn_control < hgsetget
                     case 'multcheck'
                     case 'multlist'
                     case 'slider'
-                        xk.hval.enabled = enable;
+                        xk.hval.Enabled = enable;
                     case 'stepper'
                     case 'sensor'
                     case 'color'
