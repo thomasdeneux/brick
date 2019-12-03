@@ -13,7 +13,18 @@
          checker
          truecolor
          alpha
+         image_subpart
+         nx
+         ny
+         nc
+     end
+     properties (SetObservable)
+         dosubimage = false;
+     end
+     properties (Access='private')
+         menu_def_subpart
          im = struct;
+         image_subpart_mark
      end
      
      methods
@@ -50,20 +61,20 @@
              end
              
              % Some precomputations
-             [nx ny nc] = size(X.input);
-             if nc == 3
+             [X.nx, X.ny, X.nc] = size(X.input);
+             if X.nc == 3
                  [~, X.saturation, X.lumspecial] = rgb2hsv(X.input);
                  % replace luminance by darkest channel!
                  X.lumspecial = min(X.input,[],3);
-             elseif nc == 1
+             elseif X.nc == 1
                  X.saturation = 0;
                  X.lumspecial = X.input;
              else
                  error 'input image must have 1 or 3 color channels'
              end
-             step = round(mean([nx ny])/15);
-             xstripes = mod(floor((0:nx-1)'/step),2);
-             ystripes = mod(floor((0:ny-1)/step),2);
+             step = round(mean([X.nx X.ny])/15);
+             xstripes = mod(floor((0:X.nx-1)'/step),2);
+             ystripes = mod(floor((0:X.ny-1)/step),2);
              X.checker = bsxfun(@xor,xstripes,ystripes);
              X.checker = .4 + .2*X.checker;
              
@@ -94,8 +105,9 @@
              % Controls
              s = struct(...
                  'outside__max__luminance',  {.99    'slider .8 1 .01 %.2f'}, ...
+                 'holes',                    {false  'logical'}, ...
                  'flat__colors',             {true   'logical'}, ...
-                 'border__typical__width',   {5      'slider 1 20 1 < flat__colors'}, ...
+                 'border__typical__width',   {5      'slider 1 20 1'}, ...
                  'flat__color__tolerance',   {.01    'slider 0 .1 .005 %.2f < flat__colors'}, ...
                  'border__max__luminance',   {.5     'slider 0 1 .005 %.2f < ~flat__colors'}, ...
                  'border__max__saturation',  {.5     'slider 0 1 .005 %.2f < ~flat__colors'}, ...
@@ -103,7 +115,32 @@
                  'SAVE',                {[]     {'push' 'save'}});
              X.controls = fn_control(s,@(s)X.action(s),X.grob.controls);
              X.performconversion()
-         end         
+         end     
+         function init_menus(X)
+             init_menus@interface(X)
+             m = uimenu(X.hf,'label','Sub-Image');
+             fn_propcontrol(X,'dosubimage','menu', ...
+                 'parent',m,'label','Apply to image sub-part');
+             X.menu_def_subpart = uimenu(m, ...
+                 'label','Define new image sub-part', ...
+                 'enable', fn_switch(X.dosubimage), ...
+                 'callback',@(u,e)set_image_subpart(X));
+         end
+         function set.dosubimage(X,b)
+             X.dosubimage = b;
+             set(X.menu_def_subpart,'enable',fn_switch(b))
+             if X.dosubimage && isempty(X.image_subpart)
+                 set_image_subpart(X)
+             end
+             set(X.image_subpart_mark,'visible',b)
+         end
+         function set_image_subpart(X)
+             deleteValid(X.image_subpart_mark)
+             poly = fn_mouse(X.grob.result,'poly','select image sub-part');
+             poly = poly(:,[1:end 1]);
+             X.image_subpart_mark = fn_drawpoly(poly,'parent',X.grob.result,'color','w');
+             X.image_subpart = fn_poly2mask(poly(1,:),poly(2,:),X.nx,X.ny);
+         end
          function action(X, s)
              if ischar(s)
                  % special action
@@ -120,10 +157,16 @@
          end
          function performconversion(X)
              c = fn_watch(X.hf);
-             [nx ny nc] = size(X.input);
              
              % Inside and outside masks
              outside = (X.lumspecial > X.controls.outside__max__luminance);
+             if ~X.controls.holes
+                 % consider only connected components of "outside" that
+                 % contain some border of the image
+                 labels = bwlabel(outside);
+                 ok_labels = unique([row(labels([1 end],:)) row(labels(:,[1 end]))]);
+                 outside = outside & ismember(labels,ok_labels);
+             end
              if X.controls.flat__colors
                  darkness = 1 - X.lumspecial;
                  spread = round(X.controls.border__typical__width);
@@ -132,16 +175,22 @@
                  inside = inside & ~outside;
              else
                  inside = (X.lumspecial < X.controls.border__max__luminance);
-                 if nc == 3
+                 if X.nc == 3
                      inside = inside | (X.saturation > X.controls.border__max__saturation);
                  end
              end
              border = ~(inside | outside);
+             % border must touch outside
+             labels = bwlabel(border);
+             ok_labels = unique(labels(bwmorph(outside,'dilate')));
+             border = border & ismember(labels,ok_labels);
+             inside = ~(border | outside);
+             
              a = fn_imvect(X.input,'vector');
              a(outside(:),1:2) = 1;
              a(outside(:),3) = 0;
              a(border,:) = 0;
-             a = fn_imvect(a,[nx ny],'image');
+             a = fn_imvect(a,[X.nx X.ny],'image');
              set(X.im.masks,'cdata',permute(a,[2 1 3]))
              
              % Stop here if slider is being moved
@@ -158,8 +207,8 @@
              negative_inside_spread = fn_div(negative_inside_smooth, inside_mask_smooth);
              inside_spread = fn_clip(1 - negative_inside_spread, [0 1]);
              inside_spread = fn_imvect(inside_spread,'vector');
-             X.truecolor = fn_imvect(X.input,'vector');
-             X.truecolor(outside, :) = 1;
+             xtruecolor = fn_imvect(X.input,'vector');
+             xtruecolor(outside, :) = 1;
              truecolor_border = inside_spread(border, :);
              
              % Transparency of border pixels obtained as the ratio of input
@@ -168,9 +217,8 @@
              darkness = 1 - mean(input_border,2);
              truecolor_border_darkness = 1 - mean(truecolor_border,2);
              alpha_border = fn_clip(darkness ./ truecolor_border_darkness, [0 1]);
-             X.alpha = double(inside);
-             X.alpha(border) = alpha_border;
-             set(X.im.alpha,'cdata',permute(X.alpha,[2 1 3]))
+             xalpha = double(inside);
+             xalpha(border) = alpha_border;
 
              % True color can be improved where alpha is large enough so we
              % can trust the pixel color
@@ -182,14 +230,25 @@
              if ~ismember(smooth, [0 1])
                  smooth = alpha_border .^ atanh(1-smooth);
              end
-             X.truecolor(border, :) = fn_mult(smooth,truecolor_border) + fn_mult(1-smooth,truecolor_border2);
+             xtruecolor(border, :) = fn_mult(smooth,truecolor_border) + fn_mult(1-smooth,truecolor_border2);
              
-             % Display truecolor and alpha
-             X.truecolor = fn_imvect(X.truecolor,[nx ny],'image');
-             set(X.im.truecolor,'cdata',permute(X.truecolor,[2 1 3]))
+             % true color
+             xtruecolor = fn_imvect(xtruecolor,[X.nx X.ny],'image');
              
              % Display result on top of a checkerboard
+             if X.dosubimage
+                 X.truecolor = fn_imvect(X.truecolor);
+                 xtruecolor = fn_imvect(xtruecolor);
+                 X.truecolor(X.image_subpart(:),:) = xtruecolor(X.image_subpart(:),:);
+                 X.truecolor = fn_imvect(X.truecolor,[X.nx X.ny]);
+                 X.alpha(X.image_subpart) = xalpha(X.image_subpart);
+             else
+                 X.truecolor = xtruecolor;
+                 X.alpha = xalpha;
+             end
              b = fn_add(fn_mult(X.truecolor,X.alpha), X.checker.*(1-X.alpha));
+             set(X.im.truecolor,'cdata',permute(X.truecolor,[2 1 3]))
+             set(X.im.alpha,'cdata',permute(X.alpha,[2 1 3]))
              set(X.im.result,'cdata',permute(b,[2 1 3]))
          end
          function save(X)
