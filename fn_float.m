@@ -1,4 +1,6 @@
 function x = fn_float(x)
+%FN_FLOAT Convert integer to single, keep single or double as such 
+%---
 % function x = fn_float(x)
 %---
 % convert integer x to single-precision floating number, but do not change

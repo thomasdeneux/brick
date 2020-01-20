@@ -1,4 +1,6 @@
 function b = fn_sizecompare(s1,s2)
+%FN_SIZECOMPARE Check whether two size vectors are equivalent
+%---
 % function b = fn_sizecompare(s1,s2)
 %---
 % compare size vectors by first making them the same length by padding with

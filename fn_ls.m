@@ -1,4 +1,6 @@
 function y = fn_ls(varargin)
+%FN_LS Return folder content
+%---
 % function y = fn_ls([[folder,]pattern])
 %---
 % List files inside directory

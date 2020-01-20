@@ -1,4 +1,6 @@
 function fn_movefile(pattern,rep)
+%FN_MOVEFILE Rename files in current directory using regular expression
+%---
 % function fn_movefile(pattern,rep)
 %---
 % rename files in current directory using pattern and rep according to

@@ -1,4 +1,6 @@
 function out = fn_framedisplay(varargin)
+%FN_FRAMEDISPLAY Display images arranged as a grid
+%---
 % [im/ha =] function fn_framedisplay([x,[y,...]]data[,clip][,'singleaxes|multaxes'] ...
 %       [['ncol',]ncol][,'in',hf|ha][,'display'][,'normalaxis'][,'nocolor'])
 %---

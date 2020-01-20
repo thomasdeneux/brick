@@ -1,4 +1,6 @@
 function [b c] = fn_isfigurehandle(x)
+%FN_ISFIGUREHANDLE Is handle a plausible figure handle
+%---
 % function [isfig isnewfig] = fn_isfigurehandle(x)
 %---
 % This function detects whether x can be a valid figure handle (i.e. is a

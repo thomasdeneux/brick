@@ -1,4 +1,6 @@
 function m = fn_email(flag)
+%FN_EMAIL Send e-mails from Matlab! Automatically attach figures, M-files and more
+%---
 % function fn_email
 % function fn_email('setserver')
 %--------------

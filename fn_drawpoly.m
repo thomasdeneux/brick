@@ -1,4 +1,6 @@
 function hl = fn_drawpoly(poly,varargin)
+%FN_DRAWPOLY Shortcut for line(poly(:,1),poly(:,2))
+%---
 % function hl = fn_drawpoly(poly[,'close'],line options...)
 %---
 % shortcut for line(poly(1,:),poly(2,:),varargin{:})

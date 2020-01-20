@@ -1,4 +1,6 @@
 classdef panelorganizer < hgsetget
+    %PANELORGANIZER    Divide a figure into resizeable panels
+    %---
     % function O = panelorganizer(hparent,'V|H',n[,dorelative[,xx]])
     % function hp = setSubPanel(O,idx,uipanel options...)
     % function O1 = setSubOrg(O,idx,'V|H',n[,dorelative[,xx]])
@@ -156,7 +158,7 @@ classdef panelorganizer < hgsetget
                 O.extents = 1;
             else
                 switch O.bordermode
-                    case 'bothsides'
+                    case 'twosides'
                         xx(idx) = mean(xx);
                         O.extents = xx;
                     case 'push'
@@ -189,7 +191,7 @@ classdef panelorganizer < hgsetget
             O.children(idx) = [];
             % update positions and borders
             switch O.bordermode
-                case 'bothsides'
+                case 'twosides'
                     O.extents = O.extents; % will readjust extents in pixel units and update display
                 case 'push'
                     O.pushExtent(idx)

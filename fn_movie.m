@@ -1,4 +1,6 @@
 classdef fn_movie < hgsetget
+    %FN_MOVIE          Show a movie, large number of options
+    %---
     % function fn_movie(data,option1,value1,...)
     % function fn_movie(data,optstruct)
     % function fn_movie({videoreader, nt},...)
@@ -26,8 +28,8 @@ classdef fn_movie < hgsetget
     % 
     % See also fn_playmovie
 
-% Thomas Deneux
-% Copyright 2008-2017
+    % Thomas Deneux
+    % Copyright 2008-2017
 
     properties
         opt

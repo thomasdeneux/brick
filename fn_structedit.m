@@ -1,4 +1,6 @@
 function s = fn_structedit(s,varargin)
+%FN_STRUCTEDIT Edit a structure with a GUI interface; this is a wrapper of fn_control
+%---
 % function s = fn_structedit(s[,spec][,hp][,other fn_control arguments...])
 % function s = fn_structedit(fieldname1,value1,fieldname2,value2,...)
 %---

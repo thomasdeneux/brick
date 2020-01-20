@@ -1,4 +1,6 @@
 function [filename filterindex] = fn_savefile(varargin)
+%FN_SAVEFILE User select file for saving and remember last containing folder 
+%---
 % function [filename filterindex] = fn_savefile([filter[,title]])
 %--
 % synonyme de "[filename filterindex] = fn_getfile('SAVE',[filter[,title]])"

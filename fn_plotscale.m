@@ -1,4 +1,6 @@
 function hl = fn_plotscale(varargin)
+%FN_PLOTSCALE Add horizontal and vertical scale bars to graph
+%---
 % function hl = fn_plotscale([ha,]tlabel,ylabel[,t_y_sizes[,posflag]])
 %---
 % Creates a 2 directional scale bar for graph display

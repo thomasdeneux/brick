@@ -1,8 +1,10 @@
 function answer = fn_dialog_questandmem(question,identifier)
+%FN_DIALOG_QUESTANDMEM Confirmation question with an option for not asking again 
+%---
 % function answer = fn_dialog_questandmem(question[,identifier])
 %---
 % This imitates Windows style confirmation window, with a choice between
-% 'Yes' and 'Cancel', and additionally a possibility to mark a box 'Do not
+% 'Yes' and 'No', and additionally a possibility to mark a box 'Do not
 % ask again'.
 %
 % Input:
@@ -12,7 +14,7 @@ function answer = fn_dialog_questandmem(question,identifier)
 %                   question is used as an identifier]
 %
 % Output:
-% - answer          logical - true for 'Yes', false for 'Cancel'
+% - answer          logical - true for 'Yes', false for 'No'
 %
 % See also fn_reallydlg
 
@@ -93,10 +95,10 @@ uicontrol(hf,'style','text','backgroundcolor',get(hf,'color'),'string',question,
 
 % Yes/No buttons
 uyes = uicontrol(hf,'string','Yes','pos',[bx by bw bh],'Callback','uiresume(gcf)');
-uicontrol(hf,'string','Cancel','pos',[bx+bw+bd by bw bh],'Callback','uiresume(gcf)');
+uicontrol(hf,'string','No','pos',[bx+bw+bd by bw bh],'Callback','uiresume(gcf)');
 
 % 'Do not ask again' button
-umem = uicontrol(hf,'style','checkbox','string','Always Yes', ...
+umem = uicontrol(hf,'style','checkbox','string','do not ask again', ...
     'pos',[ax ay aw ah],'parent',hf);
 
 % Answer

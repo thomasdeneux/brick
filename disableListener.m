@@ -1,4 +1,6 @@
 function c = disableListener(hl)
+%DISABLELISTENER Momentarily disable a listener (returns an onCleanup oject that reenable it when being garbage collected)
+%---
 % function c = disableListener(hl)
 %---
 % Disable listener(s) and return an onCleanup object that will re-enable it
@@ -15,8 +17,12 @@ function c = disableListener(hl)
 if nargout==0
     error 'function disableListener should be used with an output argument (onCleanup object), use enableListener(hl,false) to simply disable a listener'
 end
-disable(hl)
-c = onCleanup(@()enable(hl));
+if isempty(hl)
+    c = [];
+else
+    disable(hl)
+    c = onCleanup(@()enable(hl));
+end
 
 function disable(hl)
 

@@ -1,4 +1,6 @@
 function fn_evalcallback(fun,hobj,evnt)
+%FN_EVALCALLBACK Evaluate a callback, i.e. a char array, function handle or cell array 
+%---
 % function fn_evalcallback(fun,hobj,evnt)
 
 % Thomas Deneux

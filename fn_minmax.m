@@ -1,4 +1,6 @@
 function x = fn_minmax(varargin)
+%FN_MINMAX Basic min/max operations (e.g. intersection or union of 2 ranges)
+%---
 % function fn_minmax(action,x1,x2,..)
 %
 % utility to easily compute best axes positions...

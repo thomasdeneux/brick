@@ -1,4 +1,6 @@
 function pr = fn_getPr(var)
+%FN_GETPR Get the address of the data stored in a variable: usefull to understand when two variables share the same data in memory 
+%---
 % function pr = fn_getPr(var)
 %---
 % This MEX-file returns the pointer to the data of variable 'var'. 

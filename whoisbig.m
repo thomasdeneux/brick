@@ -1,4 +1,6 @@
 function whoisbig(varargin)
+%WHOISBIG Type 'whoisbig' to check which data takes a lot of memory 
+%---
 % function whoisbig([var][,minsize])
 %---
 % Input:

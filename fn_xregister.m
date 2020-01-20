@@ -1,4 +1,6 @@
 function d = fn_xregister(a,b,maxshift)
+%FN_XREGISTER Fast fft-based coregistration at pixel (but not sub-pixel) resolution
+%---
 % function d = fn_xregister(a,b,maxshift)
 %---
 % register images a and b using cross-correlation

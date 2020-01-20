@@ -1,4 +1,6 @@
 function str = fn_strrep(str,varargin)
+%FN_STRREP Replace several text sequences in string
+%---
 % function str = fn_strrep(str,pattern1,rep1,pattern2,rep2,...)
 %---
 % Same as Matlab strrep, but allows multiple pattern replacements

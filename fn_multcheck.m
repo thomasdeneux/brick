@@ -1,4 +1,6 @@
 classdef fn_multcheck < hgsetget
+    %FN_MULTCHECK      Special control made of multiple check boxes
+    %---
     % function fn_multcheck([n,][properties])
     % function fn_multcheck({'name1','name2',...},[properties])
     %---

@@ -1,4 +1,6 @@
 function lineoptions = fn_linespecs(varargin)
+%FN_LINESPECS Handle abbreviated plot options (e.g. 'r.') 
+%---
 % function lineoptions = fn_linespecs(line options as in plot)
 % function lineoptions = fn_linespecs({line options as in plot})
 %---

@@ -1,4 +1,6 @@
 function [p beta out3] = fn_GLMtest(X,y,h,testflag)
+%FN_GLMTEST Perform F-test and T-test in a GLM framework
+%---
 % function [p beta beta0] = fn_GLMtest(X,y,h,'F')
 % function [p beta betaproj] = fn_GLMtest(X,y,h,'T')
 %---

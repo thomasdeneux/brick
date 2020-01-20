@@ -1,4 +1,6 @@
 function y = fn_timevector(x,t,outputtype)
+%FN_TIMEVECTOR Convert set of times to vector of counts and vice-versa
+%---
 % function times|count = fn_timevector(times|count,dt|tidx[,outputtype])
 %---
 % switch representation of a point process between the times of the events

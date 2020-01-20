@@ -1,4 +1,6 @@
 function varargout = fn_register(varargin)
+%FN_REGISTER Coregister images or movie
+%---
 % function [shift e xreg] = fn_register(x,par|ref)
 % function par = fn_register('par')
 %---

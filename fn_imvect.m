@@ -1,4 +1,6 @@
 function x = fn_imvect(x,mask,varargin)
+%FN_IMVECT Convert an image to a vector of pixels inside a mask, and vice-versa 
+%---
 % function x = fn_imvect(x,mask[,outputtype][,outsidevalue])
 % function x = fn_imvect(x[,'vector'])
 % function k = fn_imvect(ij,mask[,outsidevalue])

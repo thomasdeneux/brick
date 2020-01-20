@@ -1,4 +1,6 @@
 function b = fn_reallydlg(varargin)
+%FN_REALLYDLG Ask for confirmtaion
+%---
 % function b = fn_reallydlg(line1,line2,..)
 %--
 % This is a shortcut for using Matlab questdlg function.

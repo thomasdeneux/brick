@@ -1,4 +1,6 @@
 function hf = fn_parentfigure(obj)
+%FN_PARENTFIGURE Get parent figure
+%---
 % function hf = fn_parentfigure(obj)
 %---
 % returns the figure that contains object obj by recursively getting its

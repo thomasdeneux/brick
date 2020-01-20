@@ -1,4 +1,6 @@
 function pargout=fn_meshplot(varargin)
+%FN_MESHPLOT Display a mesh
+%---
 % function ho=fn_meshplot(vertex, faces[, vcolor])
 % function ho=fn_meshplot({vertex, faces}[, vcolor])
 

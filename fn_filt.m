@@ -1,4 +1,6 @@
 function y = fn_filt(x,tau,varargin)
+%FN_FILT Gaussian low-, high- or band-pass filtering using fft
+%---
 % function y = fn_filt(x,tau[,'l|h|b|n'][,dim][,filtertype][,'mirror']
 %       ['mask'[,mask]][,'zero'][,'pad',value][,'detrend']['complex|phase'])
 % function y = fn_filt(x,tau[,options][,dim])

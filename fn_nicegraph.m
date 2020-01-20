@@ -1,4 +1,6 @@
 function fn_nicegraph(ha)
+%FN_NICEGRAPH Improve aspect of graph display
+%---
 % function fn_nicegraph([ha])
 %---
 % see also fn_labels, fn_scale, fn_plotscale

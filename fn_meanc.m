@@ -1,4 +1,6 @@
 function fn_meanc(x,dim,alpha)
+%FN_MEANC Return mean and confidence interval
+%---
 % function [m, lb, ub] = fn_meanc(x[,dim[,alpha]])
 %---
 % same as mean, but also returns a alpha level confidence interval for the mean

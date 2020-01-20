@@ -1,4 +1,6 @@
 function fn_displayarrows(varargin)
+%FN_DISPLAYARROWS Display an image and a velocity field on top of it 
+%---
 % function fn_displayarrows([[x,y,]img,]arrows,sub,flag)
 %---
 % Input

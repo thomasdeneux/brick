@@ -1,4 +1,6 @@
 function pcorr = fn_pcorrect(pvalues,method,varargin)
+%FN_PCORRECT Perform correction for multiple testing
+%---
 % function pcorr = fn_pcorrect(pvalues,method[,dim])
 % function test = fn_pcorrect(pvalues,method,alpha[,dim])
 %---

@@ -1,4 +1,6 @@
 function hl = fn_stairs(varargin)
+%FN_STAIRS Display stairs in an intuitive way
+%---
 % function hl = fn_stairs([x,]y,...)
 %---
 % a wrapper for Matlab stairs function that produces more intuitive display

@@ -1,4 +1,6 @@
 function [s grid] = fn_alignimage(a,b,varargin)
+%FN_ALIGNIMAGE Manual alignment of 2 images
+%---
 % function [[s grid] =] fn_alignimage(a,b[,shift[,'nouser']]['slider|edit'])
 %---
 % display a superposition of gray-level images a and b, and allow to move

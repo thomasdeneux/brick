@@ -1,4 +1,6 @@
 classdef fn_supercontrol < hgsetget
+    %FN_SUPERCONTROL   Super arrangement of control 
+    %---
     % function X = fn_supercontrol([hp,]specs[,callback[,x0]])
     % function specs = fn_supercontrol.examplespecs
     % function fn_supercontrol('demo')

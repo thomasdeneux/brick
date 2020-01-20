@@ -1,4 +1,6 @@
 function varargout = fn_4Dview(varargin)
+%FN_4DVIEW Navigation inside 3D, 4D or 5D imaging data
+%---
 % function fn_4Dview(option1,optionArgs1,...)
 % function varargout = fn_4Dview(action,actionArgs)
 %---

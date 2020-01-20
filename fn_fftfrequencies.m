@@ -1,4 +1,6 @@
 function varargout = fn_fftfrequencies(data,fs,flag)
+%FN_FFTFREQUENCIES Frequencies corresponding to the output of Matlab fft function
+%---
 % function ff = fn_fftfrequencies(data,fs[,'centered'])
 % function [ff1 ff2] = fn_fftfrequencies(data,fs[,'centered[+shift]'])
 %---

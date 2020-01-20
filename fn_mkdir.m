@@ -1,4 +1,6 @@
 function fn_mkdir(D)
+%FN_MKDIR Create a directory if it does not exist
+%---
 % function fn_mkdir(D)
 %---
 % creates directory D if it does not exist

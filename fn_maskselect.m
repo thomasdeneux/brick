@@ -1,4 +1,6 @@
 function mask = fn_maskselect(a,mouseflag,dorepeat,cm)
+%FN_MASKSELECT Manual selection of a mask inside an image
+%---
 % function mask = fn_maskselect(image[,mouseflag[,dorepeat[,colormap]]])
 %---
 % ROI selection within an image. Returns an array of logicals. 

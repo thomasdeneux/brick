@@ -1,6 +1,8 @@
 function fn_controlpositions(hu,hp,posrel,pospix)
-% function fn_controlpositions(hu,hp,posrel,pospix)
+%FN_CONTROLPOSITIONS Set an object position using a combination of absolute and relative (to any other object) coordinates 
 %---
+% function fn_controlpositions(hu,hp,posrel,pospix)
+% ---
 % set the position of controls relatively to an axes, and set the
 % appropriate listeners to automatically update those positions in case of
 % change of figure position, etc...
@@ -8,7 +10,7 @@ function fn_controlpositions(hu,hp,posrel,pospix)
 % Input
 % - hu      control handle
 % - hp      axes or figure handle
-% - posrel  position relative to axes/figure ([0 0] = bottom-left corner,
+% - posrel  2 or 4 elements vector - position relative to axes/figure ([0 0] = bottom-left corner,
 %           [1 1] = up-right corner)
 % - pospix  position in pixels to add to 'posrel' and size of control
 

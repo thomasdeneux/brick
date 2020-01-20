@@ -1,4 +1,6 @@
 function y = fn_subsref(x,varargin)
+%FN_SUBSREF Shortcut for calling Matlab subsref function
+%---
 % function B = fn_subsref(A,idx1,idx2,...)
 % function indices = fn_subsref(siz,idx1,idx2,...[,'global|local'])
 %---

@@ -1,4 +1,6 @@
 function [hl hlsep] = fn_rasterplot(times,varargin)
+%FN_RASTERPLOT Display multiple sets of events as small bars
+%---
 % function [hlspikes hlsep] = fn_rasterplot(times,[other arguments as for fn_spikedisplay])
 %---
 % This is a wrapper of fn_spikedisplay. Additionally to calling

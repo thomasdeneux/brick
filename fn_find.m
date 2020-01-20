@@ -1,4 +1,6 @@
 function idx = fn_find(fun,A,varargin)
+%FN_FIND Look for non-empty elements, or which evaluate to true when applying a certain function
+%---
 % function idx = fn_find(fun,A[,'first|last|all|any'][,'columns|rows'])
 % function idx = fn_find(A,fun[,'first|last|all|any'][,'columns|rows'])
 % function idx = fn_find(x,A[,'first|last|all|any'][,'columns|rows'])

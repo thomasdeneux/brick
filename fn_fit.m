@@ -1,4 +1,6 @@
 function varargout = fn_fit(x,y,fun,startpoint)
+%FN_FIT Fit the parameters of a given function
+%---
 % function [par1 ... parN yfit] = fn_fit(x,y,@(x,par1,..,parN)fun,startpoint)
 % function [a b yfit] = fn_fit(x,y,'affine')
 % function [low high thr slope yfit] = fn_fit(x,y,'sigmoid')

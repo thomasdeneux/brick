@@ -1,4 +1,6 @@
 classdef fn_sensor < fn_uicontrol
+    %FN_SENSOR     Special control whose value is changed by clicking and dragging
+    %---
     % function S = fn_sensor(propname1,propvalue1,...)
     %---
     % creates a 'sensor' control, object optimally designed for controlling
