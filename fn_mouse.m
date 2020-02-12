@@ -110,6 +110,46 @@ switch type
             otherwise
                 error 'too many output arguments'
         end
+    case {'1D'}
+        % one dimension selection
+        % draw vertical or horizontal lines
+        % return data with one dimension coordinates of first and second
+        % points
+        if doescape, warning 'escape option is not valid for type ''line''', end
+        
+        if strcmp(mode,'1D vertical')
+            %if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
+            p1 = get(ha,'CurrentPoint'); p1 = p1(1,1:2);
+            hl(1) = line('xdata',p1([1 1]),'ydata',[.5 -.5],'parent',ha,'color','k','linestyle','--');
+            hl(2) = line('xdata',p1([1 1]),'ydata',[.5 -.5],'parent',ha,'color','b','linestyle','--');
+            data = fn_buttonmotion({@draw1Dvertical,ha,hl,p1},hf,'doup');
+            lineOneCoodinates = get(hl(1),'xdata');
+            lineTwoCoodinates = get(hl(2),'xdata');
+        else
+            %if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
+            p1 = get(ha,'CurrentPoint'); p1 = p1(1,1:2);
+            hl(1) = line('xdata',[.5 -.5],'ydata',p1([2 2]),'parent',ha,'color','k','linestyle','--');
+            hl(2) = line('xdata',[.5 -.5],'ydata',p1([2 2]),'parent',ha,'color','b','linestyle','--');
+            data = fn_buttonmotion({@draw1Dhorizontal,ha,hl,p1},hf,'doup');
+            lineOneCoodinates = get(hl(1),'ydata');
+            lineTwoCoodinates = get(hl(2),'ydata');
+        end
+            data = [lineOneCoodinates(1), lineTwoCoodinates(1)];
+            delete(hl(2))
+        
+            if showselection
+                %set(hl(1),'color','y')
+            else
+                delete(hl(1))
+            end
+            switch nargout
+                case {0 1}
+                    varargout = {data};
+                case 2
+                    varargout = {data(:,1) data(:,2)};
+                otherwise
+                    error 'too many output arguments'
+            end
     case {'rect' 'rectax' 'rectangle' 'xsegment' 'ysegment'}
         % if button has already been pressed, no more button will be
         % pressed, so it is not necessary to suspend callbacks
@@ -202,7 +242,7 @@ switch type
             varargout = {[]};
             return
         end
-        if showselection,
+        if showselection
             if openline, back=[]; else back=1; end
             oldnextplot=get(ha,'NextPlot'); set(ha,'NextPlot','add')
             plot(x(1,[1:end back]),x(2,[1:end back]),'k-','parent',ha),
@@ -328,6 +368,24 @@ function data=drawline(ha,hl,p1)
 p2 = get(ha,'currentpoint');
 data = [p1(:) p2(1,1:2)'];
 set(hl,'xdata',data(1,:),'ydata',data(2,:))
+drawnow update
+
+function data=draw1Dvertical(ha,hl,p1)
+% update vertical line using xdata coordinate of hl
+% return x coordinates of p1 and of current point
+p2 = get(ha,'currentpoint');
+data = [p1(1,1) p2(1,1)];
+%hl(2) = line('xdata',p2([1 1]),'ydata',[.5, -.5],'parent',ha,'color','k');
+set(hl(2),'xdata',p2([1 1]),'ydata',[.5, -.5])
+drawnow update
+
+function data=draw1Dhorizontal(ha,hl,p1)
+% update horizontal line using ydata coordinate of hl
+% return y coordinates of p1 and of current point
+p2 = get(ha,'currentpoint');
+data = [p1(1,2) p2(1,2)];
+%hl(2) = line('xdata',p2([1 1]),'ydata',[.5, -.5],'parent',ha,'color','k');
+set(hl(2),'xdata',[.5, -.5],'ydata',p2([3, 3]))
 drawnow update
 
 %-------------------------------------------------
