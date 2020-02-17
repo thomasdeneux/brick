@@ -33,14 +33,14 @@
              
              % Input
              if nargin<1
-                 X.input = fn_getfile('Select image');
+                 a = fn_getfile('*','Select image');
              end
              if ischar(a)
                  X.filename = a;
-                 X.input = fn_readimg(a);
+                 a = fn_readimg(a);
              end
              switch class(a)
-                 case 'double'
+                 case {'single' 'double'}
                      X.input = a;
                  case 'uint8'
                      % convert to double
@@ -94,6 +94,7 @@
              % Controls
              s = struct(...
                  'outside__max__luminance',  {.99    'slider .8 1 .01 %.2f'}, ...
+                 'holes',                    {true, 'logical'}, ...
                  'flat__colors',             {true   'logical'}, ...
                  'border__typical__width',   {5      'slider 1 20 1 < flat__colors'}, ...
                  'flat__color__tolerance',   {.01    'slider 0 .1 .005 %.2f < flat__colors'}, ...
@@ -124,6 +125,14 @@
              
              % Inside and outside masks
              outside = (X.lumspecial > X.controls.outside__max__luminance);
+             if ~X.controls.holes
+                 % do not allow holes: take only the connex components
+                 % containing borders
+                 components = bwlabel(outside);
+                 borders = unique([row(components([1 end],:)) row(components([1 end],:))]);
+                 borders = setdiff(borders,0);
+                 outside = ismember(components, borders);
+             end
              if X.controls.flat__colors
                  darkness = 1 - X.lumspecial;
                  spread = round(X.controls.border__typical__width);
@@ -202,7 +211,9 @@
              fsave = fn_savefile(fsave,'Save image with transparency as');
              
              % save image
-             a = cat(3,X.truecolor,X.alpha);
+             color = X.truecolor;
+             if size(color,3) == 1, color = repmat(color,[1 1 3]); end
+             a = cat(3,color,X.alpha);
              fn_saveimg(a,fsave)
          end
      end
