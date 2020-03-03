@@ -51,7 +51,7 @@
                  a = fn_readimg(a);
              end
              switch class(a)
-                 case 'double'
+                 case {'single' 'double'}
                      X.input = a;
                  case 'uint8'
                      % convert to double
@@ -115,7 +115,7 @@
                  'SAVE',                {[]     {'push' 'save'}});
              X.controls = fn_control(s,@(s)X.action(s),X.grob.controls);
              X.performconversion()
-         end     
+         end
          function init_menus(X)
              init_menus@interface(X)
              m = uimenu(X.hf,'label','Sub-Image');
@@ -185,7 +185,7 @@
              ok_labels = unique(labels(bwmorph(outside,'dilate')));
              border = border & ismember(labels,ok_labels);
              inside = ~(border | outside);
-             
+
              a = fn_imvect(X.input,'vector');
              a(outside(:),1:2) = 1;
              a(outside(:),3) = 0;
@@ -261,7 +261,9 @@
              fsave = fn_savefile(fsave,'Save image with transparency as');
              
              % save image
-             a = cat(3,X.truecolor,X.alpha);
+             color = X.truecolor;
+             if size(color,3) == 1, color = repmat(color,[1 1 3]); end
+             a = cat(3,color,X.alpha);
              fn_saveimg(a,fsave)
          end
      end

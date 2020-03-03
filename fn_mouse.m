@@ -23,6 +23,8 @@ function varargout = fn_mouse(varargin)
 % -     use as first point the current point in axes (rect, poly, free, ellipse)
 % @     closes polygon or line (poly, free, spline)
 % ^     enable escape: cancel current selection if a second key is pressed
+% *     when drawing circles, make them circular on screen instead of with
+%       respect to coordinates
 % :num: interpolates line with one point every 'num' pixel (poly, free, ellipse)
 %       for 'ellipse' mode, if :num; is not specified, output is a cell
 %       array {center axis e} event in the case of only one outpout argument
@@ -58,6 +60,7 @@ showselection = any(mode=='+');
 openline = ~any(mode=='@');
 dointerp = any(mode==':');
 doescape = any(mode=='^');
+doscreencircle = any(mode=='*');
 
 % Suspend callbacks
 SuspendCallbacks(ha)
@@ -107,6 +110,46 @@ switch type
             otherwise
                 error 'too many output arguments'
         end
+    case {'1D'}
+        % one dimension selection
+        % draw vertical or horizontal lines
+        % return data with one dimension coordinates of first and second
+        % points
+        if doescape, warning 'escape option is not valid for type ''line''', end
+        
+        if strcmp(mode,'1D vertical')
+            %if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
+            p1 = get(ha,'CurrentPoint'); p1 = p1(1,1:2);
+            hl(1) = line('xdata',p1([1 1]),'ydata',[.5 -.5],'parent',ha,'color','k','linestyle','--');
+            hl(2) = line('xdata',p1([1 1]),'ydata',[.5 -.5],'parent',ha,'color','b','linestyle','--');
+            data = fn_buttonmotion({@draw1Dvertical,ha,hl,p1},hf,'doup');
+            lineOneCoodinates = get(hl(1),'xdata');
+            lineTwoCoodinates = get(hl(2),'xdata');
+        else
+            %if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
+            p1 = get(ha,'CurrentPoint'); p1 = p1(1,1:2);
+            hl(1) = line('xdata',[.5 -.5],'ydata',p1([2 2]),'parent',ha,'color','k','linestyle','--');
+            hl(2) = line('xdata',[.5 -.5],'ydata',p1([2 2]),'parent',ha,'color','b','linestyle','--');
+            data = fn_buttonmotion({@draw1Dhorizontal,ha,hl,p1},hf,'doup');
+            lineOneCoodinates = get(hl(1),'ydata');
+            lineTwoCoodinates = get(hl(2),'ydata');
+        end
+            data = [lineOneCoodinates(1), lineTwoCoodinates(1)];
+            delete(hl(2))
+        
+            if showselection
+                %set(hl(1),'color','y')
+            else
+                delete(hl(1))
+            end
+            switch nargout
+                case {0 1}
+                    varargout = {data};
+                case 2
+                    varargout = {data(:,1) data(:,2)};
+                otherwise
+                    error 'too many output arguments'
+            end
     case {'rect' 'rectax' 'rectangle' 'xsegment' 'ysegment'}
         % if button has already been pressed, no more button will be
         % pressed, so it is not necessary to suspend callbacks
@@ -124,7 +167,7 @@ switch type
             varargout = {[]};
             return
         end
-        if showselection,
+        if showselection
             line(rect(1,[1:4 1]),rect(2,[1:4 1]),'color','k','parent',ha)
             line(rect(1,[1:4 1]),rect(2,[1:4 1]),'color','w','linestyle',':','parent',ha),
         end
@@ -199,7 +242,7 @@ switch type
             varargout = {[]};
             return
         end
-        if showselection,
+        if showselection
             if openline, back=[]; else back=1; end
             oldnextplot=get(ha,'NextPlot'); set(ha,'NextPlot','add')
             plot(x(1,[1:end back]),x(2,[1:end back]),'k-','parent',ha),
@@ -218,16 +261,25 @@ switch type
         hl(2) = line(p(1,1),p(1,2),'color','w','linestyle',':','parent',ha);
         info = fn_pointer('flag','init');
         % circle
-        fn_buttonmotion({@drawellipse,ha,hl,info},hf,'doup')
+        if doscreencircle
+            sz = fn_pixelsize(ha);
+            ax = axis(ha); 
+            screenratio = sz(2)/sz(1); % height / width
+            axratio = (ax(4)-ax(3))/(ax(2)-ax(1)); % same, in axes coordinates
+            yadjust = screenratio / axratio; 
+        else
+            yadjust = 1;
+        end
+        fn_buttonmotion({@drawellipse,ha,hl,info,yadjust},hf,'doup')
         % make it an ellipse
         if strcmp(info.flag,'width')
             % change eccentricity -> ellipse
-            fn_buttonmotion({@drawellipse,ha,hl,info},hf)
+            fn_buttonmotion({@drawellipse,ha,hl,info,yadjust},hf)
         end
         % ring -> set the diameter of the internal circle
         if strcmp(type,'ring')
             info.flag = 'ring';
-            fn_buttonmotion({@drawellipse,ha,hl,info},hf)
+            fn_buttonmotion({@drawellipse,ha,hl,info,yadjust},hf)
         end
         x = [get(hl(1),'xdata'); get(hl(1),'ydata')];
         ax = info.axis;
@@ -236,7 +288,7 @@ switch type
         value = {center u info.eccentricity};
         if strcmp(type,'ring'), value{4} = info.relradius; end
         delete(hl)
-        if showselection,
+        if showselection
             oldnextplot=get(ha,'NextPlot'); set(ha,'NextPlot','add')
             plot(x(1,1:end),x(2,1:end),'k-','parent',ha),
             plot(x(1,1:end),x(2,1:end),'w:','parent',ha),
@@ -318,6 +370,24 @@ data = [p1(:) p2(1,1:2)'];
 set(hl,'xdata',data(1,:),'ydata',data(2,:))
 drawnow update
 
+function data=draw1Dvertical(ha,hl,p1)
+% update vertical line using xdata coordinate of hl
+% return x coordinates of p1 and of current point
+p2 = get(ha,'currentpoint');
+data = [p1(1,1) p2(1,1)];
+%hl(2) = line('xdata',p2([1 1]),'ydata',[.5, -.5],'parent',ha,'color','k');
+set(hl(2),'xdata',p2([1 1]),'ydata',[.5, -.5])
+drawnow update
+
+function data=draw1Dhorizontal(ha,hl,p1)
+% update horizontal line using ydata coordinate of hl
+% return y coordinates of p1 and of current point
+p2 = get(ha,'currentpoint');
+data = [p1(1,2) p2(1,2)];
+%hl(2) = line('xdata',p2([1 1]),'ydata',[.5, -.5],'parent',ha,'color','k');
+set(hl(2),'xdata',[.5, -.5],'ydata',p2([3, 3]))
+drawnow update
+
 %-------------------------------------------------
 function p = getPoint(hf,ha)
 
@@ -362,7 +432,11 @@ set(hl,'xdata',xdata,'ydata',ydata)
 drawnow update
 
 %-------------------------------------------------
-function drawellipse(ha,hl,info)
+function drawellipse(ha,hl,info,yadjust)
+% @param ha: Axes 
+% @param hl: Line
+% @param info: fn_pointer
+% @param doscreencircle: logical
 
 p = get(ha,'currentpoint');
 p = p(1,1:2)';
@@ -375,16 +449,16 @@ switch flag
         ydata = get(hl(1),'ydata');
         info.start = [xdata; ydata];
         info.axis = [xdata xdata; ydata ydata];
-        info.eccentricity = .999;
+        info.eccentricity = 0.999;
         info.relradius = [];
         info.flag = 'axis';
-        set(get(ha,'parent'),'windowbuttondownfcn',@(hf,evnt)set(info,'flag','click'))
-        drawellipse(ha,hl,info)
+        set(fn_parentfigure(ha),'windowbuttondownfcn',@(hf,evnt)set(info,'flag','click'))
+        drawellipse(ha,hl,info,yadjust)
         return
     case 'click'
         ax = info.axis;
         u = (ax(:,2)-ax(:,1))/2;
-        v = [u(2); -u(1)];
+        v = [u(2)*yadjust; -u(1)/yadjust];
         p = ax(:,1) + u + v;
         p0 = fn_coordinates(ha,'a2s',p,'position');
         set(0,'pointerlocation',p0);
@@ -400,13 +474,24 @@ switch flag
     otherwise
         ax = info.axis;
 end
+
+% center
+o = mean(ax,2);
+
+% main axis vector
 u = (ax(:,2)-ax(:,1))/2;
 
-% some constants
+% change to a referential that has the requested aspect ratio
+u(2,:) = u(2,:) * yadjust;
+
+% norm
 normu2 = sum(u.^2);
+
+% orthogonal vector
 v = [u(2); -u(1)];
-o = mean(ax,2);
-x = p-o;
+
+% half of main axis vector
+x = u / 2;
 
 % eccentricity
 switch flag
@@ -433,15 +518,19 @@ switch flag
 end
 
 % update display
-t = 0:.05:1;
+t = 0:.02:1;
 udata = cos(2*pi*t);
 vdata = e*sin(2*pi*t);
 if ~isempty(relradius)
         udata = [udata NaN relradius*udata];
         vdata = [vdata NaN relradius*vdata];
 end
+
+% ellipse contour: go back to the axes referential
 xdata = o(1) + u(1)*udata + v(1)*vdata;
-ydata = o(2) + u(2)*udata + v(2)*vdata;
+ydata = o(2) + (u(2)*udata + v(2)*vdata) / yadjust;
+
+% display
 set(hl,'xdata',xdata,'ydata',ydata)
 drawnow update
 
