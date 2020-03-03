@@ -1097,7 +1097,7 @@ classdef fn_control < hgsetget
                         updatecontrol(X,k)
                     else
                         if length(f)>1
-                            X.(f(1).subs) = subsassgn(X.(f(1).subs),f(2:end),x);
+                            X.(f(1).subs) = subsasgn(X.(f(1).subs),f(2:end),x);
                         else
                             X.(f(1).subs) = x;
                         end

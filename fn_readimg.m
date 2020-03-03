@@ -56,14 +56,14 @@ if nimages*nframes>1
     for i=2:nimages*nframes
         fn_progress(i)
         if nframes>1
-            [b beta] = imread(fname{1},dopermute,false,firstchannelonly,i);
+            [b beta] = readoneframe(fname{1},dopermute,false,firstchannelonly,i);
         else
-            [b beta] = imread(fname{i},dopermute,false,firstchannelonly);
+            [b beta] = readoneframe(fname{i},dopermute,false,firstchannelonly);
         end        
         if firstchannelonly
-            a(:,:,i) = b(:,:,1)';
+            a(:,:,i) = b(:,:,1);
         else
-            a(:,:,:,i) = permute(b,[2 1 3]);
+            a(:,:,:,i) = b;
         end
         if ~isempty(alpha)
             alpha(:,:,i) = beta;
