@@ -1,8 +1,9 @@
-function varargout = fn_regexptokens(a,expr)
+function varargout = fn_regexptokens(a,expr,ktoken)
 %FN_REGEXPTOKENS Get the tokens of a regexp as a simple cell array
 %---
 % function tokens = fn_regexptokens(a,expr)
 % function [tok1 ... tokn] = fn_regexptokens(a,expr)
+% function tokk = fn_regexptokens(a,expr,ktoken)
 %---
 % a wrapper of regexp that returns the tokens in a string where expression
 % 'expr' is assumed to occur exactly one time
@@ -47,7 +48,7 @@ for i=1:n
     end
 end
 
-% Simplify output if n==1 or ntoken==1
+% Simplify output if n==1 or ntoken==1 or specific token requested
 if n==1
     out = fn_map(@(x)x{1}, out, 'cell');    % cell array (#tokens) of strings
 end
@@ -61,6 +62,8 @@ if isempty(out)
 end
 if ntoken==1
     out = out{1};                   % string (if n==1) or cell array (n) of strings
+elseif nargin>=3
+    out = out{ktoken};
 end
 
 % Output
