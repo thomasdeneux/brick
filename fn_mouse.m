@@ -14,7 +14,7 @@ function varargout = fn_mouse(varargin)
 % 'rectangle'   get a rectangle selection (format [x1 x2 x3 x4; y1 y2 y3 y4])
 % 'poly'        polygone selection
 % 'line' or 'segment'       single line segment
-% 'xsegment', 'ysegment'    a segment in x or y (formag [start end]) 
+% 'xsegment', 'ysegment'    a segment in x or y (format [start end]) 
 % 'free'        free-form drawing
 % 'ellipse'     circle or ellipse
 % 'ring'        circular or elliptic ring 
