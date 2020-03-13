@@ -10,7 +10,8 @@ function varargout = fn_mouse(varargin)
 % 'point'       [default] get coordinates on mouse click
 % 'cross'       get coordinates on mouse click - use cross pointer
 % 'rect'        get a rectangle selection (format [xstart ystart xsize ysize])
-% 'rectax'      get a rectangle selection (format [xstart xend ystart yend])
+% 'rectax'      get a rectangle selection (format [xstart xend ystart yend], using bottom-left corner as start)
+% 'rectaxp'     get a rectangle selection (format [xstart xend ystart yend], using first point pressed as start)
 % 'rectangle'   get a rectangle selection (format [x1 x2 x3 x4; y1 y2 y3 y4])
 % 'poly'        polygone selection
 % 'line' or 'segment'       single line segment
@@ -150,7 +151,7 @@ switch type
                 otherwise
                     error 'too many output arguments'
             end
-    case {'rect' 'rectax' 'rectangle' 'xsegment' 'ysegment'}
+    case {'rect' 'rectax' 'rectaxp' 'rectangle' 'xsegment' 'ysegment'}
         % if button has already been pressed, no more button will be
         % pressed, so it is not necessary to suspend callbacks
         if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
@@ -181,6 +182,10 @@ switch type
                     rect = [cornera' cornerb'-cornera'];
                 case 'rectax'
                     rect = [cornera(1) cornerb(1) cornera(2) cornerb(2)];
+                case 'rectaxp'
+                    rect = rect(:,[1 3]);
+                case 'rectangle'
+                    % already correct format
                 case 'xsegment'
                     rect = [cornera(1) cornerb(1)];
                 case 'ysegment'

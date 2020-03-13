@@ -97,58 +97,21 @@ methods
             if length(spec)==1
                 error 'missing list of values'
             elseif iscell(spec{2})
-                M.valuelist = spec{2};
-                if length(spec)>=3
-                    M.labellist = spec{3}; 
-                    if length(M.labellist)==length(M.valuelist)-1
-                        M.dodefaultvalue = true;
-                        M.defaultvalue = M.valuelist{end};
-                        M.valuelist(end) = [];
-                    elseif length(M.labellist)==length(M.valuelist)+1
-                        M.doother = true;
-                    elseif length(M.labellist)~=length(M.valuelist)
-                        error 'number of labels must be equal to or one less than number of values'
-                    end
-                end
-                if length(spec)>=4
-                    M.shortlabels = spec{4};
-                    if ~iscell(M.shortlabels) || length(M.shortlabels)~=length(M.labellist)-M.doother
-                        error 'number of short labels does not match number of labels'
-                    end
-                end
+                % format {spec {values...} {labels...} [{shortlabels...}]}
+                M.setValueList(spec{2:end});
             else
-                M.valuelist = spec(2:end);
+                % format {spec value1 value2 ...}
+                M.setValueList(spec(2:end));
             end
             spec = spec{1};
             if M.dodefaultvalue && ~ismember(spec,{'menu' 'menuval' 'menugroup'})
                 error 'default value is possible only for ''menu'', ''menuval'' or ''menugroup'' options, otherwise the number of labels must be equal to the number of values'
             end
         elseif ischar(spec) && ismember(spec,{'listbox' 'popupmenu'})
+            % format 'spec', ..., 'string', {value1 value2 ...}, ...
             kstring = strcmpi(varargin(1:2:end),'string');
             if isempty(kstring), error 'missing list of values', end
-            M.valuelist = cellstr(varargin{kstring});
-        end
-        
-        % special: color
-        M.docolor = false;
-        if ~isempty(regexpi(prop,'color')) && ~isempty(M.valuelist) && any(fn_map(@ischar,M.valuelist))
-            % try converting color names to colors
-            try
-                [colornum colorname] = deal(cell(1,length(M.valuelist)));
-                for i=1:length(colornum)
-                    [colornum{i} colorname{i}] = fn_colorbyname(M.valuelist{i},'strict');
-                end
-                M.valuelist = colornum;
-                if isempty(M.labellist), M.labellist = repmat({'X'},1,length(colornum)); end
-                if isempty(M.shortlabels), M.shortlabels = colorname; end
-                M.docolor = true;
-            catch
-                set(0,'defaultlinecolor',deflinecolor)
-            end
-        end
-        if ~isempty(M.valuelist)
-            if isempty(M.labellist), M.labellist = fn_num2str(M.valuelist); end
-            if isempty(M.shortlabels), M.shortlabels = M.labellist; end
+            M.setValueList(varargin{kstring});
         end
         
         % set type and style
@@ -370,6 +333,59 @@ methods
                 error('style ''%s'' not handled in method ''setvalue''',M.style)
         end
     end
+end
+
+% Change value list
+methods
+    function setValueList(M,valuelist,labellist,shortlabels)
+        % Set value, label, shortlabel lists
+        M.valuelist = valuelist;
+        if nargin>=3
+            M.labellist = labellist;
+            if length(M.labellist)==length(M.valuelist)-1
+                M.dodefaultvalue = true;
+                M.defaultvalue = M.valuelist{end};
+                M.valuelist(end) = [];
+            elseif length(M.labellist)==length(M.valuelist)+1
+                M.doother = true;
+            elseif length(M.labellist)~=length(M.valuelist)
+                error 'number of labels must be equal to or one less than number of values'
+            end
+        else
+            M.labellist = [];
+        end
+        if nargin>=4
+            M.shortlabels = shortlabels;
+            if ~iscell(M.shortlabels) || length(M.shortlabels)~=length(M.labellist)-M.doother
+                error 'number of short labels does not match number of labels'
+            end
+        else
+            M.shortlabels = [];
+        end
+        
+        % special: color
+        M.docolor = false;
+        if ~isempty(regexpi(M.prop,'color')) && any(fn_map(@ischar,M.valuelist))
+            % try converting color names to colors
+            try
+                [colornum colorname] = deal(cell(1,length(M.valuelist)));
+                for i=1:length(colornum)
+                    [colornum{i} colorname{i}] = fn_colorbyname(M.valuelist{i},'strict');
+                end
+                M.valuelist = colornum;
+                if isempty(M.labellist), M.labellist = repmat({'X'},1,length(colornum)); end
+                if isempty(M.shortlabels), M.shortlabels = colorname; end
+                M.docolor = true;
+            end
+        end
+        
+        % set labels and short labels if they are empty
+        if ~isempty(M.valuelist)
+            if isempty(M.labellist), M.labellist = fn_num2str(M.valuelist); end
+            if isempty(M.shortlabels), M.shortlabels = M.labellist; end
+        end
+    end
+        
 end
 
 % Misc
