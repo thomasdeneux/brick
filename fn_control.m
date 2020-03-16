@@ -497,13 +497,8 @@ classdef fn_control < hgsetget
                         % note that in this case, xk.startval has not been
                         % defined yet
                         if ~strcmp(xk.style,'pushbutton')
-                            if ischar(xk.value)
-                                xk.startval = find(strcmp(xk.value,opt));
-                                if isempty(xk.startval), xk.startval = 1; end
-                            else
-                                if ~isequal(xk.value,[]), error 'value must be a string or []', end
-                                xk.startval = 1;
-                            end
+                            xk.startval = fn_find(xk.value,opt,'first');
+                            if isempty(xk.startval), xk.startval = 1; end
                             xk.value = opt{xk.startval};
                         end
                         xk.values = opt;
