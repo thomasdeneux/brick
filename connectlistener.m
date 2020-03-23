@@ -15,7 +15,7 @@ el = addlistener(source,varargin{:});
 % Listen also to the target(s) deletion (to trigger listener deletion)
 if ~iscell(target), target = num2cell(target); end
 for i=1:numel(target)
-    fn_deletefcn(target{i},@(u,e)delete(el));
+    addlistener(target{i},'ObjectBeingDestroyed',@(u,e)delete(el));
 end
 
 % Output?

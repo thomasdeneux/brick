@@ -43,7 +43,7 @@ elseif get(hp,'parent')==get(hu,'parent')
     hl.ppos = fn_pixelposlistener(hp,updatefcn);
     if strcmp(get(hp,'type'),'axes')
         hl.axlim = addlistener(hp,{'XLim','YLim'},'PostSet',updatefcn);
-        enableListener(hl.axlim,strcmp(get(hp,'DataAspectRatioMode'),'manual'));
+        hl.axlim.Enabled = strcmp(get(hp,'DataAspectRatioMode'),'manual');
         hl.axratio = addlistener(hp,'DataAspectRatioMode','PostSet', ...
             @(m,evnt)axlistener(hp,hl,updatefcn));
     end
@@ -57,16 +57,16 @@ if isgraphics(hu)
 end
 
 % delete control upon parent deletion
-fn_deletefcn(hp,@(u,e)delete(hu(ishandle(hu) || (isobject(hu) && isvalid(hu)))))
+addlistener(hp,'ObjectBeingDestroyed',@(u,e)delete(hu(ishandle(hu) || (isobject(hu) && isvalid(hu)))));
 
 % delete listeners upon control deletion
-fn_deletefcn(hu,@(u,e)deleteposlisteners(hl))
+addlistener(hu,'ObjectBeingDestroyed',@(u,e)deleteposlisteners(hl));
 
 %---
 function axlistener(hp,hl,updatefcn)
 
 feval(updatefcn)
-enableListener(hl.axlim,strcmp(get(hp,'DataAspectRatioMode'),'manual'));
+hl.axlim.Enabled = strcmp(get(hp,'DataAspectRatioMode'),'manual');
     
 %---
 function deleteposlisteners(hl)

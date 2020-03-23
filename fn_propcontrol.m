@@ -209,7 +209,7 @@ methods
         M.proplistener = addlistener(obj,prop,'PostSet',@(u,e)updatevalue(M));
         
         % delete everything upon object deletion or control deletion
-        fn_deletefcn(obj,@(u,e)delete(M))
+        addlistener(obj,'ObjectBeingDestroyed',@(u,e)delete(M));
         set(M.hu,'deletefcn',@(u,e)delete(M))
     end
     function delete(M)
@@ -225,13 +225,13 @@ methods
         if strcmp(M.type,'on/off'), curval = fn_switch(curval,'logical'); end
         if M.docolor
             % try to convert color to nice string representation
-            [colornum colorname] = fn_colorbyname(curval);
+            [colornum, colorname] = fn_colorbyname(curval);
             if ~isempty(colornum), curval = colornum; end
         end
         switch M.style
             % type logical or on/off
             case 'menu'
-                set(M.hu,'checked',fn_switch(curval))
+                M.hu.Checked = curval;
             case {'checkbox' 'radiobutton'}
                 set(M.hu,'value',curval)
             % edit

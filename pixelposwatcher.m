@@ -1,8 +1,7 @@
 classdef pixelposwatcher < handle
     % A 'pixel position watcher' object
     %
-    % This object becomes quite useless in R2014b, but we keep it for
-    % compatibility reason.
+    % This object becomes quite useless in R2014b, except for text objects!
     % See also: fn_pixelposlistener, fn_pixelsizelistener, fn_pixelpos, fn_pixelsize
    
     % Thomas Deneux
@@ -38,7 +37,7 @@ classdef pixelposwatcher < handle
             end
             % check Matlab version 
             PP.istext = strcmp(get(hobj,'type'),'text');
-            PP.newgraphics = fn_matlabversion('newgraphics') && ~PP.istext;
+            PP.newgraphics = ~PP.istext;
             setappdata(hobj,'pixelposwatcher',PP)
             PP.hobj = hobj;
             PP.isfig = strcmp(get(hobj,'type'),'figure');

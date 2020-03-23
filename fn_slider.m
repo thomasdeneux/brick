@@ -611,7 +611,7 @@ classdef fn_slider < hgsetget
             U.value = val;
             if U.area==2, U.point = p; end
             % invisible slider part if min==max
-            set(U.hslider,'visible',fn_switch(diff(mM)))
+            set(U.hslider,'visible',fn_switch(diff(mM),'on/off'))
         end
         function set.steps(U,steps)
             % valid only in 'point' mode

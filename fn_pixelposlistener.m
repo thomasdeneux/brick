@@ -22,12 +22,7 @@ switch nargin
 end
 
 % Create listener
-if fn_matlabversion('newgraphics')
-    el = [connectlistener(source,target,'LocationChanged',callback) connectlistener(source,target,'SizeChanged',callback)];
-else
-    ppw = pixelposwatcher(source);
-    el = connectlistener(ppw,target,'changepos',callback);
-end
+el = [connectlistener(source,target,'LocationChanged',callback) connectlistener(source,target,'SizeChanged',callback)];
 
 % Output?
 if nargout==0, clear el, end

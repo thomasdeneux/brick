@@ -27,8 +27,13 @@ if nargin<=2
     
     % specialized functions
     if nargin==1
+        warning 'using fn_switch with only 1 argument is deprecated, use second argument ''logical'' or ''on/off'' to specifiy desired output type'
         % logical <-> on/off conversions
-        if ischar(x)
+        if isa(x,'matlab.lang.OnOffSwitchState')
+            % matlab.lang.OnOffSwitchState -> true/false
+            % this type was introduced in R2017a
+            y = logical(x);
+        elseif ischar(x)
             % on/off -> true/false
             switch x
                 case 'on'

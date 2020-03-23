@@ -808,7 +808,7 @@ classdef fn_control < hgsetget
                 end
             end
             delete(get(X.hp,'children'))
-            fn_deletefcn(X.hp,@(hp,evnt)delete(X))
+            addlistener(X.hp,'ObjectBeingDestroyed',@(hp,evnt)delete(X));
             set(X.hp,'tag','fn_control') % prevent access to fn_imvalue
             
             % Updated sizes

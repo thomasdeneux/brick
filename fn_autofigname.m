@@ -25,7 +25,7 @@ if isempty(savedir) || strcmp(hf,'setfolder')
 end
 
 figname = get(hf,'name');
-if fn_matlabversion('newgraphics'), hfnum=get(hf,'Number'); else hfnum=hf; end
+hfnum=get(hf,'Number');
 if isempty(figname), figname = ['Figure' num2str(hfnum)]; end
 fname = fullfile(savedir, ... 
     [regexprep(figname,'[ |:/\\\*\+<>]','_')  datestr(now,'_yymmdd_HHMMSS')]);

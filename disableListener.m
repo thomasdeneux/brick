@@ -15,7 +15,7 @@ function c = disableListener(hl)
 % Copyright 2015-2017
 
 if nargout==0
-    error 'function disableListener should be used with an output argument (onCleanup object), use enableListener(hl,false) to simply disable a listener'
+    error 'function disableListener should be used with an output argument (onCleanup object), use hl.Enabled = false; to simply disable a listener'
 end
 if isempty(hl)
     c = [];
@@ -27,17 +27,9 @@ end
 function disable(hl)
 
 if ~isvalid(hl), return, end
-if fn_matlabversion('newgraphics') || isa(hl,'event.listener')
-    [hl.Enabled] = deal(false);
-else % property listener, previous to R2014b
-    [hl.Enabled] = deal('off');
-end
+[hl.Enabled] = deal(false);
 
 function enable(hl)
 
 if ~isvalid(hl), return, end
-if fn_matlabversion('newgraphics') || isa(hl,'event.listener')
-    [hl.Enabled] = deal(true);
-else % property listener, previous to R2014b
-    [hl.Enabled] = deal('on');
-end
+[hl.Enabled] = deal(true);

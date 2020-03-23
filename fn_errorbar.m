@@ -106,7 +106,7 @@ switch flag
         if isscalar(x)
             dx = 0;
         else
-            if fn_matlabversion('newgraphics') && ny<=5
+            if ny<=5
                 xdensity = ny/(ny+1.5);
             else
                 xdensity = .8;

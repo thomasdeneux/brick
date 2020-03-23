@@ -237,7 +237,6 @@
 %   fn_propcontrol    - Create controls automatically linked to an object property
 %   deleteValid       - Delete valid objects among the list of objects obj (particularly useful for Matlab graphic handles) 
 %   connectlistener   - Create a listener that will auto-delete when a target object will be deleted
-%   enableListener    - Enable/disable a listener
 %   disableListener   - Momentarily disable a listener (returns an onCleanup oject that reenable it when being garbage collected)
 %
 % MISCELLANEOUS

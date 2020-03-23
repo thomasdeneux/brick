@@ -19,12 +19,9 @@ strict = fn_flags({'strict'},varargin);
 if strict
     pos = fn_pixelpos(hobj,'strict');
     siz = pos(3:4);
-elseif fn_matlabversion('newgraphics')
+else
     pos = getpixelposition(hobj);
     siz = pos(3:4);
-else
-    W = pixelposwatcher(hobj);
-    siz = W.pixelsize;
 end
 
 if nargout==2

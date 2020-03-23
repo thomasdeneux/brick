@@ -53,7 +53,7 @@ t = getappdata(hf,'fn_watch_timer');
 if isempty(t)
     t = timer('StartDelay',.5,'TimerFcn',@(u,e)startfcn(hf));
     setappdata(hf,'fn_watch_timer',t)
-    fn_deletefcn(hf,@(u,e)delete(t));
+    addlistener(hf,'ObjectBeingDestroyed',@(u,e)delete(t));
 end
 
 function startfcn(hf)

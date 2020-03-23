@@ -106,7 +106,7 @@ uimenu(m,'label','Delete legend','callback',@(u,e)delete(hleg))
 set([hleg ht],'UIContextMenu',m)
 
 % Delete legend upon deletion of the lines
-fn_deletefcn(ht,@(u,e)deleteValid(hleg))
+addlistener(ht,'ObjectBeingDestroyed',@(u,e)deleteValid(hleg));
 
 % Output
 if nargout==0, clear hleg, end
