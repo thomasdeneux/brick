@@ -51,7 +51,7 @@ hf = fn_parentfigure(ha);
 
 % Legend axes
 hleg = axes('parent',hp,'pos',[.4 .4 .2 .2],'units','pixel','handlevisibility','off');
-set(hleg,'visible',fn_switch(doframe))
+set(hleg,'visible',onoff(doframe))
 [w h] = fn_pixelsize(hleg);
 set(hleg,'xlim',[0 w],'ylim',[-h 0]) % use pixel coordinate systems to ease everything
 set(hleg,'xtick',[],'ytick',[],'box','on') % some esthetics

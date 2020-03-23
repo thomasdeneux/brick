@@ -365,7 +365,7 @@ classdef graph < hgsetget
             vvalid = logical(G.vweight);
             x = V(1:2,vvalid);
             hl(1) = scatter(x(1,:),x(2,:),G.vweight(vvalid));
-            hold(fn_switch(tmp))
+            hold(onoff(tmp))
             switch flag
                 case 'numbers'
                     for i=find(vvalid)

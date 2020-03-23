@@ -244,7 +244,7 @@ for k=1:nfig
             if isempty(invertcolor)
                 invertcolor = isempty(findall(hfk,'type','uicontrol'));
             end
-            set(hfk,'inverthardcopy',fn_switch(invertcolor))
+            set(hfk,'inverthardcopy',onoff(invertcolor))
             printflags = fn_switch(invertcolor,{},{'-loose'});
             for i=1:length(formatk)
                 fnamei = [fbasek '.' formatk{i}];                              % [new: pdf direct] 

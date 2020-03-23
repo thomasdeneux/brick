@@ -1344,11 +1344,11 @@ classdef fn_control < hgsetget
                 xk = X.controls(k);
                 % Enable name
                 enable = xor(dep_value, X.dependencies(kdep,k)==-1);
-                set(xk.hname,'enable',fn_switch(enable))
+                set(xk.hname,'enable',onoff(enable))
                 % Enable control
                 switch xk.style
                     case {'popupmenu' 'radiobutton' 'togglebutton' 'edit' 'text'}
-                        set(xk.hval,'enable',fn_switch(enable))
+                        set(xk.hval,'enable',onoff(enable))
                     case 'multcheck'
                     case 'multlist'
                     case 'slider'

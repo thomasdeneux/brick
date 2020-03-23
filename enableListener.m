@@ -12,4 +12,4 @@ function enableListener(hl,val)
 % Copyright 2015-2020
 
 warning 'function enableListener(hl,val) is deprecated, use hl.Enabled = val; instead'
-hl.Enabled = fn_switch(val,'logical');
+hl.Enabled = logical(val);

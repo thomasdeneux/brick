@@ -222,7 +222,7 @@ end
 methods
     function updatevalue(M)
         curval = get(M.obj(1),M.prop);
-        if strcmp(M.type,'on/off'), curval = fn_switch(curval,'logical'); end
+        if strcmp(M.type,'on/off'), curval = onoff(curval); end
         if M.docolor
             % try to convert color to nice string representation
             [colornum, colorname] = fn_colorbyname(curval);
@@ -289,9 +289,9 @@ methods
             % type logical or on/off
             case 'menu'
                 if strcmp(M.type,'on/off')
-                    set(M.obj,M.prop,fn_switch(get(M.hu,'checked'),'toggle'));
+                    set(M.obj,M.prop,onoff(~logical(get(M.hu,'checked'))));
                 else
-                    set(M.obj,M.prop,~fn_switch(get(M.hu,'checked'),'logical'));
+                    set(M.obj,M.prop,~logical(get(M.hu,'checked')));
                 end
             case {'checkbox' 'radiobutton'}
                 if strcmp(M.type,'on/off')
@@ -391,12 +391,12 @@ end
 % Misc
 methods
     function set.visible(M,b)
-        M.visible = fn_switch(b,'logical');
-        set([M.hparent M.hu],'visible',fn_switch(b,'on/off')) %#ok<*MCSUP>
+        M.visible = logical(b);
+        set([M.hparent M.hu],'visible',onoff(b)) %#ok<*MCSUP>
     end
     function set.enabled(M,b)
-        M.enabled = fn_switch(b,'logical');
-        set([M.hparent M.hu],'enabled',fn_switch(b,'on/off')) %#ok<*MCSUP>
+        M.enabled = logical(b);
+        set([M.hparent M.hu],'enabled',onoff(b)) %#ok<*MCSUP>
     end
 end
 

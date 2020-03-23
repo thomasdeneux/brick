@@ -219,7 +219,7 @@ classdef panelorganizer < hgsetget
                     case 'V'
                         set(ci.hobj,'units','pixel','pos',[1 sum(xx(i+1:end))+1 W xxi])
                 end
-                set(ci.hobj,'visible',fn_switch(xx(i)>0,'on/off'))
+                set(ci.hobj,'visible',onoff(xx(i)>0))
             end
         end
         function extents = get.extents(O)

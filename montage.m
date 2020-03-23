@@ -255,7 +255,7 @@ classdef montage < interface
                         'EdgeColor','none','FaceColor','texturemap','CDataMapping','direct', ...
                         'buttondownfcn',@(u,e)action(M,'select&move',i), ...
                         'uiContextMenu',M.context,'userdata',i,'tag','montage', ...
-                        'visible',fn_switch(s.active));
+                        'visible',onoff(s.active));
                     if ~isempty(alpha)
                         set(M.im(i).h(1),'alphadata',alpha,'alphadatamapping','none','facealpha','texturemap')
                     else
@@ -265,13 +265,13 @@ classdef montage < interface
                         'color','b','linestyle','none','marker','o', ...
                         'uiContextMenu',M.context,'userdata',i,'tag','montage', ...
                         'buttondownfcn',@(u,e)action(M,'select&rotate',i), ...
-                        'visible',fn_switch(s.active && M.showmarks));
+                        'visible',onoff(s.active && M.showmarks));
                     M.im(i).h(3) = text(xyh(1,1),xyh(2,1),s.name,'parent',M.grob.ha, ...
                         'color','b', ...
                         'buttondownfcn',@(u,e)action(M,'select&move',i), ...
                         'uiContextMenu',M.context,'userdata',i,'tag','montage', ...
                         'horizontalalignment','center','verticalalignment','middle','interpreter','none', ...
-                        'visible',fn_switch(s.active && M.showmarks));
+                        'visible',onoff(s.active && M.showmarks));
                     if s.isbackground
                         set(M.im(i).h,'HitTest','off')
                         uistack(fliplr(M.im(i).h),'bottom')
@@ -296,10 +296,10 @@ classdef montage < interface
                     end
                     if dorenum, set(M.im(i).h(1),'userdata',i), end
                     if doactive
-                        set(M.im(i).h(1),'visible',fn_switch(s.active))
-                        set(M.im(i).h(2:end),'visible',fn_switch(s.active && M.showmarks))
+                        set(M.im(i).h(1),'visible',onoff(s.active))
+                        set(M.im(i).h(2:end),'visible',onoff(s.active && M.showmarks))
                     end
-                    set(M.im(i).h,'hittest',fn_switch(~s.isbackground))
+                    set(M.im(i).h,'hittest',onoff(~s.isbackground))
                     if s.isbackground
                         uistack(fliplr(M.im(i).h),'bottom')
                     end
