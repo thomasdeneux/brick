@@ -174,7 +174,7 @@ classdef fn_supercontrol < hgsetget
             nx = length(X.x_data);
         end
         function b = get.immediateupdate(X)
-            b = logical(get(X.immupdcontrol,'value'));
+            b = boolean(get(X.immupdcontrol,'value'));
         end
         function set.immediateupdate(X,b)
             set(X.immupdcontrol,'value',b)
@@ -443,7 +443,7 @@ classdef fn_supercontrol < hgsetget
                         end
                     end
                 case {'checkbox' 'togglebutton' 'radiobutton'}
-                    val = logical(get(u,'value'));
+                    val = boolean(get(u,'value'));
                 case 'stepper'
                     val = get(u,'value');
                 otherwise
@@ -461,7 +461,7 @@ classdef fn_supercontrol < hgsetget
         end
         function data_toggleactive(X,u)
             i = get(get(u,'parent'),'userdata');
-            X.x_data(i).active = logical(get(u,'value'));
+            X.x_data(i).active = boolean(get(u,'value'));
             % eval fn_supercontrol callback
             X.activechg = true;
             evalfun(X)

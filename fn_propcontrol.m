@@ -289,7 +289,7 @@ methods
             % type logical or on/off
             case 'menu'
                 if strcmp(M.type,'on/off')
-                    set(M.obj,M.prop,onoff(~logical(get(M.hu,'checked'))));
+                    set(M.obj,M.prop,onoff(~boolean(get(M.hu,'checked'))));
                 else
                     set(M.obj,M.prop,~logical(get(M.hu,'checked')));
                 end
@@ -297,7 +297,7 @@ methods
                 if strcmp(M.type,'on/off')
                     set(M.obj,M.prop,fn_switch(get(M.hu,'checked'),'on/off'));
                 else
-                    set(M.obj,M.prop,logical(get(M.hu,'value')));
+                    set(M.obj,M.prop,boolean(get(M.hu,'value')));
                 end
             % edit
             case 'edit'
@@ -391,11 +391,11 @@ end
 % Misc
 methods
     function set.visible(M,b)
-        M.visible = logical(b);
+        M.visible = boolean(b);
         set([M.hparent M.hu],'visible',onoff(b)) %#ok<*MCSUP>
     end
     function set.enabled(M,b)
-        M.enabled = logical(b);
+        M.enabled = boolean(b);
         set([M.hparent M.hu],'enabled',onoff(b)) %#ok<*MCSUP>
     end
 end

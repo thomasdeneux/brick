@@ -105,7 +105,7 @@ umem = uicontrol(hf,'style','checkbox','string','do not ask again', ...
 uiwait(hf)
 if ishandle(hf)
     answer = (get(hf,'currentobject')==uyes);
-    mem = answer && logical(get(umem,'value'));
+    mem = answer && boolean(get(umem,'value'));
     close(hf)
 else 
     mem = false;

@@ -27,7 +27,7 @@ if nargin<=2
     
     % specialized functions
     if nargin==1
-        warning 'using fn_switch with only 1 argument is deprecated, use ''logical'' overloaded function or ''onoff'' function instead'
+        warning 'using fn_switch with only 1 argument is deprecated, use ''boolean'' or ''onoff'' function instead'
         % logical <-> on/off conversions
         if isa(x,'matlab.lang.OnOffSwitchState')
             % matlab.lang.OnOffSwitchState -> true/false
@@ -52,7 +52,7 @@ if nargin<=2
             end
         end
     elseif ischar(varargin{2}) && strcmp(varargin{2},'logical')
-        warning 'using fn_switch with 2d argument ''logical'' is deprecated, use overloaded function ''logical'' instead'
+        warning 'using fn_switch with 2d argument ''logical'' is deprecated, use function ''boolean'' instead'
         % on/off -> true/false conversion only
         if ischar(x)
             switch x

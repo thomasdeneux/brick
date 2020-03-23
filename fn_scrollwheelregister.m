@@ -51,7 +51,7 @@ if ischar(arg)
             unregister(W,hobj)
             return
         case {'on' 'off'}
-            setactive(W,hobj,logical(arg))
+            setactive(W,hobj,boolean(arg))
             return
         case 'default'
             setdefault(W,hobj)

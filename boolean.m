@@ -1,5 +1,5 @@
-function b = logical(x)
-% function b = logical(x)
+function b = boolean(x)
+% function b = boolean(x)
 %---
 % overload of built-in logical conversion function. If x is 'on' or 'off',
 % will return respectively true or false. In other cases behaves as the
@@ -10,5 +10,5 @@ if ischar(x) && strcmp(x,'on')
 elseif ischar(x) && strcmp(x,'off')
     b = false;
 else
-    b = builtin('logical',x);
+    b = logical(x);
 end

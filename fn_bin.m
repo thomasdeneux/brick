@@ -238,5 +238,5 @@ switch dological
     case 1
         data = (data==1);
     case -1
-        data = logical(data);
+        data = boolean(data);
 end

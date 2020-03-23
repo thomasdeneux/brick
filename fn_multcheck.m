@@ -141,7 +141,7 @@ classdef fn_multcheck < hgsetget
                     set(P.hu(k),'value',val(k))
                 end
             end
-            P.value = logical(val);
+            P.value = boolean(val);
         end
     end
     

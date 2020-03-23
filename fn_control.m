@@ -874,7 +874,7 @@ classdef fn_control < hgsetget
                     end
                     if xk.check
                         set(xk.hname,'style','checkbox','value',xk.defaultcheck);
-                        set(xk.hname,'callback',@(hu,evnt)chgvalue(X,k,logical(get(hu,'value'))));
+                        set(xk.hname,'callback',@(hu,evnt)chgvalue(X,k,boolean(get(hu,'value'))));
                     end
                     if strcmp(xk.style,'slider') && (~xk.check || xk.defaultcheck)
                         set(xk.hname,'string',[xk.nicename ' (' num2str(xk.value,xk.format), ')'])
