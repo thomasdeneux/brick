@@ -9,14 +9,15 @@ function locate(f)
 % Thomas Deneux
 % Copyright 2015-2017
 
+try %#ok<TRYNC>
+    f = which(f);
+end
+
 if exist(f,'dir')
     % folder
     cmd = ['!explorer "' f '"'];
 else
     % file
-    try %#ok<TRYNC>
-        f = which(f);
-    end
     cmd = ['!explorer /select,"' f '"'];
 end
 disp(cmd)

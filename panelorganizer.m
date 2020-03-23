@@ -330,7 +330,7 @@ classdef panelorganizer < hgsetget
             hf = fn_parentfigure(O.hobj);
             n = O.nchildren;
             if ischar(idx)
-                if ~fn_switch(get(hf,'Resize')), return, end % not allowed to resize figure
+                if ~boolean(get(hf,'Resize')), return, end % not allowed to resize figure
                 flag = idx;
                 switch [O.splitmode flag]
                     case {'Hfigleft' 'Vfigtop'}

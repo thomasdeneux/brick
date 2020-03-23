@@ -222,7 +222,6 @@ end
 methods
     function updatevalue(M)
         curval = get(M.obj(1),M.prop);
-        if strcmp(M.type,'on/off'), curval = onoff(curval); end
         if M.docolor
             % try to convert color to nice string representation
             [colornum, colorname] = fn_colorbyname(curval);
@@ -231,7 +230,7 @@ methods
         switch M.style
             % type logical or on/off
             case 'menu'
-                M.hu.Checked = curval;
+                M.hu.Checked = onoff(curval);
             case {'checkbox' 'radiobutton'}
                 set(M.hu,'value',curval)
             % edit
