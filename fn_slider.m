@@ -55,6 +55,7 @@ classdef fn_slider < hgsetget
     properties
         layout = 'auto';    % 'left', 'right', 'up', 'down' or 'auto'
         Enabled = true;
+        grab_sides = true;
     end
     properties (SetAccess='private')
         sliderscrolling = false;
@@ -697,7 +698,7 @@ classdef fn_slider < hgsetget
                 otherwise
                     % slide
                     p0 = mouseposframe(U);
-                    if strcmp(flag,'slider') && U.area
+                    if strcmp(flag,'slider') && U.area && U.grab_sides
                         PIX = 4;
                         xs = mouseposslider(U);
                         if xs(1)<=PIX

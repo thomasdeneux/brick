@@ -177,7 +177,7 @@ methods
                 dosep = ~isempty(get(mparent,'children'));
                 for i=1:n
                     M.hu(i) = uimenu(mparent,'label',M.labellist{i});
-                    if M.docolor, set(M.hu(i),'foregroundcolor',colornum{i}), end
+                    if M.docolor, set(M.hu(i),'foregroundcolor',M.valuelist{i}), end
                     if i==1 && dosep, set(M.hu(i),'separator','on'), end
                     if ~isempty(varargin), set(M.hu(i),varargin{:}); end
                 end
