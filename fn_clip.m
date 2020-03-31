@@ -46,7 +46,6 @@ function [x clip] = fn_clip(x,varargin)
 if nargin==0, help fn_clip, return, end
 
 % Input
-x = fn_float(x);
 clipflag = []; outflag = []; nanvalue = [];
 for k=1:length(varargin)
     a = varargin{k};
@@ -159,7 +158,7 @@ else
 end
 
 % clip
-x = (x-clip(1))/diff(clip);
+x = (fn_float(x)-clip(1))/diff(clip);
 if ~doclip, return, end
 if ~isempty(nanvalue)
     xnan = isnan(x);
