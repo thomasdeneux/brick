@@ -271,7 +271,7 @@ switch type
             ax = axis(ha); 
             screenratio = sz(2)/sz(1); % height / width
             axratio = (ax(4)-ax(3))/(ax(2)-ax(1)); % same, in axes coordinates
-            yadjust = screenratio / axratio; 
+            yadjust = screenratio / axratio;
         else
             yadjust = 1;
         end
@@ -290,9 +290,31 @@ switch type
         ax = info.axis;
         u = (ax(:,2)-ax(:,1))/2;
         center = mean(ax,2);
-        value = {center u info.eccentricity};
+        ecc = info.eccentricity;
+        if doscreencircle && ~all(u==0)
+            % ellipse is defined for the moment in a referential where
+            % y-axis has been scaled by yadjust, so we need to convert back
+            % to the original referential
+            % we use index 1/2 for respectively original/adjusted
+            % referentials
+            
+            % vector conversion from ref1 to ref2
+            M = diag([1 yadjust]);
+            
+            % first convert to symmatrix representation
+            u2 = M*u;
+            e2 = ecc;
+            A2 = EllipseVector2Sym(u2,e2);
+            
+            % second apply affinity M^-1 (conversion from ref2 back to ref1)
+            [u1, e1, ~] = EllipseAffinity(u2,e2,A2,M^-1);
+            [u, ecc] = deal(u1, e1); % that's it
+        end
+        value = {center u ecc};
         if strcmp(type,'ring'), value{4} = info.relradius; end
+        
         delete(hl)
+        
         if showselection
             oldnextplot=get(ha,'NextPlot'); set(ha,'NextPlot','add')
             plot(x(1,1:end),x(2,1:end),'k-','parent',ha),
@@ -463,7 +485,7 @@ switch flag
     case 'click'
         ax = info.axis;
         u = (ax(:,2)-ax(:,1))/2;
-        v = [u(2)*yadjust; -u(1)/yadjust];
+        v = [u(2)*yadjust; -u(1)/yadjust]; % vector that is orthogonal to u and of same norm as u in the 'yadjust' changed referential
         p = ax(:,1) + u + v;
         p0 = fn_coordinates(ha,'a2s',p,'position');
         set(0,'pointerlocation',p0);
@@ -487,23 +509,22 @@ o = mean(ax,2);
 u = (ax(:,2)-ax(:,1))/2;
 
 % change to a referential that has the requested aspect ratio
-u(2,:) = u(2,:) * yadjust;
-
-% norm
-normu2 = sum(u.^2);
+u2 = u;
+u2(2) = u2(2) * yadjust;
 
 % orthogonal vector
-v = [u(2); -u(1)];
-
-% half of main axis vector
-x = u / 2;
+v2 = [u2(2); -u2(1)];
 
 % eccentricity
 switch flag
     case 'width'
-        uc = sum(x.*u)/normu2;
-        vc = sum(x.*v)/normu2;
-        e = abs(vc / (sin(acos(uc))));
+        % project point on u2 and v2
+        center = mean(ax,2);
+        x2 = (p-center);
+        x2(2) = x2(2) * yadjust; % change of referential
+        uc = sum(x2.*u2)/sum(u2.^2);
+        vc = sum(x2.*v2)/sum(u2.^2);
+        e = abs(vc / (sin(acos(uc)))); % don't remember why this formula...
         info.eccentricity = e;
     otherwise
         e  = info.eccentricity;
@@ -513,10 +534,9 @@ end
 switch flag
     case 'ring'
         center = mean(ax,2);
-        x = (p-center);
-        u = (ax(:,2)-ax(:,1))/2;
-        v = [u(2); -u(1)];
-        relradius = sqrt((x'*u)^2 + (x'*v/e)^2) / norm(u)^2;
+        x2 = (p-center);
+        x2(2) = x2(2) * yadjust; % change of referential
+        relradius = sqrt((x2'*u2)^2 + (x2'*v2/e)^2) / norm(u2)^2;
         info.relradius = relradius;
     otherwise
         relradius = info.relradius;
@@ -532,8 +552,8 @@ if ~isempty(relradius)
 end
 
 % ellipse contour: go back to the axes referential
-xdata = o(1) + u(1)*udata + v(1)*vdata;
-ydata = o(2) + (u(2)*udata + v(2)*vdata) / yadjust;
+xdata = o(1) + u2(1)*udata + v2(1)*vdata;
+ydata = o(2) + (u2(2)*udata + v2(2)*vdata) / yadjust;
 
 % display
 set(hl,'xdata',xdata,'ydata',ydata)
@@ -586,3 +606,39 @@ np = size(x,2);
 L = zeros(1,np);
 for i=2:np, L(i) = L(i-1)+norm(x(i,:)-x(i-1,:)); end
 if ~isempty(L), x = interp1(L,x,0:ds:L(end)); end
+
+%------------
+% ELLIPSE
+%------------
+
+% Ellipse defined either by center, main radius vector and eccentricity, or
+% by its bilinear equation (x-c)'A(x-c) = 1,
+
+function [u, e, A] = EllipseAffinity(u,e,A,M)
+
+% ellipse equation becomes, for y=Mx: (y-Mc)'(M^-1' A M^-1)(y-Mc) = 1
+M1 = M^-1;
+A = M1'*A*M1;
+[u, e] = EllipseSym2Vector(A);
+
+%---
+function A = EllipseVector2Sym(u,e)
+
+% (U,c) is the referential of the ellipse, x->y=U'(x-c) returns coordinates
+% in this referential, in which the ellipse equation is
+% y(1)^2 + y(2)^2/e^2 = r^2
+r = norm(u);
+u = u/r;
+U = [[-u(2); u(1)] u];
+A = U*(diag([1/e^2 1])/r^2)*U';
+
+%---
+function [u e] = EllipseSym2Vector(A)
+
+% eigenvalue decomposition returns U, r and e as above
+[U D] = svd(A); % better use svd than eig because output is real even if A is not exactly symmetric
+r = D(2,2)^-(1/2);
+e = D(1,1)^-(1/2) / r;
+u = r*U(:,2);
+
+

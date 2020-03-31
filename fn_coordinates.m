@@ -34,7 +34,7 @@ if ishandle(varargin{1})
         case 'figure'
             hf = h; ha = [];
         case 'axes'
-            ha = h; hf = get(ha,'parent');
+            ha = h; hf = fn_parentfigure(ha);
         otherwise
             error('handle is not figure or axes')
     end
@@ -62,21 +62,8 @@ Mg2s = transf2mat(origf-1,[1 1]); %#ok<*NASGU>
 % figure to axes conversion
 if any(ismember('abc',refchangetag))
     if isempty(ha), ha=gca; end
-    haunits = get(ha,'units');
-    switch haunits
-        case 'normalized'
-            posa = get(ha,'position');
-        case 'pixels'
-            % direct computation is better than changing the units if there
-            % are listener to 'units' or to 'position'
-            posa = get(ha,'position');
-            posa = [(posa(1:2)-1)./scalef posa(3:4)./scalef];
-        otherwise
-            % don't know how to do the calculations -> switch
-            set(ha,'units','normalized')
-            posa = get(ha,'position');
-            set(ha,'units',haunits)
-    end
+    posa = fn_pixelpos(ha,'recursive');
+    posa = [(posa(1:2)-1)./scalef posa(3:4)./scalef]; % relative position
     axa = double(axis(ha));
     centera = posa(1:2) + posa(3:4)/2;
     sizea = posa(3:4);

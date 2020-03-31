@@ -6,13 +6,20 @@ function pos = fn_pixelpos(hobj,varargin)
 %
 % In R2014b and later, wraps function getpixelposition
 %
-% See also fn_pixelsize 
+% Input:
+% - hobj            most graphic objects
+% - 'recursive'     return position relative to parent figure rather than
+%                   to immediate parent
+% - 'strict'        take into account that when DataAspectRatio is
+%                   fixed, only a subset of the axes space is used
+%
+% See also fn_pixelsize, getpixelposition
 
 % Thomas Deneux
 % Copyright 2011-2017
 
 if nargin==0, help fn_pixelpos, return, end
-[recursive strict] = fn_flags({'recursive' 'strict'},varargin);
+[recursive, strict] = fn_flags({'recursive' 'strict'},varargin);
  
 % get pixel position
 if strcmp(get(hobj,'type'),'text')
