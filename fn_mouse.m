@@ -11,7 +11,7 @@ function varargout = fn_mouse(varargin)
 % 'cross'       get coordinates on mouse click - use cross pointer
 % 'rect'        get a rectangle selection (format [xstart ystart xsize ysize])
 % 'rectax'      get a rectangle selection (format [xstart xend ystart yend], using bottom-left corner as start)
-% 'rectaxp'     get a rectangle selection (format [xstart xend ystart yend], using first point pressed as start)
+% 'rectaxp'     get a rectangle selection (format [xstart xend; ystart yend], using first point pressed as start)
 % 'rectangle'   get a rectangle selection (format [x1 x2 x3 x4; y1 y2 y3 y4])
 % 'poly'        polygone selection
 % 'line' or 'segment'       single line segment
