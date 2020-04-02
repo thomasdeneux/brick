@@ -361,7 +361,7 @@ function state = guisuspend(ha)
 hf = fn_parentfigure(ha);
 state.hf        = hf;
 state.obj       = findobj(hf);
-state.hittest   = get(state.obj,'hittest');
+state.hittest   = fn_get(state.obj,'hittest');
 state.buttonmotionfcn   = get(hf,'windowbuttonmotionfcn');
 state.buttondownfcn     = get(hf,'windowbuttondownfcn');
 state.buttonupfcn       = get(hf,'windowbuttonupfcn');
@@ -369,7 +369,7 @@ state.keydownfcn        = get(hf,'keypressfcn');
 state.keyupfcn = get(hf,'keyreleasefcn');
 % state.handlevis = get(ha,'handlevisibility'); % seems not necessary
 
-set(state.obj,'hittest','off')
+fn_set(state.obj,'hittest','off')
 set(hf,'hittest','on','windowbuttonmotionfcn','', ...
     'windowbuttondownfcn','','windowbuttonupfcn','', ...
     'keypressfcn','','keyreleasefcn','')
@@ -378,9 +378,7 @@ set(hf,'hittest','on','windowbuttonmotionfcn','', ...
 %-------------------------------------------------
 function guirestore(ha,state)
 
-for k=1:length(state.obj)
-    set(state.obj(k),'hittest',state.hittest{k});
-end
+fn_set(state.obj,'hittest',state.hittest);
 hf = state.hf;
 set(hf,'windowbuttonmotionfcn',state.buttonmotionfcn, ...
     'windowbuttondownfcn',state.buttondownfcn, ...

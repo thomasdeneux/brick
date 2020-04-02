@@ -1,12 +1,13 @@
-function [out errormsg] = fn_chardisplay(varargin)
-% function [str errormsg] = fn_chardisplay(val[,'ignorelimit'])
+function [out, errormsg] = fn_chardisplay(varargin)
+% function [str, errormsg] = fn_chardisplay(val[,'ignorelimit'])
 % function val = fn_chardisplay(str,type)
 %---
 % build a string representation of a non-character value and converts back
 % the string to the original type
 % 
-% Example:
+% Example: ...
 % 
+% See also fn_idx2str
 
 % Thomas Deneux
 % Copyright 2013-2017

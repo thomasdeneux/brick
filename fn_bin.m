@@ -1,4 +1,4 @@
-function [data maskbin] = fn_bin(data,bins,varargin)
+function [data, maskbin] = fn_bin(data,bins,varargin)
 % function data = fn_bin(data,bins(vector)|xybin(scalar)[,fun][,'same'][,'mask',mask])
 % function [data maskbin] = fn_bin(data,xybin(scalar)[,'mask',mask])
 %---
