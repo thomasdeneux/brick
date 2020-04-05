@@ -178,7 +178,7 @@ classdef panelorganizer < hgsetget
         function idx = removeSubPanel(O,idx)
             % check
             if ~isvalid(O), return, end % occurs e.g. when closing figure
-            if ishandle(idx) && ~strcmp(get(idx,'type'),'figure')
+            if (ishandle(idx) || isobject(idx)) && (~isvalid(idx) || ~strcmp(get(idx,'type'),'figure'))
                 idx = find([O.children.hobj]==idx,1);
                 if isempty(idx), return, end % happens on reentrant call
             end
