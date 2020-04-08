@@ -1,10 +1,10 @@
 function varargout = fn_indices(s,varargin)
 %FN_INDICES Convert between global and per-dimension indices 
 %---
-% function globi = fn_indices(sizes|array,i,j,k,...[,'s2g'])
-% function globi = fn_indices(sizes|array,ijk[,'s2g'])
-% function [i j k...] = fn_indices(sizes|array,globi[,'g2s'])
-% function ijk = fn_indices(sizes|array,globi[,'g2s'])
+% function globi = fn_indices(sizes|array,i,j,k,...[,'i2g'])
+% function globi = fn_indices(sizes|array,ijk[,'i2g'])
+% function [i j k...] = fn_indices(sizes|array,globi[,'g2i'])
+% function ijk = fn_indices(sizes|array,globi[,'g2i'])
 %---
 % converts between global and per-coordinate indices
 % 

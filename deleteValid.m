@@ -12,7 +12,7 @@ function deleteValid(varargin)
 
 for i=1:nargin
     obj = varargin{i};
-    if isempty(obj), return, end
+    if isempty(obj), continue, end
     if isstruct(obj), obj = struct2cell(obj); end
     if iscell(obj), deleteValid(obj{:}), return, end
     if isobject(obj)

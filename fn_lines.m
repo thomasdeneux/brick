@@ -2,9 +2,19 @@ function out = fn_lines(varargin)
 %FN_LINES Draw a series of vertical and/or horizontal lines
 %---
 % function hl = fn_lines([xcoordinates,ycoordinates[,zcoordinates]][,ha][,'close'][,'bottom'][,'compact'][,line options])
-% function hl = fn_lines('x|y'[,xorycoordinates][,ha][,'close'][,'bottom'][,'compact'][,line options])
+% function hl = fn_lines('x|y'[,xorycoordinates][,ha][,'bottom'][,'compact'][,line options])
 %---
 % draw a series of vertical and/or horizontal lines
+% 
+% Input:
+% - 'x|y'           indicate whether to draw only vertical or horizontal
+%                   lines
+% - coordinates     x, y, z coordinates of points through which lines
+%                   should pass
+% - ha              axes handle
+% - 'bottom'        stack all created lines below other graphic elements
+% - 'compact'       lines extend only to x/y/z limits of other lines rather
+%                   than to axes limits 
 
 % Thomas Deneux
 % Copyright 2004-2017
@@ -47,7 +57,7 @@ end
 if doz && ~(dox && doy), error 'argument', end
 x = fn_float(x); y = fn_float(y); z = fn_float(z);
 % (other options)
-ha = []; [doclose dostackbottom docompact] = deal(false); lineopt = {'color' 'k'};
+ha = []; [doclose, dostackbottom, docompact] = deal(false); lineopt = {'color' 'k'};
 for i=1:length(varargin)
     a = varargin{i};
     if isscalar(a) && ishandle(a) && strcmp(get(a,'type'),'axes')
@@ -75,7 +85,11 @@ end
 
 % Go
 if docompact
-    ax = [min(x(:)) max(x(:)) min(y(:)) max(y(:))];
+    if doz
+        ax = [min(x(:)) max(x(:)) min(y(:)) max(y(:)) min(z(:)) max(z(:))];
+    else
+        ax = [min(x(:)) max(x(:)) min(y(:)) max(y(:))];
+    end
 else
     ax = axis(ha);
 end
@@ -98,12 +112,8 @@ if ~doz
     axis(ha,ax) % under some conditions, it can happen that drawing the lines changed the range! re-establish it
 else
     % 3D
-    [nx ny nz] = deal(length(x),length(y),length(z));
-    if doclose
-        [xx yy zz] = deal(x([1 end]),y([1 end]),z([1 end]));
-    else
-        [xx yy zz] = deal(ax([1 2]),ax([3 4]),ax([5 6]));
-    end
+    [nx, ny, nz] = deal(length(x),length(y),length(z));
+    [xx, yy, zz] = deal(ax([1 2]),ax([3 4]),ax([5 6]));
     hlxy = zeros(nx,ny);
     for i=1:nx
         for j=1:ny
