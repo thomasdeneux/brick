@@ -47,7 +47,7 @@ end
 if doz && ~(dox && doy), error 'argument', end
 x = fn_float(x); y = fn_float(y); z = fn_float(z);
 % (other options)
-ha = gca; [doclose dostackbottom docompact] = deal(false); lineopt = {'color' 'k'};
+ha = []; [doclose dostackbottom docompact] = deal(false); lineopt = {'color' 'k'};
 for i=1:length(varargin)
     a = varargin{i};
     if isscalar(a) && ishandle(a) && strcmp(get(a,'type'),'axes')
@@ -66,6 +66,7 @@ for i=1:length(varargin)
         end
     end
 end
+if isempty(ha), ha = gca; end
 
 % Auto-coordinates
 if ~carg
@@ -94,7 +95,7 @@ if ~doz
             hly(k)=line(ax([1 2]),[1 1]*y(k),lineopt{:},'parent',ha);
         end
     end
-    axis(ax) % under some conditions, it can happen that drawing the lines changed the range! re-establish it
+    axis(ha,ax) % under some conditions, it can happen that drawing the lines changed the range! re-establish it
 else
     % 3D
     [nx ny nz] = deal(length(x),length(y),length(z));
