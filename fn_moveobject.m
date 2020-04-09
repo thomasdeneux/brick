@@ -1,9 +1,12 @@
 function dp = fn_moveobject(hobj,varargin)
-% function dp = fn_moveobject(hobj[,'latch'][,'point',i][,'pointer',pointer])
-% function dp = fn_moveobject(hobj,vector)
+% function [dp =] fn_moveobject(hobj[,'latch'][,'point',i][,'pointer',pointer])
+% function [dp =] fn_moveobject(hobj,vector)
+% function [dp =] fn_moveobject(hobj,event)
 %---
-% moves objects while mouse button is pressed
-% the second syntax moves the object by a fixed vector
+% Moves objects while mouse button is pressed.
+% Second syntax moves the object by a fixed vector.
+% Third syntax does not use the event, but allows to write
+% set(hobj,'ButtonDownFcn',@fn_moveobject) to move hobj when selected.
 % 
 % Options
 % - 'latch'     when button is released, brings objects back to initial
@@ -47,6 +50,7 @@ if ~isscalar(unique([par{:}])), error('objects must have the same parent'), end
 latchflag = false; twiceflag = false; pointidx = 0; movedir = 'xy'; pointer = [];
 i = 1; 
 while i<=length(varargin)
+    if isa(varargin{i},'event.EventData'), i = i+1; continue, end
     switch varargin{i}
         case 'latch'
             latchflag = true;

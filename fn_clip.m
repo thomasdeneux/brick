@@ -97,6 +97,7 @@ else
             clip = centerval + [-1 1]*max(abs(x(:)-centerval));
         end
     elseif ~isempty(xstd)
+        x = fn_float(x);
         if isempty(xstd), xstd=1; else xstd=str2double(xstd); end
         if isempty(centerval), m = mean(x(~isnan(x) & ~isinf(x))); else m = centerval; end
         st = std(x(~isnan(x) & ~isinf(x)));
