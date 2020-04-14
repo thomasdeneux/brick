@@ -158,8 +158,12 @@ else
     b = outflag(2);
 end
 
+% convert to float if the data is integer (we avoided doing it before
+% because it was not needed in the case of the 'getrange' output flag)
+[x, clip] = deal(fn_float(x),fn_float(clip));
+
 % clip
-x = (fn_float(x)-clip(1))/diff(clip);
+x = (x-clip(1))/diff(clip);
 if ~doclip, return, end
 if ~isempty(nanvalue)
     xnan = isnan(x);
