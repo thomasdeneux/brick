@@ -290,7 +290,7 @@ methods
                 if strcmp(M.type,'on/off')
                     set(M.obj,M.prop,onoff(~boolean(get(M.hu,'checked'))));
                 else
-                    set(M.obj,M.prop,~logical(get(M.hu,'checked')));
+                    set(M.obj,M.prop,~boolean(get(M.hu,'checked')));
                 end
             case {'checkbox' 'radiobutton'}
                 if strcmp(M.type,'on/off')
