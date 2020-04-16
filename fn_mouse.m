@@ -14,6 +14,8 @@ function varargout = fn_mouse(varargin)
 % 'rectaxp'     get a rectangle selection (format [xstart xend; ystart yend], using first point pressed as start)
 % 'rectangle'   get a rectangle selection (format [x1 x2 x3 x4; y1 y2 y3 y4])
 % 'poly'        polygone selection
+% 'polypt'      polygone selection, or single point if mouse was
+%               immediately released
 % 'line' or 'segment'       single line segment
 % 'xsegment', 'ysegment'    a segment in x or y (format [start end]) 
 % 'free'        free-form drawing
@@ -193,16 +195,31 @@ switch type
             end
             varargout = {rect};
         end
-    case 'poly'
+    case {'poly', 'polypt'}
         if ~buttonalreadypressed, waitforbuttonpressmsg(ha,msg), end
         selectiontype = get(hf,'selectionType');
         
-        p = get(ha,'currentpoint'); p = p(1,1:2);
-        pp = fn_pointer([p(1); p(2)]);
+        p = get(ha,'currentpoint'); p = p(1,1:2)';
+        pp = fn_pointer(p);
         hl(1) = line(pp.x(1,:),pp.x(2,:),'parent',ha,'hittest','off', ...
             'color','k');
         hl(2) = line(pp.x(1,:),pp.x(2,:),'parent',ha,'hittest','off', ...
             'color','w','linestyle',':');
+        % check whether mouse was released before any mouse motion
+        if strcmp(type,'polypt')
+            pmv = pointer();
+            set(hf,'WindowButtonUpFcn',@(u,e)set(pmv,'x','up'))
+            set(hf,'WindowButtonMotionFcn',@(u,e)set(pmv,'x','move'))
+            waitfor(pmv,'x')
+            if strcmp(pmv.x,'up')
+                set(hf,'WindowButtonMotionFcn','')
+                delete(hl)
+                varargout = {p};
+                return
+            else
+                updateLine(ha,hl,pp)
+            end
+        end
         set(hf,'WindowButtonMotionFcn',@(u,e)updateLine(ha,hl,pp))
         while true
             pp.x = pp.x(:,[1:end end]); % add a new point

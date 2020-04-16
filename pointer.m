@@ -1,4 +1,4 @@
-classdef pointer < handle
+classdef pointer < hgsetget
     %POINTER   Implement a pointer to any Matlab object
     %---
     % function p = pointer(x)
