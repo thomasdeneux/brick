@@ -156,6 +156,14 @@ methods
                         kparent = find(strcmpi(varargin(1:2:end),'parent'));
                         mparent = varargin{2*kparent};
                         varargin(2*(kparent-1)+(1:2)) = [];
+                        klab = find(strcmpi(varargin(1:2:end),'label'));
+                        if ~isempty(klab)
+                            labelprefix = [varargin{2*klab} ': '];
+                            for i = 1:length(M.labellist)
+                                M.labellist{i} = [labelprefix M.labellist{i}];
+                            end
+                            varargin(2*(kparent-1)+(1:2)) = [];
+                        end
                     case {'sub' 'sub+val'}
                         M.doautolabel = strcmp(menustyle,'sub+val');
                         mparent = uimenu('label',M.prop,varargin{:},'deletefcn',@(u,e)delete(M));
