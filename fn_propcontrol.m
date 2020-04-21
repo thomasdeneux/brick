@@ -3,7 +3,7 @@ classdef fn_propcontrol < hgsetget
 %---
 % function fn_propcontrol(obj,prop,spec,graphic object options...)
 % function fn_propcontrol(obj,prop,spec,{graphic object options...})
-% function hu = fn_propcontrol.createcontrol(...)
+% function ctrl = fn_propcontrol.createcontrol(...)
 %---
 % Create a control that will be synchronized to an object property value.
 % Use the static method fn_propcontrol.createcontrol (3rd syntax above) to
@@ -15,7 +15,8 @@ classdef fn_propcontrol < hgsetget
 % - prop    the name of the observed property THIS PROPERTY MUST BE SET AS 
 %           OBSERVABLE, AND ITS SET ACCESS MUST BE PUBLIC
 % - spec    specification of both the value type and the control style:
-%           . for logical values: 'checkbox', 'radiobutton' or 'menu'
+%           . for logical values: 'checkbox', 'radiobutton','togglebutton'
+%             or 'menu' 
 %           . for numerical and char values: 'char', 'double', 'uint8', etc
 %           . for list of values: {spec value1 value2 ...}
 %             or {spec {values...} {labels...} [{shortlabels...}]} where
@@ -44,6 +45,10 @@ classdef fn_propcontrol < hgsetget
 %           property is used.
 %           For better readability, options can be nested inside a cell
 %           array.
+% Output:
+% - ctrl    object of class fn_propcontrol
+%           the graphical object that has been created can be found in its
+%           property ctrl.hu
 %
 % See also: fn_menugroup, fn_control, fn_setpropertyandmark
 
@@ -116,7 +121,7 @@ methods
         
         % set type and style
         switch spec
-            case {'checkbox' 'radiobutton'}
+            case {'checkbox', 'radiobutton', 'togglebutton'}
                 M.type = 'logical';
                 M.style = spec;
             case {'char' 'double' 'single' 'uint8' 'uint16' 'uint32' 'uint64' 'int8' 'int16' 'int32' 'int64'}
@@ -239,7 +244,7 @@ methods
             % type logical or on/off
             case 'menu'
                 M.hu.Checked = onoff(curval);
-            case {'checkbox' 'radiobutton'}
+            case {'checkbox' 'radiobutton' 'togglebutton'}
                 set(M.hu,'value',curval)
             % edit
             case 'char'
@@ -300,7 +305,7 @@ methods
                 else
                     set(M.obj,M.prop,~boolean(get(M.hu,'checked')));
                 end
-            case {'checkbox' 'radiobutton'}
+            case {'checkbox' 'radiobutton' 'togglebutton'}
                 if strcmp(M.type,'on/off')
                     set(M.obj,M.prop,fn_switch(get(M.hu,'checked'),'on/off'));
                 else

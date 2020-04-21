@@ -82,7 +82,7 @@ classdef windowcallbackmanager < hgsetget
             W.objects(kobj).callback = callback;
             W.objects(kobj).isdefault = false;
             if isobject(hobj)
-                addlistener(hobj,'ObjectBeingDestroyed',@(u,e)unregister(W,hobj))
+                addlistener(hobj,'ObjectBeingDestroyed',@(u,e)unregister(W,hobj));
             end
         end
         function setactive(W,hobj,value)

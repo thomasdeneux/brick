@@ -186,9 +186,10 @@ classdef panelorganizer < hgsetget
             if ~O.children(idx).isset, error 'no panel or sub-organization is set at this index', end
             % delete panel
             set(O.children(idx).hobj,'DeleteFcn','') % otherwise O will be deleted!
-            delete(O.children(idx).hobj)
             % remove child
+            child = O.children(idx).hobj;
             O.children(idx) = [];
+            delete(child)
             % update positions and borders
             switch O.bordermode
                 case 'twosides'

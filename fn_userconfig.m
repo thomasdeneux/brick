@@ -1,7 +1,8 @@
 function varargout = fn_userconfig(flag,varargin)
-% function [var1 var2 var3...] = fn_userconfig(flag)
-% function fn_userconfig(flag,var1,var2,var3...)
-% function name = fn_userconfig('configfolder|codefolder'[,filename])
+% function fn_userconfig(flag,var1,var2,var3...)                       % save
+% function [var1 var2 var3...] = fn_userconfig(flag)                   % load
+% function name = fn_userconfig('configfolder|codefolder'[,filename])  % get file name 
+% function name = fn_userconfig('open'[,'configfolder|codefolder'])    % open folder in file browser 
 %---
 % Save or load variables in/from the file 
 % [prefdir '/../brickuser/userconfig/' flag '.mat']
@@ -18,6 +19,15 @@ if fn_ismemberstr(flag,{'configfolder' 'codefolder'})
     else
         varargout = {folder};
     end
+    return
+elseif strcmp(flag,'open')
+    if nargin>=2
+        folderflag = varargin{1};
+    else
+        folderflag = 'configfolder';
+    end
+    folder = fn_switch(folderflag,'configfolder',configfolder,'codefolder',codefolder);
+    locate(folder)
     return
 end
 
