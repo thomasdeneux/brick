@@ -207,7 +207,7 @@ classdef windowcallbackmanager < hgsetget
     % Scroll wheel action
     methods
         function scrollwheelaction(W,e)
-            pt = get(W.hf,'currentpoint');
+            pt = round(get(W.hf,'currentpoint'));
             if all(pt>=1 & pt<=size(W.scrollmap))
                 hobj = W.objects(W.scrollmap(pt(1),pt(2))).hobj;
             else

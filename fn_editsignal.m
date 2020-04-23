@@ -3,6 +3,8 @@ function x = fn_editsignal(x)
 %---
 % function x = fn_editsignal(x)
 % function x = fn_editsignal(hl)
+%
+% See also fn_manualfunction
 
 % Thomas Deneux
 % Copyright 2015-2017

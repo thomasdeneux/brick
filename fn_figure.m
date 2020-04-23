@@ -22,7 +22,7 @@ else
         hf = figure('name',name,'integerhandle','off','numbertitle','off');
     end
 end
-[doerase dofocus] = deal(true);
+[doerase, dofocus] = deal(true);
 i = 0;
 while i<length(varargin)
     i = i+1;
@@ -33,7 +33,7 @@ while i<length(varargin)
             i = i+1;
             h = varargin{i};
         else
-            [w h] = dealc(a);
+            [w, h] = dealc(a);
         end
         fn_setfigsize(hf,w,h)
     else
@@ -50,12 +50,17 @@ while i<length(varargin)
 end
 if doerase
     delete(get(hf,'children'))
+    % it can happen that some children have been programmed such that upon
+    % deletion, they delete the figure itself! if this is the case, we need
+    % to create the figure again
+    if ~isvalid(hf)
+        hf = fn_figure(name,varargin{:});
+    end
 end
 if dofocus
     figure(hf)
 else
     set(groot,'CurrentFigure',hf)
-    
 end
 if nargout==0
     clear hf
