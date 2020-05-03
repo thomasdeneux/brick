@@ -26,9 +26,11 @@ try
             setsubmenus(m,hf)
         end
     else
-        % cancel the menu creation for dialog figures and live script
-        % figures
-        if ~isempty(get(hf,'buttonDownFcn')) || strcmp(get(hf,'Tag'),'LiveEditorCachedFigure')
+        % cancel the menu creation for dialog figures, live script
+        % figures and uifigures
+        if ~isempty(get(hf,'buttonDownFcn')) ...
+                || strcmp(get(hf,'Tag'),'LiveEditorCachedFigure') ...
+                || isa(hf,'matlab.ui.Figure')
             return
         end
         % 

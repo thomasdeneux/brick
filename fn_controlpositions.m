@@ -20,8 +20,9 @@ function fn_controlpositions(hu,hp,posrel,pospix)
 if nargin==0, help fn_controlpositions, return, end
 
 % input
-posrel = row(posrel); if length(posrel)==2, posrel(3:4)=0; end
-pospix = row(pospix); if length(pospix)==2, pospix(3:4)=0; end
+posrel = row(posrel); posrel(end+1:4)=0;
+if nargin<4, pospix = []; end
+pospix = row(pospix); pospix(end+1:4)=0;
 
 % delete previous listeners
 if isgraphics(hu)

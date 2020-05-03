@@ -11,6 +11,8 @@ function varargout = fn_coordinates(varargin)
 % - s       screen, bottom-left origin, pixel units
 % - f       figure, bottom-left origin, normalized units
 % - g       figure, bottom-left origin, pixel units
+% - p       parent, bottom-left origin, pixel units
+% - q       parent, bottom-left origin, normalized units
 % - a       axes, axes units
 % - b       axes, bottom-left origin, pixel units
 % - c       axes, bottom-left origin, normalized units
@@ -52,18 +54,28 @@ else
     valuetag = 'transformation';
 end
 
-% screen to figure (or uipanel...) conversions
+% screen to figure conversions
 posf = fn_pixelpos(hf);
 origf = posf(1:2);
-scalef = posf(3:4);
-Mf2s = transf2mat(origf,scalef);
+sizef = posf(3:4);
+Mf2s = transf2mat(origf,sizef);
 Mg2s = transf2mat(origf-1,[1 1]); %#ok<*NASGU>
 
-% figure to axes conversion
+% screen to parent conversions
+if any(ismember('pq',refchangetag))
+    hp = get(ha,'parent');
+    posp = fn_pixelpos(hp);
+    origp = origf + posp(1:2);
+    sizep = posp(3:4);
+    Mp2s = transf2mat(origp-1,[1 1]); %#ok<*NASGU>
+    Mq2s = transf2mat(origp,sizep);
+end
+
+% screen to axes conversions
 if any(ismember('abc',refchangetag))
     if isempty(ha), ha=gca; end
     posa = fn_pixelpos(ha,'recursive');
-    posa = [(posa(1:2)-1)./scalef posa(3:4)./scalef]; % relative position
+    posa = [(posa(1:2)-1)./sizef posa(3:4)./sizef]; % relative position
     axa = double(axis(ha));
     centera = posa(1:2) + posa(3:4)/2;
     sizea = posa(3:4);
@@ -73,7 +85,7 @@ if any(ismember('abc',refchangetag))
     if strcmp(get(ha,'dataaspectratiomode'),'manual')
         ratio = get(ha,'dataaspectratio');
         manualratio = ratio(2)/ratio(1); % yes, it is the opposite of what i thougt...
-        scalea2s = scalea.*scalef;
+        scalea2s = scalea.*sizef;
         autoratio = scalea2s(1)/scalea2s(2);
         change = manualratio/autoratio;
         if change>1

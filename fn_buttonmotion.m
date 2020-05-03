@@ -51,16 +51,21 @@ while k<length(varargin)
 end
 if isempty(hf), hf = gcf; end
 
+% How many outputs of the function are expected
+nout = max(0,nargout-checkmove);
+
 % fn_buttonmotion did not terminate correctly last time?
 motionfcn = get(hf,'WindowButtonMotionFcn');
 if iscell(motionfcn) && isequal(motionfcn{1},@motionexec)
-    disp_if_debug('New call to fn_buttonmotion in this figure before the previous one was finished: terminate the previous one and return')
+    % check whether there was a queued stop command
+    stopdebugstr = getappdata(hf,'fn_buttonmotion_queuestop');
+    % terminate previous call in any case
+    disp_if_debug('New call to fn_buttonmotion in this figure before the previous one was finished: terminate the previous one first')
     terminate(hf)
-    return
+    disp_if_debug('Now go on with the new call to fn_buttonmotion')
+else
+    stopdebugstr = '';
 end
-
-% How many outputs of the function are expected
-nout = max(0,nargout-checkmove);
 
 % Backup properties that will be overriden
 state = fn_get(hf,{'WindowButtonDownFcn' 'WindowButtonUpFcn' 'WindowButtonMotionFcn' 'Interruptible' 'Pointer'});
@@ -78,17 +83,23 @@ setappdata(hf,'fn_buttonmotion_lastmoverejected',false)
 if nout, setappdata(hf,'fn_buttonmotion_output',cell(1,nout)), end
 
 % Wait for motion end
-disp_if_debug('waiting for motion end')
-waitfor(hf,'WindowButtonMotionFcn') % at motion end, function terminate will be executed, and this property will be changed
-disp_if_debug('finished waiting')
-
+if ~isempty(stopdebugstr)
+    % if there was a queued stop command do not start
+    disp_if_debug(['The previous call had queued command ' stopdebugstr ', so stop new call immediately'])
+else
+    disp_if_debug('waiting for motion end')
+    waitfor(hf,'WindowButtonMotionFcn') % at motion end, function terminate will be executed, and this property will be changed
+    disp_if_debug('finished waiting')
+end
+    
 % Finish
 if ~ishandle(hf), return, end % figure has been closed in the mean while
-if doup || getappdata(hf,'fn_buttonmotion_lastmoverejected')
+if doup || any(getappdata(hf,'fn_buttonmotion_lastmoverejected'))
     setappdata(hf,'fn_buttonmotion_scrolling',false)
     exec(fun,nout,hf);
     try rmappdata(hf,'fn_buttonmotion_scrolling'), end %#ok<TRYNC>
 end
+try rmappdata(hf,'fn_buttonmotion_lastmoverejected'), end %#ok<TRYNC>
 if checkmove
     varargout = {getappdata(hf,'fn_buttonmotion_moved')}; 
 else 
@@ -97,7 +108,7 @@ end
 try rmappdata(hf,'fn_buttonmotion_moved'), end %#ok<TRYNC>
 if nout
     varargout = [varargout getappdata(hf,'fn_buttonmotion_output')];  %#ok<VARARG>
-    rmappdata(hf,'fn_buttonmotion_output') 
+    try rmappdata(hf,'fn_buttonmotion_output'), end %#ok<TRYNC>
 end 
 
 %---
@@ -195,19 +206,21 @@ rmappdata(hf,'fn_buttonmotion_scrolling')
 %---
 function disp_if_debug(varargin)
 
-% str = [];
-% for k=1:nargin
-%     x = varargin{k};
-%     if iscell(x)
-%         if isa(x{1},'function_handle')
-%             x = func2str(x{1});
-%         else
-%             error('don''t know how to display cell array')
-%         end
-%     end
-%     str = [str x]; %#ok<AGROW>
-% end
-% disp(str)
+if eval('false')
+    str = [];
+    for k=1:nargin
+        x = varargin{k};
+        if iscell(x)
+            if isa(x{1},'function_handle')
+                x = func2str(x{1});
+            else
+                error('don''t know how to display cell array')
+            end
+        end
+        str = [str x]; %#ok<AGROW>
+    end
+    disp(str)
+end
 
 %---
 function demo
