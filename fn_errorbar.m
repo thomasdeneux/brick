@@ -128,14 +128,14 @@ switch flag
         yy = fn_add(ypattern'*e(:)',y(:)');
         xx = reshape(xx,[npattern*nx ny]);
         yy = reshape(yy,[npattern*nx ny]);
-        hl{2} = plot(xx,yy,'color','k','parent',ha);
+        hl{1} = plot(xx,yy,'color','k','parent',ha);
         % (second the bars)
         isholdoff = ~strcmp(get(ha,'nextplot'),'add');
         hold(ha,'on')
         if ~mod(length(opt),2), opt = [1 opt]; end % use width parameter = 1 for bar display
-        hl{1} = bar(x,y,opt{:});
+        hl{2} = bar(x,y,opt{:});
         if isholdoff, hold(ha,'off'), end
-        uistack(hl{2},'top')
+        uistack(hl{1},'top')
         % (final axis adjustment)
         ax = axis(ha);
         if any(y(:)<0), m=ax(3); else m=0; end
@@ -147,7 +147,7 @@ switch flag
         hl = {gobjects(1,n) gobjects(1,n)};
         for k=1:n
             kc = 1+mod(k-1,ncol);
-            hl{1}(k) = patch([x(1:nt)' x(nt:-1:1)'],[yb(:,k)' yt(nt:-1:1,k)'], ...
+            hl{2}(k) = patch([x(1:nt)' x(nt:-1:1)'],[yb(:,k)' yt(nt:-1:1,k)'], ...
                 (1+cols(kc,:))/2, ...
                 'parent',ha, ...
                 'edgecolor','none'); %,'facealpha',.5);
@@ -155,7 +155,7 @@ switch flag
         end
         for k=1:n
             kc = 1+mod(k-1,ncol);
-            hl{2}(k) = line(x,y(:,k),'color',cols(kc,:),'parent',ha);
+            hl{1}(k) = line(x,y(:,k),'color',cols(kc,:),'parent',ha);
             fn_set(hl{2}(k),opt{:})
         end
     case 'xerror'
@@ -188,6 +188,8 @@ switch flag
                 set(hl,opt{:})
             end
         end
+        % separate lines between 2 groups
+        hl = {hl(1:n) reshape(hl(n+1:3*n),[n 2])};
     case 'all'
         hl = plot(x,Y(:,:));
         sY = size(Y);

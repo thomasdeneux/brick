@@ -160,7 +160,9 @@ figure(grob.hf)
 %hc=cell2mat(fn_get(obj,'children')); hc = hc(:)';
 hc=findall(obj); hc = hc(:)';
 hctype = fn_get(hc,'type');
-hc(fn_ismemberstr(hctype,{'uimenu','uicontextmenu'})) = [];
+hc(fn_ismemberstr(hctype, ...
+    {'uimenu','uicontextmenu', ...
+    'toolbarstatebutton','toolbarpushbutton','annotationpane'})) = [];
 state.children = setdiff(hc,obj);
 state.allobj = [obj state.children];
 state.objprop = fn_get(obj,{'buttondownfcn' 'visible' 'units'},'struct');
@@ -200,7 +202,7 @@ donehu = uicontrol('parent',panel,'style','pushbutton', ...
 % Change some properties
 set(obj,'units','pixels','visible','on', ...
     'buttondownfcn',@(hobj,evnt)frameresize(info,hobj))
-set(state.children,'hittest','off')
+fn_set(state.children,'hittest','off')
 set(state.figures,'buttondownfcn','','windowbuttondownfcn','', ...
     'resize','on','resizefcn',@(hf,evnt)figureresize(info,hf))
 % set(state.axes,'dataaspectratiomode','auto')

@@ -1,4 +1,4 @@
-function [x clip] = fn_clip(x,varargin)
+function [x, clip] = fn_clip(x,varargin)
 %FN_CLIP Rescale data, restrict the range, color
 %---
 % function [x clip] = fn_clip(x[,clipflag][,outflag][,nanvalue])
@@ -70,10 +70,10 @@ end
 if isempty(clipflag), clipflag='mM'; end
 if isempty(outflag), outflag=[0 1]; end
 
-% clipping mode
+% Compute clipping range
 if isnumeric(clipflag)
     if ~isvector(clipflag) || length(clipflag)~=2, error('clipping vector must have 2 elements'), end
-    clip = clipflag;
+    clip = row(clipflag);
 else
     icenterval = regexp(clipflag,'\[.*\]$');
     if isempty(icenterval)
@@ -122,7 +122,7 @@ else
 end
 if diff(clip)==0, clip = clip+[-1 1]; end
 
-% output mode
+% Check output mode
 doclip = true;
 if strcmp(outflag,'getrange')
     x = clip;
@@ -158,11 +158,11 @@ else
     b = outflag(2);
 end
 
-% convert to float if the data is integer (we avoided doing it before
+% Convert data to float if the data is integer (we avoided doing it before
 % because it was not needed in the case of the 'getrange' output flag)
 [x, clip] = deal(fn_float(x),fn_float(clip));
 
-% clip
+% Clip data
 x = (x-clip(1))/diff(clip);
 if ~doclip, return, end
 if ~isempty(nanvalue)
@@ -175,7 +175,7 @@ else
 end
 x = min(upperbound,max(0,x)); 
 
-% scaling
+% Scaling
 if n
     if isinteger(n)
         x = cast(floor(double(n)*x),'like',n); % values between 0 and n-1
@@ -188,7 +188,7 @@ else
     x = a + x*(b-a); % b cannot be reached
 end
 
-% color and value for NaNs
+% Color and value for NaNs
 if docolor
     s = size(x); %if s(2)==1, s(2)=[]; end
     if ~isempty(nanvalue)

@@ -41,7 +41,6 @@ if ischar(varargin{end})
 else
     convtype = [];
 end
-%if nd==1, error('why do you need to convert per-coordinates indices to global indices for a vector!!??'), end
 % (which case are we treating?)
 x = varargin{1};
 if length(varargin)>=2
@@ -65,7 +64,11 @@ end
 switch convtype
     case 'i2g'             % per-coordinates -> global
         % conversion
-        cs = [1 cumprod(s(1:end-1))];
+        if nd == 0
+            cs = zeros(1,0);
+        else
+            cs = [1 cumprod(s(1:end-1))];
+        end
         globi = 1 + cs*(ijk-1);
         % indices out of range
         bad = any(ijk<1 | bsxfun(@gt,ijk,s'),1);

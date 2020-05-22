@@ -10,7 +10,7 @@ function [numdata numdataheaders textdata textdataheaders] = fn_readtextdata(fil
 % Thomas Deneux
 % Copyright 2015-2017
 
-if nargin==0, filename = fn_getfile('Please select text file'); end
+if nargin==0, filename = fn_getfile('*.txt;*.csv','Please select text file'); end
 
 % Read file
 x = fn_readtext(filename);
