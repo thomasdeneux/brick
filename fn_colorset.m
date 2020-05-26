@@ -52,7 +52,7 @@ switch setname
         if ncol>12, error 'only 12 plot colors are available', end
         colors = [0 0 1 ; 0 .75 0 ; 1 0 0 ; ...
             0 .75 .75 ; .75 0 .75 ; .75 .75 0 ; 0 0 0 ; ...
-            .75 .35 0 ; 0 1 0 ; 0 .3 0 ; .3 0 0 ; .3 0 .5];
+            1 .5 0 ; 0 1 0 ; 0 .3 0 ; .3 0 0 ; .3 0 .5];
     case 'prism'
         if isempty(ncol), ncol = 15; end
         colors = hsv(24);

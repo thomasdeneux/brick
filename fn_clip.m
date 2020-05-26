@@ -114,7 +114,7 @@ else
                 if high<30, high=100-high; end
                 low = (low+high)/2;
             end
-            clip = centerval + [-1 1]*prctile(abs(x(:)-centerval),low);
+            clip = centerval + [-1 1]*prctile(abs(x(:)-centerval),100-low);
         end
     else
         error('erroneous clipping option')
