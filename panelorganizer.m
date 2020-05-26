@@ -46,7 +46,7 @@ classdef panelorganizer < hgsetget
         end
         function delete(O)
             if ~isvalid(O) && ~isprop(O,'szlistener'), return, end
-            deleteValid(O.szlistener)
+            delete_valid(O.szlistener)
         end
         function split(O,mode,n,dorelative,xx)
             % input, checks

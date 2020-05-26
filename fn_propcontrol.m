@@ -227,7 +227,7 @@ methods
     end
     function delete(M)
         if ~isprop(M,'proplistener'), return, end
-        deleteValid(M.proplistener,M.hu,M.hparent)
+        delete_valid(M.proplistener,M.hu,M.hparent)
     end
 end
 

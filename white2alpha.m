@@ -170,7 +170,7 @@ classdef white2alpha < interface
             set(X.image_subpart_mark,'visible',b)
         end
         function set_image_subpart(X)
-            deleteValid(X.image_subpart_mark)
+            delete_valid(X.image_subpart_mark)
             poly = fn_mouse(X.grob.result,'poly','select image sub-part');
             poly = poly(:,[1:end 1]);
             X.image_subpart_mark = fn_drawpoly(poly,'parent',X.grob.result,'color','w');

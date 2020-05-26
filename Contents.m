@@ -235,9 +235,9 @@
 % - GUI oriented-object programming
 %   interface         - Parent class to create cool graphic interfaces
 %   fn_propcontrol    - Create controls automatically linked to an object property
-%   deleteValid       - Delete valid objects among the list of objects obj (particularly useful for Matlab graphic handles) 
-%   connectlistener   - Create a listener that will auto-delete when a target object will be deleted
-%   disableListener   - Momentarily disable a listener (returns an onCleanup oject that reenable it when being garbage collected)
+%   delete_valid       - Delete valid objects among the list of objects obj (particularly useful for Matlab graphic handles)
+%   connect_listener   - Create a listener that will auto-delete when a target object will be deleted
+%   disable_listener   - Momentarily disable a listener (returns an onCleanup oject that reenable it when being garbage collected)
 %
 % MISCELLANEOUS
 % - shortcuts

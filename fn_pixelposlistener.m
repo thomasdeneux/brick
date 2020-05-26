@@ -22,7 +22,7 @@ switch nargin
 end
 
 % Create listener
-el = [connectlistener(source,target,'LocationChanged',callback) connectlistener(source,target,'SizeChanged',callback)];
+el = [connect_listener(source,target,'LocationChanged',callback) connect_listener(source,target,'SizeChanged',callback)];
 
 % Output?
 if nargout==0, clear el, end

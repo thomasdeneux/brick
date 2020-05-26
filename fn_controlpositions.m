@@ -72,7 +72,7 @@ hl.axlim.Enabled = strcmp(get(hp,'DataAspectRatioMode'),'manual');
 %---
 function deleteposlisteners(hl)
 
-deleteValid(hl.ppos,hl.axlim,hl.axratio)
+delete_valid(hl.ppos,hl.axlim,hl.axratio)
 
 
 %---

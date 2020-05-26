@@ -1,7 +1,7 @@
-function el = connectlistener(source,target,varargin)
+function el = connect_listener(source,target,varargin)
 %CONNECTLISTENER Create a listener that will auto-delete when a target object will be deleted
 %---
-% function [el = ] connectlistener(source,target,[propname,]eventname,callback)
+% function [el = ] connect_listener(source,target,[propname,]eventname,callback)
 %---
 % Add a listener to source acting on target, until target gets deleted:
 % This function is a wrapper of Matlab function 

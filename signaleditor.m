@@ -106,7 +106,7 @@ classdef signaleditor < hgsetget
             end
         end
         function delete(E)
-            deleteValid(E.hf_created)
+            delete_valid(E.hf_created)
         end
     end
     

@@ -44,14 +44,14 @@ classdef pixelposwatcher < handle
             if ~PP.isfig && isempty(PP.parent) && ~PP.newgraphics
                 hp = get(PP.hobj,'parent');
                 PP.parent = pixelposwatcher(hp);
-                connectlistener(PP.parent,PP,'changepos',@(u,e)updatepos(PP));
+                connect_listener(PP.parent,PP,'changepos',@(u,e)updatepos(PP));
             end
             PP.pixelpos = zeros(1,4);
             updatepos(PP)
             if PP.newgraphics
-                connectlistener(hobj,PP,'LocationChanged',@(hf,e)updatepos(PP));
+                connect_listener(hobj,PP,'LocationChanged',@(hf,e)updatepos(PP));
             else
-                connectlistener(hobj,PP,'Position','PostSet',@(hf,e)updatepos(PP));
+                connect_listener(hobj,PP,'Position','PostSet',@(hf,e)updatepos(PP));
             end
         end
     end
