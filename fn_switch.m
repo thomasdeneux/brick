@@ -1,9 +1,6 @@
 function y = fn_switch(varargin)
 % function y = fn_switch(x,y_true,[x2,y_true2,[...]]y_false)
 % function y = fn_switch(x,case1,y1,case2,y2,..,casen,yn[,ydefault])
-% function y = fn_switch(true|false|'on'|'off')
-% function y = fn_switch(true|false|'on'|'off','logical'|'on/off')
-% function y = fn_switch('on|off','toggle')
 % function y = fn_switch(y,y_defaultifempty)
 %---
 % The 2 first cases are general prototypes: the functions recognize which
@@ -84,6 +81,7 @@ if nargin<=2
             end
         end
     elseif ischar(varargin{2}) && strcmp(varargin{2},'toggle')
+        warning 'using fn_switch with 2d argument ''toggle'' is deprecated, use onoff function instead'
         % on/off switch
         switch x
             case 'on'

@@ -10,13 +10,14 @@ function a = fn_readtext(filename)
 % Thomas Deneux
 % Copyright 2005-2017
 
-if nargin<1, filename=fn_getfile; end
+a = {};
 
-if filename==0, disp(['Could not open file ' filename]), return, end 
+if nargin<1, filename=fn_getfile; end
+if filename==0, return, end 
 
 fid=fopen(filename,'r');
+if filename==-1, disp(['Could not open file ' filename]), return, end 
 
-a = {};
 line = fgetl(fid);
 while ~isequal(line,-1)
     a{end+1,1} = line; %#ok<AGROW>
