@@ -67,7 +67,7 @@ if ncol == 4
 end
 
 % file name
-[fpath fbase fext] = fileparts(fname);
+[fpath, fbase, fext] = fileparts(fname);
 if isempty(fext)
     ext = 'png';
 else
@@ -98,8 +98,18 @@ if ncol==3
     elseif nt==1
         imwrite(a,fname,ext);
     elseif strcmp(ext,'gif')
-        error 'true color multi-frame gif are not supported'
-        imwrite(a,fname,ext,'delaytime',delaytime)
+        % it seems in Matlab's imwrite help that gif color images cannot be
+        % true color images but only indexed color images
+        fn_progress('saving image',nt)
+        for i=1:nt
+            fn_progress(i)
+            [A,map] = rgb2ind(a(:,:,:,i),256);
+            if i == 1
+                imwrite(A,map,fname,'gif','LoopCount',Inf,'DelayTime',delaytime);
+            else
+                imwrite(A,map,fname,'gif','WriteMode','append','DelayTime',delaytime);
+            end
+        end
     elseif fn_ismemberstr(ext,{'tif' 'tiff'})
         disp('case nt>1 and ncol==3 has problems with tiff images')
         fn_progress('saving image',nt)
