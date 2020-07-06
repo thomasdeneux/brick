@@ -39,7 +39,7 @@ classdef fn_pointer < dynamicprops & hgsetget
             switch f(1).type
                 case '()'
                     if length(f)>1
-                        subsassgn(X(f(1).sub{:}),f(2:end),x)
+                        subsasgn(X(f(1).subs{:}),f(2:end),x)
                     else
                         X(f(1).subs{:}) = x;
                     end
