@@ -52,16 +52,18 @@ classdef white2alpha < interface
                 'border__max__luminance',   {.5     'slider 0 1 .005 %.2f < ~flat__colors'}, ...
                 'border__max__saturation',  {.5     'slider 0 1 .005 %.2f < ~flat__colors'}, ...
                 'final__alpha__smooth',            {false  'logical'}, ...
-                'true__color__smoothing',   {0      'slider 0 1 < ~final__alpha__smooth'}, ...
-                'SAVE',                {[]     {'push' 'save'}});
+                'true__color__smoothing',   {0      'slider 0 1 < ~final__alpha__smooth'});
             X.controls = fn_control(s,@(s)X.action(s),X.grob.controls);
 
             % Load image and perform conversion
             X.load_image(varargin{:})
         end
-        function load_image(X, a)
-            % Input
-            if nargin<2
+        function load_image(X, a, varargin)
+            % Options
+            do_sub_region = fn_flags(varargin, 'subregion');
+            
+            % Image
+            if nargin<2 || isempty(a)
                 a = fn_getfile('*','Select image');
             end
             while ischar(a)
@@ -96,8 +98,21 @@ classdef white2alpha < interface
                     end
                 end
             end
-            X.input = a;
 
+            % Select sub-region
+            if do_sub_region
+                % select mask
+                mask = fn_maskselect(a, 'free');
+                % all pixels outside mask are white
+                [n_x, n_y, ~] = size(a);
+                a = fn_imvect(a, 'vector');
+                a(~mask, :) = 1;
+                a = fn_imvect(a, [n_x n_y]);
+                % crop image to mask sides
+                a = a(any(mask, 2), any(mask, 1), :);
+            end
+            X.input = a;
+            
             % Some precomputations
             [X.nx, X.ny, X.nc] = size(X.input);
             if X.nc == 3
@@ -149,7 +164,11 @@ classdef white2alpha < interface
             % Load image
             m = X.menus.interface;
             uimenu(m,'label','Load image...','separator','on', ...
-                'callback',@(u,e)load_image(X))
+                'callback',@(u,e)X.load_image())
+            uimenu(m,'label','Load image (sub-region)...'   , ...
+                'callback',@(u,e)X.load_image([], 'subregion'))
+            uimenu(m,'label','Save result...', ...
+                'callback',@(u,e)X.save())
 
             % Image sub-part
             m = uimenu(X.hf,'label','Sub-Image');
@@ -177,18 +196,8 @@ classdef white2alpha < interface
             X.image_subpart = fn_poly2mask(poly(1,:),poly(2,:),X.nx,X.ny);
         end
         function action(X, s)
-            if ischar(s)
-                % special action
-                switch s
-                    case 'save'
-                        X.save()
-                    otherwise
-                        error 'argument'
-                end
-            else
-                % parameter change
-                X.performconversion()
-            end
+            % parameter change
+            X.performconversion()
         end
         function performconversion(X)
             c = fn_watch(X.hf);
@@ -324,6 +333,18 @@ classdef white2alpha < interface
             end
             a = cat(3,xtruecolor,X.alpha);
             fn_saveimg(a,fsave)
+        end
+        function copy_clipboard(X)
+            xtruecolor = X.truecolor;
+            if size(xtruecolor,3)==1
+                xtruecolor = repmat(xtruecolor,[1 1 3]);
+            end
+            a = cat(3,xtruecolor,X.alpha);
+            imclipboard('copy', permute(a,[2 1 3]))
+        end
+        function paste_clipboard(X)
+            a = permute(imclipboard('paste'),[2 1 3]);
+            X.load_image(a)
         end
     end
 
