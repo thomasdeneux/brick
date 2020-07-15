@@ -60,7 +60,7 @@ classdef white2alpha < interface
         end
         function load_image(X, a, varargin)
             % Options
-            do_sub_region = fn_flags(varargin, 'subregion');
+            do_sub_region = fn_flags({'subregion'}, varargin);
             
             % Image
             if nargin<2 || isempty(a)
