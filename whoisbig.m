@@ -83,7 +83,9 @@ w = w(ord);
 ok = ([w.bytes]>=minsize);
 
 % (add also object which might be container of large variables through handles)
-matlabclasses = {'logical' 'char' 'single' 'double' 'uint8' 'uint16' 'uint32' 'uint64' 'int8' 'int16' 'int32' 'int64' 'struct' 'cell' 'table'};
+matlabclasses = {'logical' 'char' 'single' 'double' 'uint8' 'uint16' 'uint32' 'uint64' ...
+    'int8' 'int16' 'int32' 'int64' ...
+    'struct' 'cell' 'table' 'datetime'};
 okclasses = [matlabclasses 'alias'];
 for k = find(~ok & ~ismember({w.class},okclasses))
     % add variables who are small but which, because they are handle
