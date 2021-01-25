@@ -9,6 +9,6 @@ if ischar(x) && strcmp(x,'on')
     b = true;
 elseif ischar(x) && strcmp(x,'off')
     b = false;
-else
+else 
     b = logical(x);
 end
