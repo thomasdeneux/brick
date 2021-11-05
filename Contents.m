@@ -128,7 +128,6 @@
 %   fn_printnumber    - Add small numbers and text to images or movies
 % - regions of interest
 %   fn_maskselect     - Manual selection of a mask inside an image
-%   fn_subrect        - Manual selection of a rectangular mask inside an image
 %   fn_poly2mask      - Get the mask of a polygon interior
 %   fn_imvect         - Convert an image to a vector of pixels inside a mask, and vice-versa 
 %   fn_roiavg         - Compute average signal from a region of interest
