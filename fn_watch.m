@@ -43,7 +43,8 @@ else
     startfcn(hf)
     t = [];
 end
-c = onCleanup(@()stopfcn(hf,t,curpointer));
+% c = onCleanup(@()stopfcn(hf,t,curpointer));
+c = onCleanup(@()stopfcn(hf,t,'arrow'));
 
 function t = maketimer(hf)
 
